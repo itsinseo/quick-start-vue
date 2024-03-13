@@ -31,28 +31,27 @@ function formatDate(v) {
 
 <template>
   <div>
-  <h1>Latest itsinseo's redis-review Core Commits</h1>
-  <p>itsinseo/redis-review@{{ currentBranch }}</p>
+    <h1>Latest itsinseo's redis-review Core Commits</h1>
+    <p>itsinseo/redis-review@{{ currentBranch }}</p>
     <template v-for="branch in branches">
       <input type="radio" :id="branch" :value="branch" name="branch" v-model="currentBranch">
       <label :for="branch">{{ branch }}</label>
     </template>
     <ul>
-    <li v-for="{ html_url, sha, author, commit } in commits">
-      <a :href="html_url" target="_blank" class="commit">{{ sha.slice(0, 7) }}</a>
-      - <span class="message">{{ truncate(commit.message) }}</span><br>
-      by <span class="author">
-        <a :href="author.html_url" target="_blank">{{ commit.author.name }}</a>
-      </span>
-      at <span class="date">{{ formatDate(commit.author.date) }}</span>
-    </li>
-  </ul>
+      <li v-for="{ html_url, sha, author, commit } in commits">
+        <a :href="html_url" target="_blank" class="commit">{{ sha.slice(0, 7) }}</a>
+        - <span class="message">{{ truncate(commit.message) }}</span><br>
+        by <span class="author">
+          <a :href="author.html_url" target="_blank">{{ commit.author.name }}</a>
+        </span>
+        at <span class="date">{{ formatDate(commit.author.date) }}</span>
+      </li>
+    </ul>
   </div>
-  
+
 </template>
 
 <style>
-
 a {
   text-decoration: none;
   color: #42b883;
