@@ -26,7 +26,17 @@ function addChild() {
     props.model.children.push({ name: 'new stuff' })
 }
 
-// TODO: make any way to remove object
+function emptyFolder() {
+    props.model.children = []
+    isOpen.value = false
+}
+
+function removeItem() {
+    // TODO: make any way to remove object
+    // parent node information property needed; unique id or else
+    
+}
+
 
 </script>
 
@@ -35,9 +45,11 @@ function addChild() {
         <div :class="{ bold: isFolder }" @click="toggle" @dblclick="changeType">
             {{ model.name }}
             <span v-if="isFolder">[{{ isOpen ? '-' : '+' }}]</span>
+            <button v-if="isFolder" @click="emptyFolder">Empty</button>
+            <!-- <button v-else @click="removeItem">X</button> -->
         </div>
         <ul v-show="isOpen" v-if="isFolder">
-            
+
             <!-- A component can recursively render itself using its
         "name" option (inferred from filename if using SFC) -->
 
