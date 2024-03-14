@@ -53,7 +53,7 @@ function replace() {
   </TransitionGroup>
 </template>
 
-<style>
+<style scoped>
 .container {
   position: relative;
   padding: 0;

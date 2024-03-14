@@ -60,7 +60,7 @@ function remove(stat) {
   <pre id="raw">{{ stats }}</pre>
 </template>
 
-<style>
+<style scoped>
 polygon {
   fill: #42b983;
   opacity: 0.75;

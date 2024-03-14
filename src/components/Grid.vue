@@ -66,7 +66,7 @@ function capitalize(str) {
   <p v-else>No matches found.</p>
 </template>
 
-<style>
+<style scoped>
 table {
   border: 2px solid #42b983;
   border-radius: 3px;
