@@ -2,62 +2,62 @@
 import { ref, computed } from 'vue'
 
 const props = defineProps({
-    model: Object
+  model: Object
 })
 
 const isOpen = ref(false)
 const isFolder = computed(() => {
-    return props.model.children && props.model.children.length
+  return props.model.children && props.model.children.length
 })
 
 function toggle() {
-    isOpen.value = !isOpen.value
+  isOpen.value = !isOpen.value
 }
 
 function changeType() {
-    if (!isFolder.value) {
-        props.model.children = []
-        addChild()
-        isOpen.value = true
-    }
+  if (!isFolder.value) {
+    props.model.children = []
+    addChild()
+    isOpen.value = true
+  }
 }
 
 function addChild() {
-    props.model.children.push({ name: 'new stuff' })
+  props.model.children.push({ name: 'new stuff' })
 }
 
 function emptyFolder() {
-    props.model.children = []
-    isOpen.value = false
+  props.model.children = []
+  isOpen.value = false
 }
 
 function removeItem() {
-    // TODO: make any way to remove object
-    // parent node information property needed; unique id or else
-    
+  // TODO: make any way to remove object
+  // parent node information property needed; unique id or else
+
 }
 
 
 </script>
 
 <template>
-    <li>
-        <div :class="{ bold: isFolder }" @click="toggle" @dblclick="changeType">
-            {{ model.name }}
-            <span v-if="isFolder">[{{ isOpen ? '-' : '+' }}]</span>
-            <button v-if="isFolder" @click="emptyFolder">Empty</button>
-            <!-- <button v-else @click="removeItem">X</button> -->
-        </div>
-        <ul v-show="isOpen" v-if="isFolder">
+  <li>
+    <div :class="{ bold: isFolder }" @click="toggle" @dblclick="changeType">
+      {{ model.name }}
+      <span v-if="isFolder">[{{ isOpen ? '-' : '+' }}]</span>
+      <button v-if="isFolder" @click="emptyFolder">Empty</button>
+      <!-- <button v-else @click="removeItem">X</button> -->
+    </div>
+    <ul v-show="isOpen" v-if="isFolder">
 
-            <!-- A component can recursively render itself using its
+      <!-- A component can recursively render itself using its
         "name" option (inferred from filename if using SFC) -->
 
-            <TreeItem class="item" v-for="model in model.children" :model="model">
-            </TreeItem>
-            <li class="add" @click="addChild">+</li>
-        </ul>
-    </li>
+      <TreeItem class="item" v-for="model in model.children" :model="model">
+      </TreeItem>
+      <li class="add" @click="addChild">+</li>
+    </ul>
+  </li>
 
 
 </template>
