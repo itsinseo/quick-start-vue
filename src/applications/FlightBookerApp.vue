@@ -44,8 +44,6 @@ function pad(n, s = String(n)) {
   return s.length < 2 ? `0${s}` : s
 }
 
-// TODO: save booking data to localStorage & show
-
 </script>
 
 <template>
