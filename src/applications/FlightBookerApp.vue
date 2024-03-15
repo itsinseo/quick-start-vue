@@ -44,8 +44,6 @@ function pad(n, s = String(n)) {
   return s.length < 2 ? `0${s}` : s
 }
 
-// TODO: save booking data to localStorage & show
-
 </script>
 
 <template>
@@ -62,7 +60,7 @@ function pad(n, s = String(n)) {
   <p>{{ canBook ? '' : 'Return date must be after departure date.' }}</p>
 </template>
 
-<style>
+<style scoped>
 select,
 input,
 button {
