@@ -1,2 +1,0 @@
-2024/03/15
-TimerApp: if the timer is not stopped and the reset button is pressed, the next time when the user wants to pause he/she has to press additional number of times equal to the reset has been pressed

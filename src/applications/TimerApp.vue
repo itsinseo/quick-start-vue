@@ -7,27 +7,30 @@ import { ref, onUnmounted, computed } from 'vue'
 const duration = ref(3 * 1000)
 const elapsed = ref(0)
 
-let lastTime
-let handle
+const lastTime = ref(0)
+const handle = ref(0)
 const isRunning = ref(true)
 const isPaused = ref(false)
 
 function update() {
-  elapsed.value = performance.now() - lastTime
+  elapsed.value = performance.now() - lastTime.value
   if (elapsed.value >= duration.value) {
-    cancelAnimationFrame(handle)
+    cancelAnimationFrame(handle.value)
     isRunning.value = false
     isPaused.value = true
   } else {
     isRunning.value = true
     isPaused.value = false
-    handle = requestAnimationFrame(update)
+    handle.value = requestAnimationFrame(update)
   }
 }
 
 function reset() {
+  if (!isPaused.value) {
+    pause()
+  }
   elapsed.value = 0
-  lastTime = performance.now()
+  lastTime.value = performance.now()
   update()
 }
 
@@ -38,20 +41,20 @@ const progressRate = computed(() =>
 reset()
 
 onUnmounted(() => {
-  cancelAnimationFrame(handle)
+  cancelAnimationFrame(handle.value)
 })
 
 function pause() {
-  cancelAnimationFrame(handle)
-  elapsed.value = performance.now() - lastTime
-  
+  cancelAnimationFrame(handle.value)
+  elapsed.value = performance.now() - lastTime.value
+
   isPaused.value = true
   isRunning.value = true
 }
 
 function start() {
-  lastTime = performance.now() - elapsed.value
-  handle = requestAnimationFrame(update)
+  lastTime.value = performance.now() - elapsed.value
+  handle.value = requestAnimationFrame(update)
   isPaused.value = false
   isRunning.value = true
 }
