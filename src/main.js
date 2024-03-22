@@ -2,7 +2,7 @@ import './assets/main.css'
 
 import { createApp } from 'vue'
 // import App from './App.vue'
-import App from '@/applications/ExternalApiApp.vue'
+import App from '@/applications/FlightBookerApp.vue'
 import 'primevue/resources/themes/nova/theme.css'
 
 import PrimeVue from 'primevue/config'

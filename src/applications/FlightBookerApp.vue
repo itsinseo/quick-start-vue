@@ -5,29 +5,33 @@ https://eugenkiss.github.io/7guis/tasks/#flight
 <script setup>
 import { ref, computed } from 'vue'
 
-const flightType = ref('one-way flight')
-const departureDate = ref(dateToString(new Date()))
+const flightType = ref()
+const departureDate = ref(new Date())
 const returnDate = ref(departureDate.value)
 
-const isReturn = computed(() => flightType.value === 'return flight')
+const isReturn = computed(() => flightType.value === 'Return Flight')
+
+const typeSelected = computed(
+  () => flightType.value
+)
 
 const canBook = computed(
   () =>
     !isReturn.value ||
-    stringToDate(returnDate.value) > stringToDate(departureDate.value)
+    returnDate.value > departureDate.value
 )
+
+const flightOptions = ref([
+  'One-way Flight',
+  'Return Flight'
+])
 
 function book() {
   alert(
     isReturn.value
-      ? `You have booked a return flight leaving on ${departureDate.value} and returning on ${returnDate.value}.`
-      : `You have booked a one-way flight leaving on ${departureDate.value}.`
+      ? `You have booked a return flight leaving on ${dateToString(departureDate.value)} and returning on ${dateToString(returnDate.value)}.`
+      : `You have booked a one-way flight leaving on ${dateToString(departureDate.value)}.`
   )
-}
-
-function stringToDate(str) {
-  const [y, m, d] = str.split('-')
-  return new Date(+y, m - 1, +d)
 }
 
 function dateToString(date) {
@@ -47,16 +51,19 @@ function pad(n, s = String(n)) {
 </script>
 
 <template>
-  <select v-model="flightType">
-    <option value="one-way flight">One-way Flight</option>
-    <option value="return flight">Return Flight</option>
-  </select>
 
-  <input type="date" v-model="departureDate">
-  <input type="date" v-model="returnDate" :disabled="!isReturn">
+  <div>
+    <Dropdown v-model="flightType" :options="flightOptions" placeholder="One-way or Return" />
+  </div>
 
-  <button :disabled="!canBook" @click="book">Book</button>
+  <div>
+    <Calendar v-model="departureDate" dateFormat="yy-mm-dd" />
+    <Calendar v-model="returnDate" dateFormat="yy-mm-dd" :disabled="!isReturn" />
+  </div>
 
+  <Button :disabled="!canBook || !typeSelected" @click="book">Book</Button>
+
+  <p>{{ typeSelected ? '' : 'Select Flight Type First' }}</p>
   <p>{{ canBook ? '' : 'Return date must be after departure date.' }}</p>
 </template>
 
