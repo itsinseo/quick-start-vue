@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { valueToPoint } from '@/util/svg-util.js'
+import { valueToPoint } from '@/utils/svg-util.js'
 
 const props = defineProps({
   stat: Object,
