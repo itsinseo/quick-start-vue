@@ -1,7 +1,9 @@
 # quick-start-vue
 
 This template should help get you started developing with Vue 3 in Vite. <br>
-URL: https://vuejs.org/examples/#hello-world
+URL: https://vuejs.org/examples/#hello-world <br>
+
+Personal practice also included: HTML/CSS, PrimeVue, etc. 
 
 ## Recommended IDE Setup
 
@@ -30,4 +32,16 @@ npm run dev
 
 ```sh
 npm run build
+```
+
+### Update dependencies if outdated
+
+```sh
+npm update
+```
+
+### Always get help if not familiar
+
+```sh
+npm help
 ```
