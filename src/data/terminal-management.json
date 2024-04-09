@@ -1,0 +1,162 @@
+[
+  {
+    "terminal_id": "MTL2405LRN007",
+    "customer": "(IN)INWOO",
+    "location": "인도네시아",
+    "registered_date": "24-04-03 15:40",
+    "modified_date": "24-04-03 15:42",
+    "sim": "202404096388617"
+  },
+  {
+    "terminal_id": "MTL2405LRN006",
+    "customer": "(IN)INWOO",
+    "location": "인도네시아",
+    "registered_date": "24-04-03 15:39",
+    "modified_date": "24-04-03 15:42",
+    "sim": "202404096388616"
+  },
+  {
+    "terminal_id": "MTL2405LRN005",
+    "customer": "(IN)SUNG OH",
+    "location": "인도네시아",
+    "registered_date": "24-04-03 15:39",
+    "modified_date": "24-04-03 15:41",
+    "sim": "202404096388614"
+  },
+  {
+    "terminal_id": "MTL2405LRN004",
+    "customer": "PT JINSEONG ENG INDONESIA",
+    "location": "인도네시아",
+    "registered_date": "24-04-03 15:38",
+    "modified_date": "24-04-03 15:40",
+    "sim": "202404096388613"
+  },
+  {
+    "terminal_id": "MTL2405LRN003",
+    "customer": "PT JINSEONG ENG INDONESIA",
+    "location": "인도네시아",
+    "registered_date": "24-04-03 15:38",
+    "modified_date": "24-04-03 15:40",
+    "sim": "202404096388612"
+  },
+  {
+    "terminal_id": "MTL2405LRN002",
+    "customer": "(IN)WANSANG(S)",
+    "location": "인도네시아",
+    "registered_date": "24-04-03 15:37",
+    "modified_date": "24-04-03 15:40",
+    "sim": "202404096388611"
+  },
+  {
+    "terminal_id": "MTL2405LRN001",
+    "customer": "(IN)HYOLIMNEO(S)",
+    "location": "인도네시아",
+    "registered_date": "24-04-03 15:32",
+    "modified_date": "24-04-03 15:40",
+    "sim": "202404096388610"
+  },
+  {
+    "terminal_id": "MTL2346LRN007",
+    "customer": "광대공업사",
+    "location": "대한민국",
+    "registered_date": "24-01-19 09:56",
+    "modified_date": "24-01-19 10:36",
+    "sim": "202404096388609"
+  },
+  {
+    "terminal_id": "MTL2346LRN006",
+    "customer": "진아ISP",
+    "location": "대한민국",
+    "registered_date": "24-01-19 09:55",
+    "modified_date": "24-01-19 10:36",
+    "sim": "202404096388608"
+  },
+  {
+    "terminal_id": "MTL2346LRN005",
+    "customer": "원서산업",
+    "location": "대한민국",
+    "registered_date": "24-01-19 09:53",
+    "modified_date": "24-01-19 10:36",
+    "sim": "202404096388607"
+  },
+  {
+    "terminal_id": "MTL2346LRN004",
+    "customer": "진명실업",
+    "location": "대한민국",
+    "registered_date": "24-01-19 09:52",
+    "modified_date": "24-01-19 10:35",
+    "sim": "202404096388606"
+  },
+  {
+    "terminal_id": "MTL2346LRN003",
+    "customer": "림대기업",
+    "location": "대한민국",
+    "registered_date": "24-01-19 09:50",
+    "modified_date": "24-01-19 10:35",
+    "sim": "202404096388605"
+  },
+  {
+    "terminal_id": "MTL2346LRN002",
+    "customer": "양진테크",
+    "location": "대한민국",
+    "registered_date": "24-01-19 09:48",
+    "modified_date": "24-01-19 10:34",
+    "sim": "202404096388604"
+  },
+  {
+    "terminal_id": "MTL2346LRN001",
+    "customer": "인동하이텍",
+    "location": "대한민국",
+    "registered_date": "24-01-19 09:44",
+    "modified_date": "24-01-19 10:34",
+    "sim": "202404096388603"
+  },
+  {
+    "terminal_id": "MTL2337LRN016",
+    "customer": "성경정밀 인도법인",
+    "location": "인도",
+    "registered_date": "24-01-30 17:11",
+    "modified_date": "24-01-30 17:39",
+    "sim": "202404096388602"
+  },
+  {
+    "terminal_id": "MTL2337LRN015",
+    "customer": "성경정밀 인도법인",
+    "location": "인도",
+    "registered_date": "24-01-30 17:10",
+    "modified_date": "24-01-30 17:38",
+    "sim": "202404096388601"
+  },
+  {
+    "terminal_id": "MTL2337LRN014",
+    "customer": "LG 멕시코법인(몬테뉴)",
+    "location": "멕시코",
+    "registered_date": "24-01-09 11:02",
+    "modified_date": "24-01-09 11:10",
+    "sim": "202404096388600"
+  },
+  {
+    "terminal_id": "MTL2337LRN013",
+    "customer": "LG 미국법인(테네시)",
+    "location": "미국",
+    "registered_date": "24-01-09 10:59",
+    "modified_date": "24-01-09 11:10",
+    "sim": "202404096388624"
+  },
+  {
+    "terminal_id": "MTL2337LRN012",
+    "customer": "TL정밀",
+    "location": "대한민국",
+    "registered_date": "23-11-29 13:13",
+    "modified_date": "23-11-29 14:05",
+    "sim": "202404096388634"
+  },
+  {
+    "terminal_id": "MTL2337LRN011",
+    "customer": "LG 미국법인(테네시)",
+    "location": "미국",
+    "registered_date": "23-11-21 13:27",
+    "modified_date": "23-11-22 09:32",
+    "sim": "202404096388644"
+  }
+]
