@@ -1,10 +1,9 @@
 <script setup>
-import TerminalManagement from '@/components/TerminalManagement.vue'
-
+import HeaderMenu from '@/components/HeaderMenu.vue'
 </script>
 
 <template>
-  <TerminalManagement />
+  <HeaderMenu title="TOC Pilot" msg="Welcome"/>
 </template>
 
 <style scoped></style>
