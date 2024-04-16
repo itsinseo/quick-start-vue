@@ -92,8 +92,8 @@
     "customer": "림대기업",
     "location": "대한민국",
     "registered_date": "24-01-19 09:50",
-    "modified_date": "24-01-19 10:35",
-    "sim": "202404096388605"
+    "modified_date": "24-01-19 09:50",
+    "sim": "202404156388605"
   },
   {
     "terminal_id": "MTL2346LRN002",
@@ -158,5 +158,29 @@
     "registered_date": "23-11-21 13:27",
     "modified_date": "23-11-22 09:32",
     "sim": "202404096388644"
+  },
+  {
+    "terminal_id": "TSC2415LRN001",
+    "customer": "삼성전자(도쿄)",
+    "location": "일본",
+    "registered_date": "24-04-15 14:50",
+    "modified_date": "24-04-15 14:50",
+    "sim": "202404156388644"
+  },
+  {
+    "terminal_id": "LTM2415LRN001",
+    "customer": "LG 일본법인(도쿄)",
+    "location": "일본",
+    "registered_date": "24-04-15 15:50",
+    "modified_date": "24-04-15 15:50",
+    "sim": "202404150000001"
+  },
+  {
+    "terminal_id": "CTM2415LRN001",
+    "customer": "피에스텍",
+    "location": "대한민국",
+    "registered_date": "24-04-15 16:50",
+    "modified_date": "24-04-15 16:50",
+    "sim": "202404150000002"
   }
 ]

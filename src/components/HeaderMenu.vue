@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue'
 import { RouterLink, RouterView } from 'vue-router';
-// import router from '@/router';
 
 defineProps({
   title: {
@@ -14,7 +13,6 @@ defineProps({
   }
 })
 
-// const items = ref(router.options.routes);
 const explicitItems = ref([
   {
     path: '/',
@@ -32,7 +30,13 @@ const explicitItems = ref([
     path: '/management',
     name: 'terminalManagement',
     label: '터미널 관리',
-    icon: 'pi pi-calendar',
+    icon: 'pi pi-list',
+  },
+  {
+    path: '/map',
+    name: 'terminalMap',
+    label: '터미널 지도',
+    icon: 'pi pi-map',
   },
 ])
 
@@ -45,20 +49,7 @@ const explicitItems = ref([
     <h2>{{ msg }}</h2>
   </div>
 
-  <!-- routerlink with menubar: using router options data -->
-  <!-- <div>
-    <Menubar :model="items">
-      <template #item="{ item, props, hasSubmenu }">
-        <router-link v-slot="{ href, navigate }" :to="item.path" custom>
-          <a :href="href" v-bind="props.action" @click="navigate">
-            <span class="ml-2">{{ item.name }}</span>
-          </a>
-        </router-link>
-      </template>
-</Menubar>
-</div> -->
-
-  <!-- routerlink with menubar: using explicitly defined data -->
+  <!-- router link with menubar: using explicitly defined data -->
   <div class="menu-bar">
     <Menubar :model="explicitItems">
       <template #item="{ item, props, hasSubmenu }">

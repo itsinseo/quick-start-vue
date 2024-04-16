@@ -19,6 +19,11 @@ const router = createRouter({
       name: 'terminalManagement',
       component: () => import('../views/TerminalManagementView.vue')
     },
+    {
+      path: '/map',
+      name: 'terminalMap',
+      component: () => import('../views/TerminalMapView.vue')
+    }
   ]
 })
 

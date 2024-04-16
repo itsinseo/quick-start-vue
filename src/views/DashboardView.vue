@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <h1>Dashboard goes here</h1>
+  <h2>대쉬보드</h2>
 </template>
 
 <style>
