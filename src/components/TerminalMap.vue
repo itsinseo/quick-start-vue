@@ -1,11 +1,15 @@
 <script setup>
 import { onMounted } from 'vue';
 
-// Use the NPM js-api-loader package
-// https://developers.google.com/maps/documentation/javascript/load-maps-js-api?_gl=1*f619ec*_up*MQ..*_ga*MTI1ODc3MjIwNC4xNzEzMTY3NTE2*_ga_NRWSTWS78N*MTcxMzE3MDQ3NS4yLjAuMTcxMzE3MDQ3NS4wLjAuMA..#js-api-loader
-import { Loader } from "@googlemaps/js-api-loader"
+import { Loader } from '@googlemaps/js-api-loader'
+import { MarkerClusterer } from '@googlemaps/markerclusterer'
+
+import markerList from '@/data/marker-list.json'
 
 let map;
+const centerPosition = { lat: 35.95, lng: 127.75 };
+const sampleMarkerList = markerList.positions;
+
 function initMap() {
   const loader = new Loader({
     apiKey: import.meta.env.VITE_GMAPS_KEY,
@@ -13,12 +17,38 @@ function initMap() {
   });
 
   loader.load().then(async () => {
-    const { Map } = await google.maps.importLibrary("maps");
+    const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+    const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
 
     map = new Map(document.getElementById("map"), {
-      center: { lat: -34.397, lng: 150.644 },
-      zoom: 8,
+      center: centerPosition,
+      zoom: 7,
+      mapId: "DEMO_ROK_MAP"
     });
+    const infoWindow = new google.maps.InfoWindow({
+      content: "",
+      disableAutoPan: true,
+    });
+    const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const markers = sampleMarkerList.map((coordinate, i) => {
+      const label = labels[i % labels.length];
+      const pinGlyph = new google.maps.marker.PinElement({
+        glyph: label,
+        glyphColor: "white"
+      });
+      const marker = new AdvancedMarkerElement({
+        position: coordinate,
+        content: pinGlyph.element
+      });
+
+      marker.addListener("click", () => {
+        infoWindow.setContent(coordinate.name)
+        infoWindow.open(map, marker)
+      })
+      return marker;
+    });
+
+    new MarkerClusterer({ markers, map });
   });
 }
 
@@ -28,8 +58,8 @@ onMounted(() => {
 
 function getMapSize() {
   let div = document.getElementById('map');
-  console.log(div.offsetWidth)
-  console.log(div.offsetHeight)
+  console.log("width: " + div.offsetWidth)
+  console.log("height: " + div.offsetHeight)
 }
 
 </script>
@@ -41,7 +71,7 @@ function getMapSize() {
   <div id="map2"></div>
 
   <!-- TODO: remove dev purpose button -->
-  <Button @click="getMapSize" style="margin: 2px;">Get Map Size</Button>
+  <Button @click="getMapSize" style="margin-top: 10px;">Get Map Size</Button>
 </template>
 
 <style>

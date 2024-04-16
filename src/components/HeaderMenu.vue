@@ -94,13 +94,19 @@ const explicitItems = ref([
     justify-content: center;
   }
 
-  .p-menubar {
-    max-width: 60%;
+  .p-menubar-mobile {
+    max-width: 50%;
     border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .p-menubar-button {
+    padding: 2px;
   }
 
   .p-menubar-root-list {
-    padding-right: 8px;
+    flex-wrap: nowrap;
   }
 }
 </style>
