@@ -7,7 +7,8 @@ import { MarkerClusterer } from '@googlemaps/markerclusterer'
 import markerList from '@/data/marker-list.json'
 
 let map;
-const centerPosition = { lat: 35.95, lng: 127.75 };
+let zoomLevel = 7;
+let centerPosition = { lat: 35.95, lng: 127.75 };
 const sampleMarkerList = markerList.positions;
 
 function initMap() {
@@ -22,8 +23,25 @@ function initMap() {
 
     map = new Map(document.getElementById("map"), {
       center: centerPosition,
-      zoom: 7,
-      mapId: "DEMO_ROK_MAP"
+      zoom: zoomLevel,
+      gestureHandling: "greedy",
+      mapId: "DEMO_ROK_MAP",
+      streetViewControl: false,
+      mapTypeControl: true,
+      mapTypeControlOptions: {
+        style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+        mapTypeIds: ["roadmap", "terrain"],
+      },
+      minZoom: 1,
+      maxZoom: 12,
+      restriction: {
+        latLngBounds: {
+          south: -60,
+          north: 75,
+          west: -180,
+          east: 180,
+        },
+      },
     });
     const infoWindow = new google.maps.InfoWindow({
       content: "",
@@ -48,7 +66,11 @@ function initMap() {
       return marker;
     });
 
-    new MarkerClusterer({ markers, map });
+    const markerClusterer = new MarkerClusterer({ markers, map });
+    // TODO: define markerClusterer's click function
+    // markerClusterer.onClusterClick = () => {
+    //   console.log("clusterer clicked")
+    // }
   });
 }
 
@@ -65,10 +87,7 @@ function getMapSize() {
 </script>
 
 <template>
-  <h2>터미널 지도</h2>
-
   <div id="map"></div>
-  <div id="map2"></div>
 
   <!-- TODO: remove dev purpose button -->
   <Button @click="getMapSize" style="margin-top: 10px;">Get Map Size</Button>
@@ -77,6 +96,12 @@ function getMapSize() {
 <style>
 #map {
   width: 100%;
-  height: 75vh;
+  height: 65vh;
+}
+
+@media (max-width: 960px) {
+  #map {
+    height: 75vh;
+  }
 }
 </style>
