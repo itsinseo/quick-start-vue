@@ -1,17 +1,15 @@
 <script setup>
-import { ref } from 'vue'
-import { RouterLink, RouterView } from 'vue-router';
+import { ref, watchEffect } from 'vue';
+import { RouterLink, RouterView, useRoute } from 'vue-router';
 
 defineProps({
   title: {
     type: String,
     required: true
   },
-  msg: {
-    type: String,
-    required: true
-  }
 })
+
+const route = useRoute()
 
 const explicitItems = ref([
   {
@@ -40,13 +38,19 @@ const explicitItems = ref([
   },
 ])
 
+const pageTitle = ref('');
+
+watchEffect(() => {
+  pageTitle.value = route.meta.title
+})
+
 </script>
 
 <template>
   <div class="container-header">
     <h1><a href="/">{{ title }}</a></h1>
     <Divider layout="vertical" />
-    <h2>{{ msg }}</h2>
+    <h2 class="page-title">{{ pageTitle }}</h2>
   </div>
 
   <!-- router link with menubar: using explicitly defined data -->
@@ -88,16 +92,21 @@ const explicitItems = ref([
   padding: 2px;
 }
 
-@media (max-width: 1024px) {
-  .container-header {
+@media (max-width: 960px) {
+  .container-header>*:not(.page-title) {
     display: none;
-    justify-content: center;
+  }
+
+  .page-title {
+    position: absolute;
+    top: 0;
+    right: 1rem;
   }
 
   .p-menubar-mobile {
     max-width: 50%;
     border: none;
-    margin: 0;
+    margin-bottom: 1rem;
     padding: 0;
   }
 

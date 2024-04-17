@@ -20,7 +20,7 @@ a,
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 961px) {
   body {
     display: flex;
   }

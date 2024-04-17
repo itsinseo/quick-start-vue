@@ -60,7 +60,6 @@ initFilter();
 
 <template>
   <div class="card">
-    <h2>터미널 관리</h2>
     <DataTable :value="dataList" datakey="terminal_id" v-model:filters="filters" :globalFilterFields removableSort
       paginator :rows="5" :rowsPerPageOptions rowHover
       paginatorTemplate="RowsPerPageDropdown CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
@@ -90,7 +89,10 @@ initFilter();
       </Column>
       <Column field="customer" header="고객사" class="th-customer"></Column>
       <Column field="location" header="납품처" :showFilterMenu="false" sortable class="th-location"></Column>
-      <Column field="customer" header="고객사 납품처" class="th-customer-location" sortable>
+      <Column field="customer" class="th-customer-location" sortable>
+        <template #header>
+          <div>고객사<br>납품처</div>
+        </template>
         <template #body="{ data }">
           {{ formatCustomer(data.customer) }}<br>
           {{ data.location }}
@@ -135,7 +137,7 @@ th {
   display: none;
 }
 
-@media (min-width: 1025px) {
+@media (min-width: 961px) {
   .card {
     width: 100%;
   }
@@ -149,7 +151,7 @@ th {
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 960px) {
   .input-search {
     width: 100%;
   }
