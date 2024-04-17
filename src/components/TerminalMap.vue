@@ -9,7 +9,13 @@ import markerList from '@/data/marker-list.json'
 let map;
 let zoomLevel = 7;
 let centerPosition = { lat: 35.95, lng: 127.75 };
-const sampleMarkerList = markerList.positions;
+const sampleMarkerList = markerList;
+
+function formatMarkerInfo(coordinate) {
+  return coordinate.name
+    + ' '
+    + 'CTM0000NRC000'
+}
 
 function initMap() {
   const loader = new Loader({
@@ -52,17 +58,21 @@ function initMap() {
       const label = labels[i % labels.length];
       const pinGlyph = new google.maps.marker.PinElement({
         glyph: label,
-        glyphColor: "white"
+        glyphColor: "white",
+        background: coordinate.disconnected === true ? "red" : "green"
       });
       const marker = new AdvancedMarkerElement({
+        // extracts 'lat' & 'lng' from provided object
         position: coordinate,
-        content: pinGlyph.element
+        content: pinGlyph.element,
       });
 
       marker.addListener("click", () => {
-        infoWindow.setContent(coordinate.name)
+        infoWindow.setContent(formatMarkerInfo(coordinate))
         infoWindow.open(map, marker)
       })
+      marker.title = coordinate.name;
+
       return marker;
     });
 
