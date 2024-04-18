@@ -13,7 +13,7 @@ const route = useRoute()
 
 const explicitItems = ref([
   {
-    path: '/',
+    path: '/dashboard',
     name: 'dashboard',
     label: '대쉬보드',
     icon: 'pi pi-th-large',

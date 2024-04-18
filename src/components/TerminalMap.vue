@@ -39,7 +39,7 @@ function initMap() {
         mapTypeIds: ["roadmap", "terrain"],
       },
       minZoom: 1,
-      maxZoom: 12,
+      maxZoom: 15,
       restriction: {
         latLngBounds: {
           south: -60,
