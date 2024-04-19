@@ -11,7 +11,7 @@ defineProps({
 
 const route = useRoute()
 
-const explicitItems = ref([
+const explicitRoutes = ref([
   {
     path: '/dashboard',
     name: 'dashboard',
@@ -55,7 +55,7 @@ watchEffect(() => {
 
   <!-- router link with menubar: using explicitly defined data -->
   <div class="menu-bar">
-    <Menubar :model="explicitItems">
+    <Menubar :model="explicitRoutes">
       <template #item="{ item, props, hasSubmenu }">
         <router-link v-if="item.path" v-slot="{ href, navigate }" :to="item.path" custom>
           <a :href="href" v-bind="props.action" @click="navigate">

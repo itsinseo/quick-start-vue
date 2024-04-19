@@ -1,10 +1,11 @@
 <script setup>
-import terminalManagement from '@/data/terminal-management.json'
 import { ref } from "vue"
 import { FilterMatchMode } from 'primevue/api'
 
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
+
+import terminalManagement from '@/data/terminal-management.json'
 
 const dataList = terminalManagement
 const filters = ref()
