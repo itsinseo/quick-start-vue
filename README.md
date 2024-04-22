@@ -52,3 +52,10 @@ npm help
 npm install @googlemaps/js-api-loader
 npm install @googlemaps/markerclusterer
 ```
+
+### Styling: PrimeVue + others
+```sh
+npm install primevue
+npm install primeflex
+npm install primeicons
+```
