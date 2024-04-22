@@ -88,30 +88,21 @@ onMounted(() => {
   initMap();
 });
 
-function getMapSize() {
-  let div = document.getElementById('map');
-  console.log("width: " + div.offsetWidth)
-  console.log("height: " + div.offsetHeight)
-}
-
 </script>
 
 <template>
   <div id="map"></div>
-
-  <!-- TODO: remove dev purpose button -->
-  <Button @click="getMapSize" style="margin-top: 10px;">Get Map Size</Button>
 </template>
 
 <style>
 #map {
   width: 100%;
-  height: 65vh;
+  height: 75vh;
 }
 
 @media (max-width: 960px) {
   #map {
-    height: 75vh;
+    height: 85vh;
   }
 }
 </style>

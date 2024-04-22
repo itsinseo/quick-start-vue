@@ -6,6 +6,7 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 
 import terminalManagement from '@/data/terminal-management.json'
+import { reactive } from "vue";
 
 const dataList = terminalManagement
 const filters = ref()
@@ -36,6 +37,7 @@ const locationList = [
   { name: "인도네시아" },
   { name: "일본" }
 ]
+
 const initFilter = () => {
   filters.value = {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -55,6 +57,69 @@ const formatCustomer = (customer) => {
   return customer
 }
 
+const salesStatus = [
+  '정상출고',
+  '회수',
+  'A/S'
+]
+const customerDepartment = ref([
+  { name: 'LG', department: ['VS', 'MAGNA'] },
+  { name: 'SAMSUNG', department: ['생활가전', '무선'] },
+  { name: 'LS', department: [] }
+]);
+
+const filteredCustomers = ref();
+const searchCustomers = (event) => {
+  setTimeout(() => {
+    if (!event.query.trim().length) {
+      filteredCustomers.value = [...customerDepartment];
+    } else {
+      filteredCustomers.value = customerDepartment.value.filter((customer) => {
+        return customer.name.toLowerCase().startsWith(event.query.toLowerCase());
+      }).map(customer => customer.name);
+    }
+  }, 100);
+};
+
+// TODO: watch customer, select department
+
+const visible = ref(false);
+
+const codeInfo = reactive({
+  customer: null,
+  year: null,
+  week: null,
+  server: null,
+  serial: null
+});
+const salesInfo = reactive({
+  date: null,
+  customer: null,
+  manager: null,
+  contact: null,
+  email: null,
+  status: "정상출고"
+});
+const installInfo = reactive({
+  region: null,
+  location: null,
+  details: null,
+  customer: null,
+  department: null,
+  memo: null
+});
+
+function submitTerminalForm() {
+  console.log(
+    codeInfo.customer
+    + codeInfo.year
+    + codeInfo.week
+    + codeInfo.server
+    + codeInfo.serial
+  );
+  visible.value = false;
+}
+
 initFilter();
 
 </script>
@@ -66,20 +131,35 @@ initFilter();
       paginatorTemplate="RowsPerPageDropdown CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
       currentPageReportTemplate="{first} - {last} of {totalRecords}" scrollable scrollHeight="600px">
       <template #header>
-        <div class="table-header">
-          <IconField iconPosition="left" class="icon-field-search">
-            <InputIcon class="pi pi-search" />
-            <InputText v-model="filters['global'].value" placeholder="검색" class="input-search" />
-          </IconField>
-          <Dropdown v-model="filters['terminal_id'].value" :options="terminalHeaderList" optionValue="name"
-            optionLabel="name" placeholder="터미널 코드" showClear class="dropdown-terminal-id">
-            <template #option="{ option }">
-              {{ option.name }} - {{ option.description }}
-            </template>
-          </Dropdown>
-          <MultiSelect v-model="filters['location'].value" :options="locationList" optionValue="name" optionLabel="name"
-            placeholder="납품처" :maxSelectedLabels="1" class="select-location" />
-          <Button type="button" icon="pi pi-filter-slash" outlined @click="initFilter()" class="button-filter-clear" />
+        <div class="flex table-header">
+          <div class="grid">
+            <div class="col">
+              <Button label="추가" @click="visible = true" />
+            </div>
+            <div class="col">
+              <IconField iconPosition="left" class="icon-field-search">
+                <InputIcon class="pi pi-search" />
+                <InputText v-model="filters['global'].value" placeholder="검색" class="input-search" />
+              </IconField>
+            </div>
+            <div class="col">
+              <Dropdown v-model="filters['terminal_id'].value" :options="terminalHeaderList" optionValue="name"
+                optionLabel="name" placeholder="터미널 코드" showClear class="dropdown-terminal-id">
+                <template #option="{ option }">
+                  {{ option.name }} - {{ option.description }}
+                </template>
+              </Dropdown>
+            </div>
+            <div class="col">
+              <MultiSelect v-model="filters['location'].value" :options="locationList" optionValue="name"
+                optionLabel="name" placeholder="납품처" :maxSelectedLabels="1" class="select-location" />
+            </div>
+            <div class="col">
+              <Button type="button" icon="pi pi-filter-slash" outlined @click="initFilter()"
+                class="button-filter-clear" />
+            </div>
+          </div>
+
         </div>
       </template>
       <template #empty> 검색 결과가 없습니다. </template>
@@ -108,6 +188,109 @@ initFilter();
       <Column field="modified_date" header="최종수정" sortable class="th-modified-date"></Column>
     </DataTable>
   </div>
+
+  <!-- TODO: resolve reactive class style configuration -->
+  <Dialog v-model:visible="visible" modal header="터미널 상세 정보" style="width:50vw; max-width: 600px;"
+    :breakpoints="{ '960px': '95vw' }">
+    <div class="grid">
+      <div class="col-12">
+        <span style="font-weight: bold; color: red;">* 터미널ID (13자리)</span>
+      </div>
+      <div class="col-3 flex flex-column">
+        <Dropdown v-model="codeInfo.customer" :options="terminalHeaderList" optionValue="name" optionLabel="name"
+          placeholder="터미널 코드">
+          <template #option="{ option }">
+            {{ option.name }} - {{ option.description }}
+          </template>
+        </Dropdown>
+        <small>고객코드(3)</small>
+      </div>
+      <div class="col-2 flex flex-column">
+        <InputText v-model="codeInfo.year" />
+        <small>년도(2)</small>
+      </div>
+      <div class="col-2 flex flex-column">
+        <InputText v-model="codeInfo.week" />
+        <small>주차(2)</small>
+      </div>
+      <div class="col-3 flex flex-column">
+        <InputText v-model="codeInfo.server" />
+        <small>서버코드(3)</small>
+      </div>
+      <div class="col-2 flex flex-column">
+        <InputText v-model="codeInfo.serial" />
+        <small>번호(3)</small>
+      </div>
+    </div>
+
+    <Divider />
+
+    <div class="grid">
+      <div class="col-12">
+        <span style="font-weight: bold; color: red;">* 납품정보</span>
+      </div>
+      <div class="col-5 flex flex-column">
+        <Calendar v-model="salesInfo.date" dateFormat="yy-mm-dd" />
+        <small>납품일자</small>
+      </div>
+      <div class="col-7 flex flex-column">
+        <InputText v-model="salesInfo.customer" />
+        <small>납품처</small>
+      </div>
+      <div class="col-5 flex flex-column">
+        <InputText v-model="salesInfo.manager" />
+        <small>담당자</small>
+      </div>
+      <div class="col-7 flex flex-column">
+        <InputText v-model="salesInfo.contact" />
+        <small>연락처</small>
+      </div>
+      <div class="col-7 flex flex-column">
+        <InputText v-model="salesInfo.email" />
+        <small>E-mail</small>
+      </div>
+      <div class="col-5 flex flex-column">
+        <Dropdown v-model="salesInfo.status" :options="salesStatus" />
+      </div>
+    </div>
+
+    <Divider />
+
+    <div class="grid">
+      <div class="col-12">
+        <span style="font-weight: bold; color: red;">* 설치정보</span>
+      </div>
+      <div class="col-3 flex flex-column">
+        <InputText v-model="installInfo.region" />
+        <small>국가(Region)</small>
+      </div>
+      <div class="col-3 flex flex-column">
+        <InputText v-model="installInfo.location" />
+        <small>설치지역</small>
+      </div>
+      <div class="col-6 flex flex-column">
+        <InputText v-model="installInfo.details" />
+        <small>설치위치(상세)</small>
+      </div>
+      <div class="col-3 flex flex-column">
+        <AutoComplete v-model="installInfo.customer" :suggestions="filteredCustomers" @complete="searchCustomers" />
+        <small>고객사(출고)</small>
+      </div>
+      <div class="col-4 flex flex-column">
+        <Dropdown v-model="installInfo.department" :options=null showClear />
+        <small>사업부</small>
+      </div>
+      <div class="col-5 flex flex-column">
+        <InputText v-model="installInfo.memo" />
+        <small>비고(메모)</small>
+      </div>
+    </div>
+
+    <div class="flex justify-content-end gap-2 mt-2">
+      <Button type="button" label="닫기" icon="pi pi-times" severity="secondary" @click="visible = false"></Button>
+      <Button type="button" label="저장" icon="pi pi-check" @click="submitTerminalForm"></Button>
+    </div>
+  </Dialog>
 </template>
 
 <style>
@@ -116,21 +299,36 @@ th {
   font-weight: bold;
 }
 
+.grid {
+  margin: 0;
+}
+
+.p-button {
+  word-break: keep-all;
+}
+
+.p-autocomplete-input {
+  width: 100%;
+}
+
 .p-datatable-header {
-  margin: 2px 0 2px 0;
-  padding: 0;
+  padding: 0.2rem;
+}
+
+div[class^="col"] {
+  padding: 0.2rem;
 }
 
 .th-customer {
   min-width: 200px;
 }
 
-.input-search,
+.p-inputtext,
 .dropdown-terminal-id,
 .select-location,
-.button-filter-clear {
-  height: 40px;
-  margin: 2px;
+.p-button {
+  display: flex;
+  height: 2.5rem;
   align-items: center;
 }
 
@@ -138,29 +336,7 @@ th {
   display: none;
 }
 
-@media (min-width: 961px) {
-  .card {
-    width: 100%;
-  }
-
-  .icon-field-search {
-    float: left;
-  }
-
-  .th-customer-location {
-    display: none
-  }
-}
-
 @media (max-width: 960px) {
-  .input-search {
-    width: 100%;
-  }
-
-  .select-location {
-    max-width: 45%;
-  }
-
   .th-customer {
     display: none;
   }
@@ -185,6 +361,25 @@ th {
 
   .break-terminal-id {
     display: inline;
+  }
+
+  .p-dialog-header,
+  .p-dialog-content {
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 961px) {
+  .card {
+    width: 100%;
+  }
+
+  .icon-field-search {
+    float: left;
+  }
+
+  .th-customer-location {
+    display: none
   }
 }
 </style>
