@@ -1,12 +1,11 @@
 <script setup>
-import { ref } from "vue"
+import { ref, reactive } from "vue"
 import { FilterMatchMode } from 'primevue/api'
 
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 
 import terminalManagement from '@/data/terminal-management.json'
-import { reactive } from "vue";
 
 const dataList = terminalManagement
 const filters = ref()
@@ -189,7 +188,7 @@ initFilter();
     </DataTable>
   </div>
 
-  <!-- TODO: resolve reactive class style configuration -->
+  <!-- TOOD: apply required option to fields -->
   <Dialog v-model:visible="visible" modal header="터미널 상세 정보" style="width:50vw; max-width: 600px;"
     :breakpoints="{ '960px': '95vw' }">
     <div class="grid">

@@ -1,0 +1,134 @@
+[
+  {
+    "currencyCode": "EUR",
+    "serviceProfile": "T1_100MB",
+    "vat": 0,
+    "rate": 1.97,
+    "bizCode": "LAB",
+    "routerCnt": 240,
+    "monthlyFee": 472.80,
+    "totalCnt": 510,
+    "totalRate": 986.67
+  },
+  {
+    "currencyCode": "EUR",
+    "serviceProfile": "T1_100MB",
+    "vat": 0,
+    "rate": 1.97,
+    "bizCode": "TSC",
+    "routerCnt": 128,
+    "monthlyFee": 252.16,
+    "totalCnt": 510,
+    "totalRate": 986.67
+  },
+  {
+    "currencyCode": "EUR",
+    "serviceProfile": "PP_100MB",
+    "vat": 0,
+    "rate": 1.59,
+    "bizCode": "TSC",
+    "routerCnt": 57,
+    "monthlyFee": 90.63,
+    "totalCnt": 510,
+    "totalRate": 986.67
+  },
+  {
+    "currencyCode": "EUR",
+    "serviceProfile": "T1_100MB",
+    "vat": 0,
+    "rate": 1.97,
+    "bizCode": "LTM",
+    "routerCnt": 25,
+    "monthlyFee": 49.25,
+    "totalCnt": 510,
+    "totalRate": 986.67
+  },
+  {
+    "currencyCode": "EUR",
+    "serviceProfile": "PP_150MB",
+    "vat": 0,
+    "rate": 2.02,
+    "bizCode": "LTM",
+    "routerCnt": 25,
+    "monthlyFee": 50.50,
+    "totalCnt": 510,
+    "totalRate": 986.67
+  },
+  {
+    "currencyCode": "EUR",
+    "serviceProfile": "PP_100MB",
+    "vat": 0,
+    "rate": 1.59,
+    "bizCode": "LAB",
+    "routerCnt": 11,
+    "monthlyFee": 17.49,
+    "totalCnt": 510,
+    "totalRate": 986.67
+  },
+  {
+    "currencyCode": "EUR",
+    "serviceProfile": "T1_150MB",
+    "vat": 0,
+    "rate": 2.50,
+    "bizCode": "LTM",
+    "routerCnt": 11,
+    "monthlyFee": 27.50,
+    "totalCnt": 510,
+    "totalRate": 986.67
+  },
+  {
+    "currencyCode": "EUR",
+    "serviceProfile": "T1_100MB",
+    "vat": 0,
+    "rate": 1.97,
+    "bizCode": "CTM",
+    "routerCnt": 9,
+    "monthlyFee": 17.73,
+    "totalCnt": 510,
+    "totalRate": 986.67
+  },
+  {
+    "currencyCode": "EUR",
+    "serviceProfile": "T1_150MB",
+    "vat": 0,
+    "rate": 2.50,
+    "bizCode": "LAB",
+    "routerCnt": 2,
+    "monthlyFee": 5.00,
+    "totalCnt": 510,
+    "totalRate": 986.67
+  },
+  {
+    "currencyCode": "EUR",
+    "serviceProfile": "PP_100MB",
+    "vat": 0,
+    "rate": 1.59,
+    "bizCode": "CTM",
+    "routerCnt": 1,
+    "monthlyFee": 1.59,
+    "totalCnt": 510,
+    "totalRate": 986.67
+  },
+  {
+    "currencyCode": "EUR",
+    "serviceProfile": "PP_150MB",
+    "vat": 0,
+    "rate": 2.02,
+    "bizCode": "CTM",
+    "routerCnt": 1,
+    "monthlyFee": 2.02,
+    "totalCnt": 510,
+    "totalRate": 986.67
+  },
+  {
+    "currencyCode": "KRW",
+    "serviceProfile": "PP_150MB",
+    "vat": 0,
+    "rate": 1000,
+    "bizCode": "CTM",
+    "routerCnt": 10,
+    "monthlyFee": 10000,
+    "totalCnt": 10,
+    "totalRate": 10000
+  }
+]

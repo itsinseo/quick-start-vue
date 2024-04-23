@@ -4,28 +4,96 @@
     "counter_count": 73,
     "terminal_count": 8,
     "counter_disconnected": 9,
-    "terminal_disconnected": 3
+    "terminal_disconnected": 2,
+    "children": [
+      {
+        "terminalId": "LTM0000NRL000",
+        "location": "XX공장",
+        "lastReceived": "2024-04-19 16:43"
+      },
+      {
+        "terminalId": "LTM0000NRL999",
+        "location": "OO공장",
+        "lastReceived": "2024-04-19 16:51"
+      }
+    ]
   },
   {
     "company_name": "Skivee",
     "counter_count": 48,
     "terminal_count": 9,
     "counter_disconnected": 6,
-    "terminal_disconnected": 3
+    "terminal_disconnected": 3,
+    "children": [
+      {
+        "terminalId": "LTM0000ABC123",
+        "location": "공장1",
+        "lastReceived": "2024-04-19 12:30"
+      },
+      {
+        "terminalId": "LTM0000XYZ789",
+        "location": "공장2",
+        "lastReceived": "2024-04-19 14:15"
+      },
+      {
+        "terminalId": "LTM0000DEF456",
+        "location": "공장3",
+        "lastReceived": "2024-04-19 16:00"
+      }
+    ]
   },
   {
     "company_name": "Cogidoo",
     "counter_count": 71,
     "terminal_count": 7,
     "counter_disconnected": 19,
-    "terminal_disconnected": 2
+    "terminal_disconnected": 2,
+    "children": [
+      {
+        "terminalId": "LTM0000GHI789",
+        "location": "공장4",
+        "lastReceived": "2024-04-19 10:20"
+      },
+      {
+        "terminalId": "LTM0000JKL012",
+        "location": "공장5",
+        "lastReceived": "2024-04-19 11:45"
+      }
+    ]
   },
   {
     "company_name": "Thoughtsphere",
     "counter_count": 59,
     "terminal_count": 15,
     "counter_disconnected": 12,
-    "terminal_disconnected": 5
+    "terminal_disconnected": 5,
+    "children": [
+      {
+        "terminalId": "LTM0000MNO345",
+        "location": "공장6",
+        "lastReceived": "2024-04-19 09:00"
+      },
+      {
+        "terminalId": "LTM0000PQR678",
+        "location": "공장7",
+        "lastReceived": "2024-04-19 10:30"
+      },
+      {
+        "terminalId": "LTM0000STU901",
+        "location": "공장8",
+        "lastReceived": "2024-04-19 12:45"
+      },
+      {
+        "terminalId": "LTM0000VWX234",
+        "location": "공장9",
+        "lastReceived": "2024-04-19 14:20"
+      },
+      {
+        "terminalId": "LTM0000YZA567",
+        "location": "공장10",
+        "lastReceived": "2024-04-19 16:10"
+      }
+    ]
   },
   {
     "company_name": "Feedfire",
