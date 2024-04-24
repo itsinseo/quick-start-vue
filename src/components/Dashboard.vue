@@ -35,7 +35,7 @@ const expandAll = () => {
 const collapseAll = () => {
   expandedRows.value = null;
 }
-expandAll();
+// expandAll();
 
 const totalMonthlyCost = ref(simData.value[0].totalRate)
 const totalRouterCount = ref(simData.value[0].totalCnt)

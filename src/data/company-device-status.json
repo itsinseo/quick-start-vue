@@ -1,6 +1,6 @@
 [
   {
-    "company_name": "Tekfly",
+    "company_name": "ㅇㅇ전자",
     "counter_count": 73,
     "terminal_count": 8,
     "counter_disconnected": 9,
@@ -19,7 +19,7 @@
     ]
   },
   {
-    "company_name": "Skivee",
+    "company_name": "XX전자",
     "counter_count": 48,
     "terminal_count": 9,
     "counter_disconnected": 6,
@@ -43,7 +43,7 @@
     ]
   },
   {
-    "company_name": "Cogidoo",
+    "company_name": "ㅁㅁ산업",
     "counter_count": 71,
     "terminal_count": 7,
     "counter_disconnected": 19,
@@ -62,7 +62,7 @@
     ]
   },
   {
-    "company_name": "Thoughtsphere",
+    "company_name": "XX산업",
     "counter_count": 59,
     "terminal_count": 15,
     "counter_disconnected": 12,
@@ -96,115 +96,115 @@
     ]
   },
   {
-    "company_name": "Feedfire",
+    "company_name": "ㅇㅇ테크",
     "counter_count": 100,
     "terminal_count": 11,
     "counter_disconnected": 15,
-    "terminal_disconnected": 5
+    "terminal_disconnected": 0
   },
   {
-    "company_name": "Kayveo",
+    "company_name": "기업1",
     "counter_count": 78,
     "terminal_count": 8,
     "counter_disconnected": 11,
-    "terminal_disconnected": 5
+    "terminal_disconnected": 0
   },
   {
-    "company_name": "Fadeo",
+    "company_name": "기업2",
     "counter_count": 25,
     "terminal_count": 10,
     "counter_disconnected": 17,
-    "terminal_disconnected": 2
+    "terminal_disconnected": 0
   },
   {
-    "company_name": "Topdrive",
+    "company_name": "기업3",
     "counter_count": 83,
     "terminal_count": 18,
     "counter_disconnected": 16,
-    "terminal_disconnected": 1
+    "terminal_disconnected": 0
   },
   {
-    "company_name": "Photobean",
+    "company_name": "기업4",
     "counter_count": 58,
     "terminal_count": 5,
     "counter_disconnected": 3,
     "terminal_disconnected": 0
   },
   {
-    "company_name": "Twitterworks",
+    "company_name": "기업5",
     "counter_count": 29,
     "terminal_count": 14,
     "counter_disconnected": 12,
-    "terminal_disconnected": 3
+    "terminal_disconnected": 0
   },
   {
-    "company_name": "Quimba",
+    "company_name": "기업6",
     "counter_count": 92,
     "terminal_count": 16,
     "counter_disconnected": 8,
     "terminal_disconnected": 0
   },
   {
-    "company_name": "Pixoboo",
+    "company_name": "기업7",
     "counter_count": 49,
     "terminal_count": 5,
     "counter_disconnected": 3,
     "terminal_disconnected": 0
   },
   {
-    "company_name": "Aibox",
+    "company_name": "기업8",
     "counter_count": 83,
     "terminal_count": 19,
     "counter_disconnected": 11,
-    "terminal_disconnected": 1
+    "terminal_disconnected": 0
   },
   {
-    "company_name": "Zoozzy",
+    "company_name": "기업9",
     "counter_count": 96,
     "terminal_count": 11,
     "counter_disconnected": 1,
-    "terminal_disconnected": 2
+    "terminal_disconnected": 0
   },
   {
-    "company_name": "Quimba",
+    "company_name": "기업10",
     "counter_count": 62,
     "terminal_count": 5,
     "counter_disconnected": 10,
-    "terminal_disconnected": 4
+    "terminal_disconnected": 0
   },
   {
-    "company_name": "Zooxo",
+    "company_name": "기업11",
     "counter_count": 35,
     "terminal_count": 15,
     "counter_disconnected": 12,
     "terminal_disconnected": 0
   },
   {
-    "company_name": "Gigabox",
+    "company_name": "기업12",
     "counter_count": 41,
     "terminal_count": 5,
     "counter_disconnected": 4,
-    "terminal_disconnected": 3
+    "terminal_disconnected": 0
   },
   {
-    "company_name": "Brainlounge",
+    "company_name": "기업13",
     "counter_count": 75,
     "terminal_count": 14,
     "counter_disconnected": 14,
-    "terminal_disconnected": 2
+    "terminal_disconnected": 0
   },
   {
-    "company_name": "Browsetype",
+    "company_name": "기업14",
     "counter_count": 62,
     "terminal_count": 18,
     "counter_disconnected": 16,
-    "terminal_disconnected": 4
+    "terminal_disconnected": 0
   },
   {
-    "company_name": "Topiclounge",
+    "company_name": "기업15",
     "counter_count": 69,
     "terminal_count": 14,
     "counter_disconnected": 19,
-    "terminal_disconnected": 2
+    "terminal_disconnected": 0
   }
 ]

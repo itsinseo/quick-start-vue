@@ -14,9 +14,7 @@ const app = createApp(App)
 app.use(router)
 app.use(PrimeVue)
 app.use(i18nPlugin, {
-  greetings: {
-    hello: 'Bonjour!'
-  }
+  
 })
 
 app.mount('#app')

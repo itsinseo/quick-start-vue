@@ -6,6 +6,7 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 
 import terminalManagement from '@/data/terminal-management.json'
+import { computed } from "vue";
 
 const dataList = terminalManagement
 const filters = ref()
@@ -80,9 +81,14 @@ const searchCustomers = (event) => {
   }, 100);
 };
 
-// TODO: watch customer, select department
-
+// 터미널 상세 정보 다이얼로그 때문에 와쳐를 추가해야 할까..?
+// 추가 안하면 최초 뷰포트 기준으로 결정돼서, 창 크기 변경에 반응은 못함
+const isLargeScreen = computed(() => {
+  return window.innerWidth > 960;
+})
 const visible = ref(false);
+const currentPage = ref(1);
+const totalPages = 3;
 
 const codeInfo = reactive({
   customer: null,
@@ -109,14 +115,24 @@ const installInfo = reactive({
 });
 
 function submitTerminalForm() {
-  console.log(
-    codeInfo.customer
-    + codeInfo.year
-    + codeInfo.week
-    + codeInfo.server
-    + codeInfo.serial
-  );
+  console.log(codeInfo);
+  console.log(salesInfo);
+  console.log(installInfo);
+
+  resetObject(codeInfo);
+  resetObject(salesInfo);
+  resetObject(installInfo);
+
   visible.value = false;
+  currentPage.value = 1;
+}
+
+function resetObject(obj) {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      obj[key] = null;
+    }
+  }
 }
 
 initFilter();
@@ -128,7 +144,7 @@ initFilter();
     <DataTable :value="dataList" datakey="terminal_id" v-model:filters="filters" :globalFilterFields removableSort
       paginator :rows="5" :rowsPerPageOptions rowHover
       paginatorTemplate="RowsPerPageDropdown CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-      currentPageReportTemplate="{first} - {last} of {totalRecords}" scrollable scrollHeight="600px">
+      currentPageReportTemplate="{first} - {last} of {totalRecords}" scrollable scrollHeight="70vh">
       <template #header>
         <div class="flex table-header">
           <div class="grid">
@@ -158,7 +174,6 @@ initFilter();
                 class="button-filter-clear" />
             </div>
           </div>
-
         </div>
       </template>
       <template #empty> 검색 결과가 없습니다. </template>
@@ -188,106 +203,209 @@ initFilter();
     </DataTable>
   </div>
 
-  <!-- TOOD: apply required option to fields -->
+  <!-- TOOD: apply required option, watch department with customer -->
   <Dialog v-model:visible="visible" modal header="터미널 상세 정보" style="width:50vw; max-width: 600px;"
     :breakpoints="{ '960px': '95vw' }">
-    <div class="grid">
-      <div class="col-12">
-        <span style="font-weight: bold; color: red;">* 터미널ID (13자리)</span>
+    <div v-if="isLargeScreen" class="wrapper-container">
+      <div class="grid">
+        <div class="col-12">
+          <span style="font-weight: bold; color: red;">* 터미널ID (13자리)</span>
+        </div>
+        <div class="col-3 flex flex-column">
+          <Dropdown v-model="codeInfo.customer" :options="terminalHeaderList" optionValue="name" optionLabel="name"
+            placeholder="터미널 코드">
+            <template #option="{ option }">
+              {{ option.name }} - {{ option.description }}
+            </template>
+          </Dropdown>
+          <small>고객코드(3)</small>
+        </div>
+        <div class="col-2 flex flex-column">
+          <InputMask v-model="codeInfo.year" mask="99" />
+          <small>년도(2)</small>
+        </div>
+        <div class="col-2 flex flex-column">
+          <InputMask v-model="codeInfo.week" mask="99" />
+          <small>주차(2)</small>
+        </div>
+        <div class="col-3 flex flex-column">
+          <InputMask v-model="codeInfo.server" mask="a**" />
+          <small>서버코드(3)</small>
+        </div>
+        <div class="col-2 flex flex-column">
+          <InputMask v-model="codeInfo.serial" mask="999" />
+          <small>번호(3)</small>
+        </div>
       </div>
-      <div class="col-3 flex flex-column">
-        <Dropdown v-model="codeInfo.customer" :options="terminalHeaderList" optionValue="name" optionLabel="name"
-          placeholder="터미널 코드">
-          <template #option="{ option }">
-            {{ option.name }} - {{ option.description }}
-          </template>
-        </Dropdown>
-        <small>고객코드(3)</small>
+
+      <Divider />
+
+      <div class="grid">
+        <div class="col-12">
+          <span style="font-weight: bold; color: red;">* 납품정보</span>
+        </div>
+        <div class="col-5 flex flex-column">
+          <Calendar v-model="salesInfo.date" dateFormat="yy-mm-dd" showButtonBar />
+          <small>납품일자</small>
+        </div>
+        <div class="col-7 flex flex-column">
+          <InputText v-model="salesInfo.customer" />
+          <small>납품처</small>
+        </div>
+        <div class="col-5 flex flex-column">
+          <InputText v-model="salesInfo.manager" />
+          <small>담당자</small>
+        </div>
+        <div class="col-7 flex flex-column">
+          <InputText v-model="salesInfo.contact" />
+          <small>연락처</small>
+        </div>
+        <div class="col-7 flex flex-column">
+          <InputText v-model="salesInfo.email" />
+          <small>E-mail</small>
+        </div>
+        <div class="col-5 flex flex-column">
+          <Dropdown v-model="salesInfo.status" :options="salesStatus" />
+        </div>
       </div>
-      <div class="col-2 flex flex-column">
-        <InputText v-model="codeInfo.year" />
-        <small>년도(2)</small>
+
+      <Divider />
+
+      <div class="grid">
+        <div class="col-12">
+          <span style="font-weight: bold; color: red;">* 설치정보</span>
+        </div>
+        <div class="col-3 flex flex-column">
+          <InputText v-model="installInfo.region" />
+          <small>국가(Region)</small>
+        </div>
+        <div class="col-3 flex flex-column">
+          <InputText v-model="installInfo.location" />
+          <small>설치지역</small>
+        </div>
+        <div class="col-6 flex flex-column">
+          <InputText v-model="installInfo.details" />
+          <small>설치위치(상세)</small>
+        </div>
+        <div class="col-3 flex flex-column">
+          <AutoComplete v-model="installInfo.customer" :suggestions="filteredCustomers" @complete="searchCustomers" />
+          <small>고객사(출고)</small>
+        </div>
+        <div class="col-4 flex flex-column">
+          <Dropdown v-model="installInfo.department" :options=null showClear disabled />
+          <small>사업부</small>
+        </div>
+        <div class="col-5 flex flex-column">
+          <InputText v-model="installInfo.memo" />
+          <small>비고(메모)</small>
+        </div>
       </div>
-      <div class="col-2 flex flex-column">
-        <InputText v-model="codeInfo.week" />
-        <small>주차(2)</small>
-      </div>
-      <div class="col-3 flex flex-column">
-        <InputText v-model="codeInfo.server" />
-        <small>서버코드(3)</small>
-      </div>
-      <div class="col-2 flex flex-column">
-        <InputText v-model="codeInfo.serial" />
-        <small>번호(3)</small>
+
+      <div class="flex justify-content-end gap-2 mt-2">
+        <Button type="button" label="닫기" icon="pi pi-times" severity="secondary" @click="visible = false"></Button>
+        <Button type="button" label="저장" icon="pi pi-check" @click="submitTerminalForm"></Button>
       </div>
     </div>
 
-    <Divider />
+    <div v-else class="wrapper-container">
+      <div v-if="currentPage === 1" class="grid">
+        <div class="col-12">
+          <span style="font-weight: bold; color: red;">* 터미널ID (13자리)</span>
+        </div>
+        <div class="col-6 flex flex-column">
+          <Dropdown v-model="codeInfo.customer" :options="terminalHeaderList" optionValue="name" optionLabel="name"
+            placeholder="터미널 코드">
+            <template #option="{ option }">
+              {{ option.name }} - {{ option.description }}
+            </template>
+          </Dropdown>
+          <small>고객코드(3)</small>
+        </div>
+        <div class="col-3 flex flex-column">
+          <InputMask v-model="codeInfo.year" mask="99" />
+          <small>년도(2)</small>
+        </div>
+        <div class="col-3 flex flex-column">
+          <InputMask v-model="codeInfo.week" mask="99" />
+          <small>주차(2)</small>
+        </div>
+        <div class="col-6 flex flex-column">
+          <InputMask v-model="codeInfo.server" mask="a**" />
+          <small>서버코드(3)</small>
+        </div>
+        <div class="col-6 flex flex-column">
+          <InputMask v-model="codeInfo.serial" mask="999" />
+          <small>번호(3)</small>
+        </div>
+      </div>
 
-    <div class="grid">
-      <div class="col-12">
-        <span style="font-weight: bold; color: red;">* 납품정보</span>
+      <div v-else-if="currentPage === 2" class="grid">
+        <div class="col-12">
+          <span style="font-weight: bold; color: red;">* 납품정보</span>
+        </div>
+        <div class="col-5 flex flex-column">
+          <Calendar v-model="salesInfo.date" dateFormat="yy-mm-dd" showButtonBar />
+          <small>납품일자</small>
+        </div>
+        <div class="col-7 flex flex-column">
+          <InputText v-model="salesInfo.customer" />
+          <small>납품처</small>
+        </div>
+        <div class="col-5 flex flex-column">
+          <InputText v-model="salesInfo.manager" />
+          <small>담당자</small>
+        </div>
+        <div class="col-7 flex flex-column">
+          <InputText v-model="salesInfo.contact" />
+          <small>연락처</small>
+        </div>
+        <div class="col-7 flex flex-column">
+          <InputText v-model="salesInfo.email" />
+          <small>E-mail</small>
+        </div>
+        <div class="col-5 flex flex-column">
+          <Dropdown v-model="salesInfo.status" :options="salesStatus" />
+        </div>
       </div>
-      <div class="col-5 flex flex-column">
-        <Calendar v-model="salesInfo.date" dateFormat="yy-mm-dd" />
-        <small>납품일자</small>
-      </div>
-      <div class="col-7 flex flex-column">
-        <InputText v-model="salesInfo.customer" />
-        <small>납품처</small>
-      </div>
-      <div class="col-5 flex flex-column">
-        <InputText v-model="salesInfo.manager" />
-        <small>담당자</small>
-      </div>
-      <div class="col-7 flex flex-column">
-        <InputText v-model="salesInfo.contact" />
-        <small>연락처</small>
-      </div>
-      <div class="col-7 flex flex-column">
-        <InputText v-model="salesInfo.email" />
-        <small>E-mail</small>
-      </div>
-      <div class="col-5 flex flex-column">
-        <Dropdown v-model="salesInfo.status" :options="salesStatus" />
-      </div>
-    </div>
 
-    <Divider />
+      <div v-else-if="currentPage === 3" class="grid">
+        <div class="col-12">
+          <span style="font-weight: bold; color: red;">* 설치정보</span>
+        </div>
+        <div class="col-6 flex flex-column">
+          <InputText v-model="installInfo.region" />
+          <small>국가(Region)</small>
+        </div>
+        <div class="col-6 flex flex-column">
+          <InputText v-model="installInfo.location" />
+          <small>설치지역</small>
+        </div>
+        <div class="col-12 flex flex-column">
+          <InputText v-model="installInfo.details" />
+          <small>설치위치(상세)</small>
+        </div>
+        <div class="col-6 flex flex-column">
+          <AutoComplete v-model="installInfo.customer" :suggestions="filteredCustomers" @complete="searchCustomers" />
+          <small>고객사(출고)</small>
+        </div>
+        <div class="col-6 flex flex-column">
+          <!-- TODO: apply disabled by watching customer -->
+          <Dropdown v-model="installInfo.department" :options=null showClear disabled />
+          <small>사업부</small>
+        </div>
+        <div class="col-12 flex flex-column">
+          <InputText v-model="installInfo.memo" />
+          <small>비고(메모)</small>
+        </div>
+      </div>
 
-    <div class="grid">
-      <div class="col-12">
-        <span style="font-weight: bold; color: red;">* 설치정보</span>
+      <div class="flex justify-content-end gap-2 mt-2">
+        <Button type="button" label="취소" icon="pi pi-times" severity="danger" @click="visible = false" />
+        <Button v-if="currentPage > 1" type="button" label="이전" severity="secondary" @click="currentPage--" />
+        <Button v-if="currentPage < totalPages" type="button" label="다음" @click="currentPage++" />
+        <Button v-if="currentPage === totalPages" type="button" label="제출" icon="pi pi-check"
+                @click="submitTerminalForm" />
       </div>
-      <div class="col-3 flex flex-column">
-        <InputText v-model="installInfo.region" />
-        <small>국가(Region)</small>
-      </div>
-      <div class="col-3 flex flex-column">
-        <InputText v-model="installInfo.location" />
-        <small>설치지역</small>
-      </div>
-      <div class="col-6 flex flex-column">
-        <InputText v-model="installInfo.details" />
-        <small>설치위치(상세)</small>
-      </div>
-      <div class="col-3 flex flex-column">
-        <AutoComplete v-model="installInfo.customer" :suggestions="filteredCustomers" @complete="searchCustomers" />
-        <small>고객사(출고)</small>
-      </div>
-      <div class="col-4 flex flex-column">
-        <Dropdown v-model="installInfo.department" :options=null showClear />
-        <small>사업부</small>
-      </div>
-      <div class="col-5 flex flex-column">
-        <InputText v-model="installInfo.memo" />
-        <small>비고(메모)</small>
-      </div>
-    </div>
-
-    <div class="flex justify-content-end gap-2 mt-2">
-      <Button type="button" label="닫기" icon="pi pi-times" severity="secondary" @click="visible = false"></Button>
-      <Button type="button" label="저장" icon="pi pi-check" @click="submitTerminalForm"></Button>
     </div>
   </Dialog>
 </template>
@@ -333,6 +451,11 @@ div[class^="col"] {
 
 .break-terminal-id {
   display: none;
+}
+
+.wrapper-container {
+  margin: 0;
+  padding: 0;
 }
 
 @media (max-width: 960px) {
