@@ -56,6 +56,7 @@ npm install @googlemaps/markerclusterer
 ### Styling: PrimeVue + others
 ```sh
 npm install primevue
+npm install chart.js
 npm install primeflex
 npm install primeicons
 ```
