@@ -10,24 +10,6 @@ import simUsage from '@/data/sim.json'
 const cds = ref(companyDeviceStatus);
 const simData = ref(simUsage);
 
-// function makeChildrenData() {
-//   cds.value.map((data) => {
-//     data.children = [
-//       {
-//         terminalId: 'LTM0000NRL000',
-//         location: 'XX공장',
-//         lastReceived: '2024-04-19 16:43',
-//       },
-//       {
-//         terminalId: 'LTM0000NRL999',
-//         location: 'OO공장',
-//         lastReceived: '2024-04-19 16:51',
-//       }
-//     ]
-//   })
-// }
-// makeChildrenData();
-
 const expandedRows = ref({});
 const expandAll = () => {
   expandedRows.value = cds.value.reduce((acc, p) => (acc[p.company_name] = true) && acc, {});

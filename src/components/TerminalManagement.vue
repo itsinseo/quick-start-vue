@@ -1,12 +1,13 @@
 <script setup>
-import { ref, reactive } from "vue"
+import { ref, reactive, computed } from "vue"
 import { FilterMatchMode } from 'primevue/api'
 
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
+import Stepper from 'primevue/stepper';
+import StepperPanel from 'primevue/stepperpanel';
 
 import terminalManagement from '@/data/terminal-management.json'
-import { computed } from "vue";
 
 const dataList = terminalManagement
 const filters = ref()
@@ -127,6 +128,19 @@ function submitTerminalForm() {
   currentPage.value = 1;
 }
 
+const secondVisible = ref(false);
+function submitSecondTerminalForm() {
+  console.log(codeInfo);
+  console.log(salesInfo);
+  console.log(installInfo);
+
+  resetObject(codeInfo);
+  resetObject(salesInfo);
+  resetObject(installInfo);
+
+  secondVisible.value = false;
+}
+
 function resetObject(obj) {
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
@@ -167,7 +181,7 @@ initFilter();
             </div>
             <div class="col">
               <MultiSelect v-model="filters['location'].value" :options="locationList" optionValue="name"
-                optionLabel="name" placeholder="납품처" :maxSelectedLabels="1" class="select-location" />
+                optionLabel="name" placeholder="납품처" :maxSelectedLabels="1" selectedItemsLabel="{0}개 국가" class="select-location" />
             </div>
             <div class="col">
               <Button type="button" icon="pi pi-filter-slash" outlined @click="initFilter()"
@@ -204,7 +218,7 @@ initFilter();
   </div>
 
   <!-- TOOD: apply required option, watch department with customer -->
-  <Dialog v-model:visible="visible" modal header="터미널 상세 정보" style="width:50vw; max-width: 600px;"
+  <Dialog v-model:visible="visible" modal header="터미널 상세 정보" style="max-width: 600px;"
     :breakpoints="{ '960px': '95vw' }">
     <div v-if="isLargeScreen" class="wrapper-container">
       <div class="grid">
@@ -404,9 +418,127 @@ initFilter();
         <Button v-if="currentPage > 1" type="button" label="이전" severity="secondary" @click="currentPage--" />
         <Button v-if="currentPage < totalPages" type="button" label="다음" @click="currentPage++" />
         <Button v-if="currentPage === totalPages" type="button" label="제출" icon="pi pi-check"
-                @click="submitTerminalForm" />
+          @click="submitTerminalForm" />
       </div>
     </div>
+  </Dialog>
+
+  <Button label="TEST" icon="pi pi-wrench" @click="secondVisible = true" />
+  <Dialog v-model:visible="secondVisible" modal header="터미널 세부 정보(TEST)" style="width:90vw; max-width: 600px;">
+    <Stepper>
+      <StepperPanel header="터미널 ID">
+        <template #content="{ nextCallback }">
+          <div class="grid">
+            <div class="col-12">
+              <span style="font-weight: bold; color: red;">* 터미널ID (13자리)</span>
+            </div>
+            <div class="col-6 flex flex-column">
+              <Dropdown v-model="codeInfo.customer" :options="terminalHeaderList" optionValue="name" optionLabel="name"
+                placeholder="터미널 코드">
+                <template #option="{ option }">
+                  {{ option.name }} - {{ option.description }}
+                </template>
+              </Dropdown>
+              <small>고객코드(3)</small>
+            </div>
+            <div class="col-3 flex flex-column">
+              <InputMask v-model="codeInfo.year" mask="99" />
+              <small>년도(2)</small>
+            </div>
+            <div class="col-3 flex flex-column">
+              <InputMask v-model="codeInfo.week" mask="99" />
+              <small>주차(2)</small>
+            </div>
+            <div class="col-6 flex flex-column">
+              <InputMask v-model="codeInfo.server" mask="a**" />
+              <small>서버코드(3)</small>
+            </div>
+            <div class="col-6 flex flex-column">
+              <InputMask v-model="codeInfo.serial" mask="999" />
+              <small>번호(3)</small>
+            </div>
+          </div>
+          <div class="flex pt-4 justify-content-end">
+            <Button label="다음" icon="pi pi-arrow-right" iconPos="right" @click="nextCallback" />
+          </div>
+        </template>
+      </StepperPanel>
+      <StepperPanel header="납품정보">
+        <template #content="{ prevCallback, nextCallback }">
+          <div class="grid">
+            <div class="col-12">
+              <span style="font-weight: bold; color: red;">* 납품정보</span>
+            </div>
+            <div class="col-5 flex flex-column">
+              <Calendar v-model="salesInfo.date" dateFormat="yy-mm-dd" showButtonBar />
+              <small>납품일자</small>
+            </div>
+            <div class="col-7 flex flex-column">
+              <InputText v-model="salesInfo.customer" />
+              <small>납품처</small>
+            </div>
+            <div class="col-5 flex flex-column">
+              <InputText v-model="salesInfo.manager" />
+              <small>담당자</small>
+            </div>
+            <div class="col-7 flex flex-column">
+              <InputText v-model="salesInfo.contact" />
+              <small>연락처</small>
+            </div>
+            <div class="col-7 flex flex-column">
+              <InputText v-model="salesInfo.email" />
+              <small>E-mail</small>
+            </div>
+            <div class="col-5 flex flex-column">
+              <Dropdown v-model="salesInfo.status" :options="salesStatus" />
+            </div>
+          </div>
+          <div class="flex pt-4 justify-content-between">
+            <Button label="이전" severity="secondary" icon="pi pi-arrow-left" @click="prevCallback" />
+            <Button label="다음" icon="pi pi-arrow-right" iconPos="right" @click="nextCallback" />
+          </div>
+        </template>
+      </StepperPanel>
+      <StepperPanel header="설치정보">
+        <template #content="{ prevCallback }">
+          <div class="grid">
+            <div class="col-12">
+              <span style="font-weight: bold; color: red;">* 설치정보</span>
+            </div>
+            <div class="col-6 flex flex-column">
+              <InputText v-model="installInfo.region" />
+              <small>국가(Region)</small>
+            </div>
+            <div class="col-6 flex flex-column">
+              <InputText v-model="installInfo.location" />
+              <small>설치지역</small>
+            </div>
+            <div class="col-12 flex flex-column">
+              <InputText v-model="installInfo.details" />
+              <small>설치위치(상세)</small>
+            </div>
+            <div class="col-6 flex flex-column">
+              <AutoComplete v-model="installInfo.customer" :suggestions="filteredCustomers"
+                @complete="searchCustomers" />
+              <small>고객사(출고)</small>
+            </div>
+            <div class="col-6 flex flex-column">
+              <!-- TODO: apply disabled by watching customer -->
+              <Dropdown v-model="installInfo.department" :options=null showClear disabled />
+              <small>사업부</small>
+            </div>
+            <div class="col-12 flex flex-column">
+              <InputText v-model="installInfo.memo" />
+              <small>비고(메모)</small>
+            </div>
+          </div>
+          <div class="flex pt-4 justify-content-between">
+            <Button label="이전" severity="secondary" icon="pi pi-arrow-left" @click="prevCallback" />
+            <Button label="완료" icon="pi pi-check" iconPos="right" @click="submitSecondTerminalForm" />
+          </div>
+        </template>
+      </StepperPanel>
+    </Stepper>
   </Dialog>
 </template>
 
@@ -458,11 +590,13 @@ div[class^="col"] {
   padding: 0;
 }
 
-@media (max-width: 960px) {
-  .th-customer {
-    display: none;
-  }
+.p-stepper-panels {
+  padding: 0;
+}
 
+@media (max-width: 960px) {
+
+  .th-customer,
   .th-location {
     display: none;
   }

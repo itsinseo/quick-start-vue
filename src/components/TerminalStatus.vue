@@ -1,6 +1,7 @@
 <script setup>
-import terminalCommunication from '@/data/terminal-communication.json'
 import { ref } from 'vue';
+
+import terminalCommunication from '@/data/terminal-communication.json'
 
 const terminalStatus = ref(terminalCommunication);
 
@@ -32,15 +33,15 @@ initSelectedColumns();
 <template>
   <DataTable :value="terminalStatus" paginator :rows="10" :rowsPerPageOptions="[10, 20, 50]"
     paginatorTemplate="RowsPerPageDropdown CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-    currentPageReportTemplate="{first} - {last} of {totalRecords}" scrollable scrollHeight="70vh">
+    currentPageReportTemplate="{first} - {last} of {totalRecords}" scrollable removableSort :reorderableColumns="true" scrollHeight="70vh" rowHover>
     <template #header>
       <div style="text-align:left">
         <MultiSelect :modelValue="selectedColumns" :options="columns" optionLabel="header" @update:modelValue="onToggle"
-          display="chip" placeholder="항목 선택" />
+          display="chip" scrollHeight="20vh" placeholder="항목 선택" />
       </div>
     </template>
     <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
-      :key="col.field + '_' + index" style="word-break: break-all">
+      :key="col.field + '_' + index" style="word-break: break-all" sortable>
     </Column>
   </DataTable>
 </template>
@@ -48,6 +49,15 @@ initSelectedColumns();
 <style>
 .p-datatable-header {
   padding: 0.2rem;
+}
+
+.p-multiselect-label {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.p-multiselect-token {
+  margin: 0.1rem;
 }
 
 @media (max-width: 960px) {
