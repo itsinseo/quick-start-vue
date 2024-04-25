@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DashboardView from '@/views/DashboardView.vue'
 
+// TODO: find out whether it is OK to put icon information in meta tags
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -13,7 +14,8 @@ const router = createRouter({
       name: 'dashboard',
       component: DashboardView,
       meta: {
-        title: '대쉬보드'
+        title: '대쉬보드',
+        icon: 'pi pi-th-large'
       }
     },
     {
@@ -21,7 +23,8 @@ const router = createRouter({
       name: 'terminalStatus',
       component: () => import('../views/TerminalStatusView.vue'),
       meta: {
-        title: '터미널 통신 현황'
+        title: '터미널 통신 현황',
+        icon: 'pi pi-wave-pulse'
       }
     },
     {
@@ -29,7 +32,8 @@ const router = createRouter({
       name: 'terminalManagement',
       component: () => import('../views/TerminalManagementView.vue'),
       meta: {
-        title: '터미널 관리'
+        title: '터미널 관리',
+        icon: 'pi pi-list'
       }
     },
     {
@@ -37,7 +41,17 @@ const router = createRouter({
       name: 'terminalMap',
       component: () => import('../views/TerminalMapView.vue'),
       meta: {
-        title: '터미널 지도'
+        title: '터미널 지도',
+        icon: 'pi pi-map'
+      }
+    },
+    {
+      path: '/chart',
+      name: 'terminalChart',
+      component: () => import('../views/TerminalChart.vue'),
+      meta: {
+        title: '터미널 차트',
+        icon: 'pi pi-chart-bar'
       }
     }
   ]

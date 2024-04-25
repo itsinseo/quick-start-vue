@@ -2,6 +2,8 @@
 import { ref, watchEffect } from 'vue';
 import { RouterLink, RouterView, useRoute } from 'vue-router';
 
+import router from '@/router';
+
 defineProps({
   title: {
     type: String,
@@ -11,38 +13,13 @@ defineProps({
 
 const route = useRoute()
 
-const explicitRoutes = ref([
-  {
-    path: '/dashboard',
-    name: 'dashboard',
-    label: '대쉬보드',
-    icon: 'pi pi-th-large',
-  },
-  {
-    path: '/status',
-    name: 'terminalStatus',
-    label: '터미널 통신 현황',
-    icon: 'pi pi-wave-pulse',
-  },
-  {
-    path: '/management',
-    name: 'terminalManagement',
-    label: '터미널 관리',
-    icon: 'pi pi-list',
-  },
-  {
-    path: '/map',
-    name: 'terminalMap',
-    label: '터미널 지도',
-    icon: 'pi pi-map',
-  },
-])
-
 const pageTitle = ref('');
 
 watchEffect(() => {
   pageTitle.value = route.meta.title
 })
+
+const importedRoutes = ref(router.options.routes.filter((route) => route.name));
 
 </script>
 
@@ -53,15 +30,14 @@ watchEffect(() => {
     <h2 class="page-title">{{ pageTitle }}</h2>
   </div>
 
-  <!-- router link with menubar: using explicitly defined data -->
   <div class="menu-bar">
-    <Menubar :model="explicitRoutes">
+    <Menubar :model="importedRoutes">
       <template #item="{ item, props, hasSubmenu }">
         <router-link v-if="item.path" v-slot="{ href, navigate }" :to="item.path" custom>
           <a :href="href" v-bind="props.action" @click="navigate">
-            <span :class="item.icon" />
+            <span :class="item.meta?.icon" />
             &nbsp;
-            <span class="ml-2">{{ item.label }}</span>
+            <span class="ml-2">{{ item.meta?.title }}</span>
           </a>
         </router-link>
       </template>
