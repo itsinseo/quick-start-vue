@@ -48,7 +48,7 @@ const router = createRouter({
     {
       path: '/chart',
       name: 'terminalChart',
-      component: () => import('../views/TerminalChart.vue'),
+      component: () => import('../views/TerminalChartView.vue'),
       meta: {
         title: '터미널 차트',
         icon: 'pi pi-chart-bar'
