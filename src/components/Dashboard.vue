@@ -1,9 +1,6 @@
 <script setup>
 import { ref } from 'vue'
 
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-
 import companyDeviceStatus from '@/data/company-device-status.json'
 import simUsage from '@/data/sim.json'
 

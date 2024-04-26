@@ -4,8 +4,6 @@ import { FilterMatchMode } from 'primevue/api'
 
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
-import Stepper from 'primevue/stepper';
-import StepperPanel from 'primevue/stepperpanel';
 
 import terminalManagement from '@/data/terminal-management.json'
 
@@ -424,9 +422,9 @@ initFilter();
   </Dialog>
 
   <Button label="TEST" icon="pi pi-wrench" @click="secondVisible = true" />
-  <Dialog v-model:visible="secondVisible" modal header="터미널 세부 정보(TEST)" style="width:90vw; max-width: 600px;">
+  <Dialog v-model:visible="secondVisible" modal header="터미널 상세 정보" style="width:90vw; max-width: 600px;">
     <Stepper>
-      <StepperPanel header="터미널 ID">
+      <StepperPanel header="ID">
         <template #content="{ nextCallback }">
           <div class="grid">
             <div class="col-12">
@@ -463,7 +461,7 @@ initFilter();
           </div>
         </template>
       </StepperPanel>
-      <StepperPanel header="납품정보">
+      <StepperPanel header="납품">
         <template #content="{ prevCallback, nextCallback }">
           <div class="grid">
             <div class="col-12">
@@ -499,7 +497,7 @@ initFilter();
           </div>
         </template>
       </StepperPanel>
-      <StepperPanel header="설치정보">
+      <StepperPanel header="설치">
         <template #content="{ prevCallback }">
           <div class="grid">
             <div class="col-12">
