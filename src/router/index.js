@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DashboardView from '@/views/DashboardView.vue'
 
-// TODO: find out whether it is OK to put icon information in meta tags
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [

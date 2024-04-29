@@ -1,0 +1,65 @@
+{
+  "isAbroad": false,
+  "markerList": [
+    {
+      "name": "ㅇㅇ전자",
+      "lat": 37.2794307522912,
+      "lng": 127.017639984062,
+      "disconnected": true
+    },
+    {
+      "name": "ㅁㅁ전자",
+      "lat": 37.5591566870621,
+      "lng": 126.925365266111,
+      "disconnected": false
+    },
+    {
+      "name": "ㅁㅁ하이테크",
+      "lat": 35.1385425826116,
+      "lng": 129.101478129467,
+      "disconnected": true
+    },
+    {
+      "name": "ㅇㅇ테크",
+      "lat": 37.5551838865696,
+      "lng": 126.929262377425,
+      "disconnected": false
+    },
+    {
+      "name": "ㅁㅁ테크",
+      "lat": 35.2061851763803,
+      "lng": 129.07944301057,
+      "disconnected": true
+    },
+    {
+      "name": "ㅇㅇ몰드",
+      "lat": 37.5611108082421,
+      "lng": 126.983126838689,
+      "disconnected": false
+    },
+    {
+      "name": "ㅇㅇ산업",
+      "lat": 37.8618712965506,
+      "lng": 127.741025082042,
+      "disconnected": true
+    },
+    {
+      "name": "ㅁㅁ산업",
+      "lat": 37.4716015677854,
+      "lng": 126.628180641423,
+      "disconnected": false
+    },
+    {
+      "name": "ㅇㅇ하이테크",
+      "lat": 35.1023341092746,
+      "lng": 129.026118158562,
+      "disconnected": true
+    },
+    {
+      "name": "ㅇㅇ화학",
+      "lat": 35.1021556227043,
+      "lng": 129.025797930182,
+      "disconnected": false
+    }
+  ]
+}

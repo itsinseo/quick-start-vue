@@ -29,3 +29,8 @@ a,
     grid-template-columns: 1fr 1fr;
   }
 }
+
+.wrapper-container {
+  margin: 0;
+  padding: 0;
+}

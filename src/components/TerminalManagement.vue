@@ -5,6 +5,10 @@ import { FilterMatchMode } from 'primevue/api'
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 
+// Stepper requires explicit import
+import Stepper from 'primevue/stepper';
+import StepperPanel from 'primevue/stepperpanel';
+
 import terminalManagement from '@/data/terminal-management.json'
 
 const dataList = terminalManagement
@@ -80,8 +84,7 @@ const searchCustomers = (event) => {
   }, 100);
 };
 
-// 터미널 상세 정보 다이얼로그 때문에 와쳐를 추가해야 할까..?
-// 추가 안하면 최초 뷰포트 기준으로 결정돼서, 창 크기 변경에 반응은 못함
+// watcher 추가하지 않음; window.innerWidth 는 최초 렌더링시 결정
 const isLargeScreen = computed(() => {
   return window.innerWidth > 960;
 })
@@ -581,11 +584,6 @@ div[class^="col"] {
 
 .break-terminal-id {
   display: none;
-}
-
-.wrapper-container {
-  margin: 0;
-  padding: 0;
 }
 
 .p-stepper-panels {
