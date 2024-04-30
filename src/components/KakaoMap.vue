@@ -4,6 +4,8 @@ import { onMounted } from 'vue'
 import markerList from '@/data/domestic-marker-list.json'
 
 let map = null;
+const dataList = markerList.markerList;
+
 onMounted(() => {
   if (window.kakao && window.kakao.maps) {
     initMap();
@@ -30,17 +32,15 @@ function initMap() {
     minLevel: 6
   });
 
-  const dataList = markerList.markerList;
-
   var imageSrcGreen = '/marker-green.png';
   var imageSrcRed = '/marker-red.png';
   var imageSize = new kakao.maps.Size(29, 42);
 
   // 마커 클러스터러로 관리할 마커 객체는 생성할 때 지도 객체를 설정하지 않음 - 클러스터러가 이미 지도에 매핑되어 있음
-  dataList.map(function (data) {
+  dataList.map((data) => {
     var imageSrc = imageSrcGreen;
     var lastCommunicationTime = new Date();
-    if (data.disconnected == true) {
+    if (data.disconnected === true) {
       imageSrc = imageSrcRed;
       lastCommunicationTime = new Date(70);
     }
@@ -68,7 +68,7 @@ function initMap() {
 
   var zoomControl = new kakao.maps.ZoomControl();
   map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
-};
+}
 
 function makeOverListener(map, marker, infowindow) {
   return function () {
@@ -103,15 +103,4 @@ function formatDate(date) {
   </div>
 </template>
 
-<style scoped>
-#map {
-  width: 100%;
-  height: 75vh;
-}
-
-@media (max-width: 960px) {
-  #map {
-    height: 85vh;
-  }
-}
-</style>
+<style></style>

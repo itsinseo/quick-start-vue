@@ -90,22 +90,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div id="map" >
+  <div id="map">
     <p>
       google map div fallback message
     </p>
   </div>
 </template>
 
-<style>
-#map {
-  width: 100%;
-  height: 75vh;
-}
-
-@media (max-width: 960px) {
-  #map {
-    height: 85vh;
-  }
-}
-</style>
+<style></style>
