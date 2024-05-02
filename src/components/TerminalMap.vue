@@ -3,7 +3,6 @@ import { ref } from 'vue';
 
 import GoogleMap from '@/components/GoogleMap.vue'
 import KakaoMap from '@/components/KakaoMap.vue'
-import NaverMap from '@/components/NaverMap.vue'
 
 const isGlobal = ref(false);
 
@@ -13,10 +12,7 @@ const isGlobal = ref(false);
   <div class="wrapper-container">
     <Button label="국내/해외 전환(TEST)" icon="pi pi-wrench" @click="isGlobal = !isGlobal" class="button-test" />
     <GoogleMap v-if="isGlobal" />
-    <div v-else>
-      <!-- <KakaoMap /> -->
-      <NaverMap />
-    </div>
+    <KakaoMap v-else />
   </div>
 </template>
 
