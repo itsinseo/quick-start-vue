@@ -34,3 +34,4 @@ coverage
 .env.local
 /src/reference/
 /src/data/terminal-communication.json
+/src/data/comm-raw-data.json

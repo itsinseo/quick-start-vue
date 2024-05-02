@@ -7,13 +7,7 @@ let map = null;
 const dataList = markerList.markerList;
 
 onMounted(() => {
-  if (window.kakao && window.kakao.maps) {
-    initMap();
-  } else {
-    const script = document.createElement('script');
-    /* global kakao */
-    script.onload = () => kakao.maps.load(initMap);
-  }
+  initMap();
 })
 
 function initMap() {
