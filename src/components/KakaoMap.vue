@@ -23,7 +23,8 @@ function initMap() {
   var clusterer = new kakao.maps.MarkerClusterer({
     map: map,
     averageCenter: true,
-    minLevel: 6
+    minLevel: 6,
+    disableClickZoom: true
   });
 
   var imageSrcGreen = '/marker-green.png';
@@ -51,7 +52,7 @@ function initMap() {
     });
 
     var infowindow = new kakao.maps.InfoWindow({
-      content: `<div style="width:150px;text-align:center;padding:6px 0;font-size:10px">${data.name}<br>${infoWindowContent}</div>`
+      content: `<div style="width:150px;text-align:center;padding:6px 0;font-size:1rem">${data.name}<br>${infoWindowContent}</div>`
     });
 
     kakao.maps.event.addListener(marker, 'mouseover', makeOverListener(map, marker, infowindow));
@@ -59,6 +60,8 @@ function initMap() {
 
     clusterer.addMarker(marker);
   });
+
+  setClustererEvent(clusterer)
 
   var zoomControl = new kakao.maps.ZoomControl();
   map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
@@ -74,6 +77,27 @@ function makeOutListener(infowindow) {
   return function () {
     infowindow.close();
   };
+}
+
+function setClustererEvent(clusterer) {
+  var infowindow = new kakao.maps.InfoWindow();
+
+  kakao.maps.event.addListener(clusterer, 'clusterover', function (cluster) {
+    var clusterMarkerNameList = cluster.getMarkers().map((marker) => '<br>' + marker.Gb);
+
+    infowindow.setContent(
+      `<div style="width:150px;text-align:left;padding:6px 0;font-size:0.8rem">업체 목록:${clusterMarkerNameList}</div>`
+    )
+
+    var position = cluster.getCenter();
+    position.Ma += 0.1 * (2 ** (map.getLevel() - 12));
+    infowindow.setPosition(position);
+    return infowindow.open(map);
+  })
+
+  kakao.maps.event.addListener(clusterer, 'clusterout', () => {
+    infowindow.close();
+  })
 }
 
 function formatDate(date) {
