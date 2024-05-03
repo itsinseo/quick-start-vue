@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed } from "vue"
+import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue"
 import { FilterMatchMode } from 'primevue/api'
 
 import IconField from 'primevue/iconfield';
@@ -8,6 +8,8 @@ import InputIcon from 'primevue/inputicon';
 // Stepper requires explicit import
 import Stepper from 'primevue/stepper';
 import StepperPanel from 'primevue/stepperpanel';
+
+import kakaoGeocode from '@/utils/kakao-geocoding'
 
 import terminalManagement from '@/data/terminal-management.json'
 
@@ -84,11 +86,7 @@ const searchCustomers = (event) => {
   }, 100);
 };
 
-// watcher 추가하지 않음; window.innerWidth 는 최초 렌더링시 결정
-const isLargeScreen = computed(() => {
-  return window.innerWidth > 960;
-})
-const visible = ref(false);
+const desktopDialog = ref(false);
 const currentPage = ref(1);
 const totalPages = 3;
 
@@ -117,29 +115,31 @@ const installInfo = reactive({
 });
 
 function submitTerminalForm() {
-  console.log(codeInfo);
-  console.log(salesInfo);
-  console.log(installInfo);
+  callGeocodingApi();
 
-  resetObject(codeInfo);
-  resetObject(salesInfo);
-  resetObject(installInfo);
-
-  visible.value = false;
+  desktopDialog.value = false;
   currentPage.value = 1;
 }
 
-const secondVisible = ref(false);
-function submitSecondTerminalForm() {
-  console.log(codeInfo);
-  console.log(salesInfo);
-  console.log(installInfo);
+const mobileDialog = ref(false);
+function submitMobileTerminalForm() {
+  callGeocodingApi();
 
-  resetObject(codeInfo);
-  resetObject(salesInfo);
-  resetObject(installInfo);
+  mobileDialog.value = false;
+}
 
-  secondVisible.value = false;
+function callGeocodingApi() {
+  kakaoGeocode(installInfo.details)
+    .then(coords => {
+      console.log(coords);
+
+      resetObject(codeInfo);
+      resetObject(salesInfo);
+      resetObject(installInfo);
+    })
+    .catch(error => {
+      alert("에러: " + error);
+    });
 }
 
 function resetObject(obj) {
@@ -152,76 +152,93 @@ function resetObject(obj) {
 
 initFilter();
 
+const windowWidth = ref(window.innerWidth);
+
+const resizeWindowWidth = () => {
+  windowWidth.value = window.innerWidth;
+}
+
+const isLargeWindow = computed(() => {
+  return windowWidth.value > 960 ? true : false
+})
+
+onMounted(() => {
+  window.addEventListener('resize', resizeWindowWidth)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', resizeWindowWidth)
+})
+
 </script>
 
 <template>
-  <div class="card">
-    <DataTable :value="dataList" datakey="terminal_id" v-model:filters="filters" :globalFilterFields removableSort
-      paginator :rows="5" :rowsPerPageOptions rowHover
-      paginatorTemplate="RowsPerPageDropdown CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-      currentPageReportTemplate="{first} - {last} of {totalRecords}" scrollable scrollHeight="70vh">
-      <template #header>
-        <div class="flex table-header">
-          <div class="grid">
-            <div class="col">
-              <Button label="추가" @click="visible = true" />
-            </div>
-            <div class="col">
-              <IconField iconPosition="left" class="icon-field-search">
-                <InputIcon class="pi pi-search" />
-                <InputText v-model="filters['global'].value" placeholder="검색" class="input-search" />
-              </IconField>
-            </div>
-            <div class="col">
-              <Dropdown v-model="filters['terminal_id'].value" :options="terminalHeaderList" optionValue="name"
-                optionLabel="name" placeholder="터미널 코드" showClear class="dropdown-terminal-id">
-                <template #option="{ option }">
-                  {{ option.name }} - {{ option.description }}
-                </template>
-              </Dropdown>
-            </div>
-            <div class="col">
-              <MultiSelect v-model="filters['location'].value" :options="locationList" optionValue="name"
-                optionLabel="name" placeholder="납품처" :maxSelectedLabels="1" selectedItemsLabel="{0}개 국가" class="select-location" />
-            </div>
-            <div class="col">
-              <Button type="button" icon="pi pi-filter-slash" outlined @click="initFilter()"
-                class="button-filter-clear" />
-            </div>
+  <DataTable :value="dataList" datakey="terminal_id" v-model:filters="filters" :globalFilterFields removableSort
+    paginator :rows="5" :rowsPerPageOptions rowHover
+    paginatorTemplate="RowsPerPageDropdown CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+    currentPageReportTemplate="{first} - {last} of {totalRecords}" scrollable scrollHeight="70vh">
+    <template #header>
+      <div class="flex table-header">
+        <div class="grid">
+          <div class="col">
+            <Button v-if="isLargeWindow" label="추가" @click="desktopDialog = true" />
+            <Button v-else label="TEST" icon="pi pi-wrench" @click="mobileDialog = true" />
+          </div>
+          <div class="col">
+            <IconField iconPosition="left" class="icon-field-search">
+              <InputIcon class="pi pi-search" />
+              <InputText v-model="filters['global'].value" placeholder="검색" class="input-search" />
+            </IconField>
+          </div>
+          <div class="col">
+            <Dropdown v-model="filters['terminal_id'].value" :options="terminalHeaderList" optionValue="name"
+              optionLabel="name" placeholder="터미널 코드" showClear class="dropdown-terminal-id">
+              <template #option="{ option }">
+                {{ option.name }} - {{ option.description }}
+              </template>
+            </Dropdown>
+          </div>
+          <div class="col">
+            <MultiSelect v-model="filters['location'].value" :options="locationList" optionValue="name"
+              optionLabel="name" placeholder="납품처" :maxSelectedLabels="1" selectedItemsLabel="{0}개 국가"
+              class="select-location" />
+          </div>
+          <div class="col">
+            <Button type="button" icon="pi pi-filter-slash" outlined @click="initFilter()"
+              class="button-filter-clear" />
           </div>
         </div>
+      </div>
+    </template>
+    <template #empty> 검색 결과가 없습니다. </template>
+    <Column field="terminal_id" header="터미널 ID" sortable>
+      <template #body="{ data }">
+        {{ data.terminal_id.slice(0, 7) }}<br class="break-terminal-id">{{ data.terminal_id.slice(7) }}
       </template>
-      <template #empty> 검색 결과가 없습니다. </template>
-      <Column field="terminal_id" header="터미널 ID" sortable>
-        <template #body="{ data }">
-          {{ data.terminal_id.slice(0, 7) }}<br class="break-terminal-id">{{ data.terminal_id.slice(7) }}
-        </template>
-      </Column>
-      <Column field="customer" header="고객사" class="th-customer"></Column>
-      <Column field="location" header="납품처" :showFilterMenu="false" sortable class="th-location"></Column>
-      <Column field="customer" class="th-customer-location" sortable>
-        <template #header>
-          <div>고객사<br>납품처</div>
-        </template>
-        <template #body="{ data }">
-          {{ formatCustomer(data.customer) }}<br>
-          {{ data.location }}
-        </template>
-      </Column>
-      <Column field="registered_date" header="납품일자" sortable class="th-registered-date">
-        <template #body="{ data }">
-          {{ formatDate(data.registered_date) }}
-        </template>
-      </Column>
-      <Column field="sim" header="SIM"></Column>
-      <Column field="modified_date" header="최종수정" sortable class="th-modified-date"></Column>
-    </DataTable>
-  </div>
+    </Column>
+    <Column field="customer" header="고객사" class="th-customer"></Column>
+    <Column field="location" header="납품처" :showFilterMenu="false" sortable class="th-location"></Column>
+    <Column field="customer" class="th-customer-location" sortable>
+      <template #header>
+        <div>고객사<br>납품처</div>
+      </template>
+      <template #body="{ data }">
+        {{ formatCustomer(data.customer) }}<br>
+        {{ data.location }}
+      </template>
+    </Column>
+    <Column field="registered_date" header="납품일자" sortable class="th-registered-date">
+      <template #body="{ data }">
+        {{ formatDate(data.registered_date) }}
+      </template>
+    </Column>
+    <Column field="sim" header="SIM"></Column>
+    <Column field="modified_date" header="최종수정" sortable class="th-modified-date"></Column>
+  </DataTable>
 
   <!-- TOOD: apply required option, watch department with customer -->
-  <Dialog v-model:visible="visible" modal header="터미널 상세 정보" style="max-width: 600px;"
+  <Dialog v-model:visible="desktopDialog" modal header="터미널 상세 정보" style="max-width: 600px;"
     :breakpoints="{ '960px': '95vw' }">
-    <div v-if="isLargeScreen" class="wrapper-container">
+    <div v-if="windowWidth" class="wrapper-container">
       <div class="grid">
         <div class="col-12">
           <span style="font-weight: bold; color: red;">* 터미널ID (13자리)</span>
@@ -317,7 +334,8 @@ initFilter();
       </div>
 
       <div class="flex justify-content-end gap-2 mt-2">
-        <Button type="button" label="닫기" icon="pi pi-times" severity="secondary" @click="visible = false"></Button>
+        <Button type="button" label="닫기" icon="pi pi-times" severity="secondary"
+          @click="desktopDialog = false"></Button>
         <Button type="button" label="저장" icon="pi pi-check" @click="submitTerminalForm"></Button>
       </div>
     </div>
@@ -415,7 +433,7 @@ initFilter();
       </div>
 
       <div class="flex justify-content-end gap-2 mt-2">
-        <Button type="button" label="취소" icon="pi pi-times" severity="danger" @click="visible = false" />
+        <Button type="button" label="취소" icon="pi pi-times" severity="danger" @click="desktopDialog = false" />
         <Button v-if="currentPage > 1" type="button" label="이전" severity="secondary" @click="currentPage--" />
         <Button v-if="currentPage < totalPages" type="button" label="다음" @click="currentPage++" />
         <Button v-if="currentPage === totalPages" type="button" label="제출" icon="pi pi-check"
@@ -424,8 +442,7 @@ initFilter();
     </div>
   </Dialog>
 
-  <Button label="TEST" icon="pi pi-wrench" @click="secondVisible = true" />
-  <Dialog v-model:visible="secondVisible" modal header="터미널 상세 정보" style="width:90vw; max-width: 600px;">
+  <Dialog v-model:visible="mobileDialog" modal header="터미널 상세 정보" style="width:90vw; max-width: 600px;">
     <Stepper>
       <StepperPanel header="ID">
         <template #content="{ nextCallback }">
@@ -535,7 +552,7 @@ initFilter();
           </div>
           <div class="flex pt-4 justify-content-between">
             <Button label="이전" severity="secondary" icon="pi pi-arrow-left" @click="prevCallback" />
-            <Button label="완료" icon="pi pi-check" iconPos="right" @click="submitSecondTerminalForm" />
+            <Button label="완료" icon="pi pi-check" iconPos="right" @click="submitMobileTerminalForm" />
           </div>
         </template>
       </StepperPanel>

@@ -17,6 +17,29 @@ function formatMarkerInfo(coordinate) {
     + 'CTM0000NRC000'
 }
 
+function codeAddress(address) {
+  return new Promise((resolve, reject) => {
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ 'address': address }, function (results, status) {
+      if (status == 'OK') {
+        resolve(results);
+      } else {
+        reject(new Error(status));
+      }
+    });
+  });
+}
+
+function testGoogleGeocoding() {
+  codeAddress('서울시 강남구 도곡로 7길')
+    .then(coords => {
+      console.log(coords);
+    })
+    .catch(error => {
+      alert("에러: " + error);
+    });
+}
+
 function initMap() {
   const loader = new Loader({
     apiKey: import.meta.env.VITE_GMAPS_KEY,
@@ -70,16 +93,23 @@ function initMap() {
         infoWindow.setContent(formatMarkerInfo(coordinate))
         infoWindow.open(map, marker)
       })
-      marker.title = coordinate.name;
 
       return marker;
     });
 
-    const markerClusterer = new MarkerClusterer({ markers, map });
-    // TODO: define markerClusterer's click function
-    // markerClusterer.onClusterClick = () => {
-    //   console.log("clusterer clicked")
-    // }
+    var mcOptions = {
+      onClusterclick: (cluster) => {
+        var markerContentList = cluster.markers.map((marker) => marker.title);
+
+        const infoWindow = new google.maps.InfoWindow({
+          content: markerContentList,
+          disableAutoPan: true,
+        });
+
+        infoWindow.open(map)
+      }
+    };
+    const markerClusterer = new MarkerClusterer({ markers, map, mcOptions });
   });
 }
 
@@ -90,6 +120,7 @@ onMounted(() => {
 </script>
 
 <template>
+  <Button label="Geocoding TEST" icon="pi pi-wrench" @click="testGoogleGeocoding" class="button-test"></Button>
   <div id="map">
     <p>
       google map div fallback message
