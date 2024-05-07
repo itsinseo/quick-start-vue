@@ -99,11 +99,21 @@ function initMap() {
 
     const markerClusterer = new MarkerClusterer({ markers, map });
     markerClusterer.onClusterClick = function (event, cluster, map) {
-      var markerContentList = "";
+      var markerContentList = `
+        <table>
+          <tr>
+            <th style="background-color: lightblue">업체명</th>
+            <th style="background-color: lightblue">통신 상태</th>
+          </tr>`;
       cluster.markers.map((marker) => {
         var markerConnection = marker.data.disconnected === true ? " 연결 끊김 " : "";
-        markerContentList += marker.title + markerConnection + '<br>'
+        markerContentList += `
+          <tr>
+            <td>${marker.title}</td>
+            <td style="color: red">${markerConnection}</td>
+          </tr>`;
       });
+      markerContentList += `</table>`;
 
       infoWindow.close();
       infoWindow.setContent(markerContentList);
