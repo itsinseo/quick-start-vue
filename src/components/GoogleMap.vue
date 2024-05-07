@@ -13,8 +13,6 @@ const sampleMarkerList = markerList.markerList;
 
 function formatMarkerInfo(coordinate) {
   return coordinate.name
-    + ' '
-    + 'CTM0000NRC000'
 }
 
 function codeAddress(address) {
@@ -33,7 +31,7 @@ function codeAddress(address) {
 function testGoogleGeocoding() {
   codeAddress('서울시 강남구 도곡로 7길')
     .then(coords => {
-      console.log(coords);
+      console.log(coords[0].formatted_address + ": " + coords[0].geometry.location.toString());
     })
     .catch(error => {
       alert("에러: " + error);
@@ -61,6 +59,7 @@ function initMap() {
         style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
         mapTypeIds: ["roadmap", "terrain"],
       },
+      scaleControl: true,
       minZoom: 1,
       maxZoom: 15,
       restriction: {
@@ -76,11 +75,9 @@ function initMap() {
       content: "",
       disableAutoPan: true,
     });
-    const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const markers = sampleMarkerList.map((coordinate, i) => {
-      const label = labels[i % labels.length];
       const pinGlyph = new google.maps.marker.PinElement({
-        glyph: label,
+        glyph: coordinate.name.substr(0, 2),
         glyphColor: "white",
         background: coordinate.disconnected === true ? "red" : "green"
       });
@@ -94,22 +91,30 @@ function initMap() {
         infoWindow.open(map, marker)
       })
 
+      marker.title = coordinate.name;
+      marker.data = coordinate;
+
       return marker;
     });
 
-    var mcOptions = {
-      onClusterclick: (cluster) => {
-        var markerContentList = cluster.markers.map((marker) => marker.title);
+    const markerClusterer = new MarkerClusterer({ markers, map });
+    markerClusterer.onClusterClick = function (event, cluster, map) {
+      var markerContentList = "";
+      cluster.markers.map((marker) => {
+        var markerConnection = marker.data.disconnected === true ? " 연결 끊김 " : "";
+        markerContentList += marker.title + markerConnection + '<br>'
+      });
 
-        const infoWindow = new google.maps.InfoWindow({
-          content: markerContentList,
-          disableAutoPan: true,
-        });
+      infoWindow.close();
+      infoWindow.setContent(markerContentList);
 
-        infoWindow.open(map)
-      }
-    };
-    const markerClusterer = new MarkerClusterer({ markers, map, mcOptions });
+      // infoWindow.open 전달용 가상 marker
+      var clustererMarker = new AdvancedMarkerElement({
+        position: cluster.position
+      })
+
+      infoWindow.open(map, clustererMarker);
+    }
   });
 }
 
