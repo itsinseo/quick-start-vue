@@ -4,12 +4,17 @@ import { onMounted } from 'vue';
 import { Loader } from '@googlemaps/js-api-loader'
 import { MarkerClusterer } from '@googlemaps/markerclusterer'
 
-import markerList from '@/data/abroad-marker-list.json'
+const props = defineProps({
+  markerList: {
+    type: Array,
+    required: true
+  },
+})
 
 let map;
-let zoomLevel = 7;
+let zoomLevel = 2;
 let centerPosition = { lat: 35.95, lng: 127.75 };
-const sampleMarkerList = markerList.markerList;
+const sampleMarkerList = props.markerList;
 
 function formatMarkerInfo(coordinate) {
   return coordinate.name
@@ -60,7 +65,7 @@ function initMap() {
         mapTypeIds: ["roadmap", "terrain"],
       },
       scaleControl: true,
-      minZoom: 1,
+      minZoom: 2,
       maxZoom: 15,
       restriction: {
         latLngBounds: {

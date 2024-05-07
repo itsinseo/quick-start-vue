@@ -1,10 +1,15 @@
 <script setup>
 import { onMounted } from 'vue'
 
-import markerList from '@/data/domestic-marker-list.json'
+const props = defineProps({
+  markerList: {
+    type: Array,
+    required: true
+  },
+})
 
 let map = null;
-const dataList = markerList.markerList;
+const sampleMarkerList = props.markerList;
 
 onMounted(() => {
   initMap();
@@ -32,7 +37,7 @@ function initMap() {
   var imageSize = new kakao.maps.Size(29, 42);
 
   // 마커 클러스터러로 관리할 마커 객체는 생성할 때 지도 객체를 설정하지 않음 - 클러스터러가 이미 지도에 매핑되어 있음
-  dataList.map((data) => {
+  sampleMarkerList.map((data) => {
     var imageSrc = imageSrcGreen;
     var lastCommunicationTime = new Date();
     if (data.disconnected === true) {
