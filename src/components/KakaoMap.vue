@@ -67,7 +67,7 @@ function initMap() {
     clusterer.addMarker(marker);
   });
 
-  setClustererEvent(clusterer)
+  setClustererOverlay(clusterer)
 
   var zoomControl = new kakao.maps.ZoomControl();
   map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
@@ -85,54 +85,40 @@ function makeOutListener(infowindow) {
   };
 }
 
-function setClustererEvent(clusterer) {
-  var infowindow = new kakao.maps.InfoWindow();
-
+function setClustererOverlay(clusterer) {
+  var customOverlay;
   kakao.maps.event.addListener(clusterer, 'clusterover', function (cluster) {
-    var infoContent = `<div style="width: 150px; text-align: left; padding: 6px 0; font-size: 0.8rem">`;
-    cluster.getMarkers().map((marker) => infoContent += `<div>${marker.data.name}</div>`);
-    infoContent += `</div>`;
-    infowindow.setContent(infoContent);
+    customOverlay = new kakao.maps.CustomOverlay({
+      position: cluster.getCenter(),
+      xAnchor: 0.5,
+      yAnchor: 1.1,
+    });
 
-    var position = cluster.getCenter();
-    position.Ma += 0.1 * (2 ** (map.getLevel() - 12));
-    infowindow.setPosition(position);
-    return infowindow.open(map);
+    var markerContentList = `<div style="background-color: white">
+        <table>
+          <tr>
+            <th style="background-color: lightblue">업체명</th>
+            <th style="background-color: lightblue">통신 상태</th>
+          </tr>`;
+    cluster.getMarkers().map((marker) => {
+      var markerConnection = marker.data.disconnected === true ? " 연결 끊김 " : "";
+      markerContentList += `
+          <tr>
+            <td>${marker.data.name}</td>
+            <td style="color: red">${markerConnection}</td>
+          </tr>`;
+    });
+    markerContentList += `</table></div>`;
+
+    customOverlay.setContent(markerContentList);
+
+    customOverlay.setMap(map);
   })
 
-  kakao.maps.event.addListener(clusterer, 'clusterout', () => {
-    infowindow.close();
+  kakao.maps.event.addListener(clusterer, 'clusterout', function (cluster) {
+    customOverlay.setMap(null);
   })
 }
-
-// function setClustererOverlay(clusterer) {
-//   var customOverlay = new kakao.maps.CustomOverlay();
-
-//   kakao.maps.event.addListener(clusterer, 'clusterclick', function (cluster) {
-//     function close() {
-//       overlay.setMap(null);
-//     }
-
-//     var markerContentList = `<div style="background-color: white">
-//         <button onclick="close()">X</button>
-//         <table>
-//           <tr>
-//             <th style="background-color: lightblue">업체명</th>
-//             <th style="background-color: lightblue">통신 상태</th>
-//           </tr>`;
-//     cluster.getMarkers().map((marker) => {
-//       var markerConnection = marker.data.disconnected === true ? " 연결 끊김 " : "";
-//       markerContentList += `
-//           <tr>
-//             <td>${marker.data.name}</td>
-//             <td>${markerConnection}</td>
-//           </tr>`;
-//     });
-//     markerContentList += `</table></div>`;
-
-//     customOverlay.setContent(markerContentList);
-//   })
-// }
 
 function formatDate(date) {
   const formattedDate = date.toLocaleString('en', {

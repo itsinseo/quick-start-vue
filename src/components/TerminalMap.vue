@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import GoogleMap from '@/components/GoogleMap.vue'
 import KakaoMap from '@/components/KakaoMap.vue'
 
-import MarkerList from '@/data/domestic-marker-list.json'
+import MarkerList from '@/data/abroad-marker-list.json'
 
 const minLat = 33.11;
 const maxLat = 38.61;
@@ -28,8 +28,10 @@ const needGoogleMap = isGlobal.value;
 
 <template>
   <div class="wrapper-container">
-    <Button v-if="needGoogleMap" label="국내/해외 전환(TEST)" icon="pi pi-wrench" @click="isGlobal = !isGlobal"
-      class="button-test" />
+    <div class="wrapper-container" v-if="needGoogleMap">
+      <Button v-if="isGlobal" label="국내 지도" icon="pi pi-map" @click="isGlobal = !isGlobal" class="button-test" />
+      <Button v-else label="전세계 지도" icon="pi pi-globe" @click="isGlobal = !isGlobal" class="button-test" />
+    </div>
     <GoogleMap :markerList="globalMarkerList" v-if="isGlobal" />
     <KakaoMap :markerList="domesticMarkerList" v-else />
   </div>

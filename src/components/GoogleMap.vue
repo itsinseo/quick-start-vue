@@ -77,8 +77,7 @@ function initMap() {
       },
     });
     const infoWindow = new google.maps.InfoWindow({
-      content: "",
-      disableAutoPan: true,
+      content: ""
     });
     const markers = sampleMarkerList.map((coordinate, i) => {
       const pinGlyph = new google.maps.marker.PinElement({
@@ -92,6 +91,9 @@ function initMap() {
       });
 
       marker.addListener("click", () => {
+        infoWindow.setOptions({
+        pixelOffset: new google.maps.Size(0, 0)
+      })
         infoWindow.setContent(formatMarkerInfo(coordinate))
         infoWindow.open(map, marker)
       })
@@ -121,6 +123,9 @@ function initMap() {
       markerContentList += `</table>`;
 
       infoWindow.close();
+      infoWindow.setOptions({
+        pixelOffset: new google.maps.Size(0, -10)
+      })
       infoWindow.setContent(markerContentList);
 
       // infoWindow.open 전달용 가상 marker
@@ -140,7 +145,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <Button label="Geocoding TEST" icon="pi pi-wrench" @click="testGoogleGeocoding" class="button-test"></Button>
+  <!-- <Button label="Geocoding TEST" icon="pi pi-wrench" @click="testGoogleGeocoding" class="button-test"></Button> -->
   <div id="map">
     <p>
       google map div fallback message
