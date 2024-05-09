@@ -7,6 +7,8 @@ import commRawData from '@/data/comm-raw-data.json'
 
 const commDataList = commRawData;
 
+const inputText = ref();
+
 const apiThreshold = 20;
 const dt = ref();
 const geocodedDataList = ref([]);
@@ -34,7 +36,7 @@ function codeAddress(address, region) {
   });
 }
 
-function testGoogleGeocoding() {
+function googleGeocoding() {
   try {
     var count = 0;
 
@@ -85,6 +87,16 @@ function initMap() {
   });
 }
 
+function testGoogleGeocoding(address) {
+  codeAddress(address, null)
+    .then(coords => {
+      console.log(address + " -> " + coords[0].formatted_address + ": " + coords[0].geometry.location.toString());
+    })
+    .catch(error => {
+      console.log(address + ": " + error);
+    })
+}
+
 onMounted(() => {
   initMap();
 })
@@ -92,14 +104,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <DataTable :value="geocodedDataList" ref="dt">
+  <div class="wrapper-container">
+    <InputText type="text" v-model="inputText" class="button-test" />
+    <Button @click="testGoogleGeocoding(inputText)" label="Test Geocoding" icon="pi pi-wrench" class="button-test" />
+  </div>
+  <DataTable :value="geocodedDataList" ref="dt" removableSort paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]">
     <template #header>
       <div style="text-align: left">
-        <Button @click="testGoogleGeocoding" label="Test Geocoding" icon="pi pi-wrench" class="button-test" />
+        <Button @click="googleGeocoding" label="Geocoding" icon="pi pi-google" class="button-test" />
         <Button icon="pi pi-download" label="CSV" @click="exportCSV($event)" class="button-test" />
       </div>
     </template>
-    <Column field="tid" header="터미널ID" exportHeader="Product Code" />
+    <Column field="tid" header="터미널ID" sortable />
     <Column field="address" header="주소" />
     <Column field="region" header="국가" />
     <Column field="formattedAddress" header="변환된 주소" />
@@ -108,4 +124,8 @@ onMounted(() => {
   </DataTable>
 </template>
 
-<style></style>
+<style scoped>
+.button-test {
+  display: inline;
+}
+</style>
