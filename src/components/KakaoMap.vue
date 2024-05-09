@@ -137,7 +137,7 @@ function formatDate(date) {
 
 <template>
   <div id="map">
-    <p>kakao map div fallback message</p>
+    <ProgressSpinner />
   </div>
 </template>
 

@@ -37,8 +37,4 @@ const needGoogleMap = isGlobal.value;
   </div>
 </template>
 
-<style>
-.button-test {
-  margin: 0.5rem 0.5rem 0.5rem 0;
-}
-</style>
+<style></style>

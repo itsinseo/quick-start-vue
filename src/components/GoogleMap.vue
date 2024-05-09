@@ -147,9 +147,7 @@ onMounted(() => {
 <template>
   <!-- <Button label="Geocoding TEST" icon="pi pi-wrench" @click="testGoogleGeocoding" class="button-test"></Button> -->
   <div id="map">
-    <p>
-      google map div fallback message
-    </p>
+    <ProgressSpinner />
   </div>
 </template>
 

@@ -52,6 +52,15 @@ const router = createRouter({
         title: '터미널 차트',
         icon: 'pi pi-chart-bar'
       }
+    },
+    {
+      path: '/test',
+      name: 'testComponent',
+      component: () => import('../components/TestComponent.vue'),
+      meta: {
+        title: 'TEST',
+        icon: 'pi pi-wrench'
+      }
     }
   ]
 })
