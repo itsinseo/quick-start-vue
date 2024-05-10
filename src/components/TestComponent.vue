@@ -22,6 +22,11 @@ function codeAddress(address, region) {
     var geocoder = new google.maps.Geocoder();
     geocoder.geocode({ 'address': address }, function (results, status) {
       if (status == 'OK') {
+        results[0].address_components.map((addr_component) => {
+          if (addr_component.types[0] === 'country' && addr_component.long_name !== region) {
+            reject(new Error(`COUNTRY_INFO_NOT_MATCHING - Given:${region}, Result:${addr_component.long_name}`))
+          }
+        })
         resolve(results);
       } else {
         geocoder.geocode({ 'address': region }, function (secondaryResults, secondaryStatus) {
@@ -88,9 +93,10 @@ function initMap() {
 }
 
 function testGoogleGeocoding(address) {
-  codeAddress(address, null)
+  codeAddress(address, '대한민국')
     .then(coords => {
-      console.log(address + " -> " + coords[0].formatted_address + ": " + coords[0].geometry.location.toString());
+      // console.log(address + " -> " + coords[0].formatted_address + ": " + coords[0].geometry.location.toString());
+      console.log(coords);
     })
     .catch(error => {
       console.log(address + ": " + error);
@@ -108,7 +114,8 @@ onMounted(() => {
     <InputText type="text" v-model="inputText" class="button-test" />
     <Button @click="testGoogleGeocoding(inputText)" label="Test Geocoding" icon="pi pi-wrench" class="button-test" />
   </div>
-  <DataTable :value="geocodedDataList" ref="dt" removableSort paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]">
+  <DataTable :value="geocodedDataList" ref="dt" removableSort paginator :rows="10"
+    :rowsPerPageOptions="[5, 10, 20, 50]">
     <template #header>
       <div style="text-align: left">
         <Button @click="googleGeocoding" label="Geocoding" icon="pi pi-google" class="button-test" />
