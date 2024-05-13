@@ -7,7 +7,23 @@ import commRawData from '@/data/comm-raw-data.json'
 
 const commDataList = commRawData;
 
+const countryList = [
+  '대한민국',
+  '말레이시아',
+  '멕시코',
+  '미국',
+  '베트남',
+  '브라질',
+  '이집트',
+  '인도',
+  '인도네시아',
+  '중국',
+  '폴란드'
+]
+const selectedCountry = ref();
 const inputText = ref();
+const formattedAddress = ref();
+const formattedCoordinate = ref();
 
 const apiThreshold = 20;
 const dt = ref();
@@ -93,13 +109,14 @@ function initMap() {
 }
 
 function testGoogleGeocoding(address) {
-  codeAddress(address, '대한민국')
+  codeAddress(address, selectedCountry.value)
     .then(coords => {
-      // console.log(address + " -> " + coords[0].formatted_address + ": " + coords[0].geometry.location.toString());
-      console.log(coords);
+      formattedAddress.value = coords[0].formatted_address;
+      formattedCoordinate.value = coords[0].geometry.location.toString();
     })
     .catch(error => {
-      console.log(address + ": " + error);
+      formattedAddress.value = address + ": " + error;
+      formattedCoordinate.value = null;
     })
 }
 
@@ -111,8 +128,13 @@ onMounted(() => {
 
 <template>
   <div class="wrapper-container">
+    <Dropdown v-model="selectedCountry" :options="countryList" placeholder="국가 선택" style="min-width: 10rem;" />
     <InputText type="text" v-model="inputText" class="button-test" />
     <Button @click="testGoogleGeocoding(inputText)" label="Test Geocoding" icon="pi pi-wrench" class="button-test" />
+    <div class="wrapper-container">
+      <Textarea type="text" v-model="formattedAddress" autoResize rows="3" cols="20" />
+      <Textarea type="text" v-model="formattedCoordinate" autoResize rows="3" cols="20" />
+    </div>
   </div>
   <DataTable :value="geocodedDataList" ref="dt" removableSort paginator :rows="10"
     :rowsPerPageOptions="[5, 10, 20, 50]">

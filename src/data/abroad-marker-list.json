@@ -1,6 +1,23 @@
 {
-  "isAbroad": true,
   "markerList": [
+    {
+      "name": "XX전자",
+      "lat": null,
+      "lng": null,
+      "disconnected": true
+    },
+    {
+      "name": "YY전자",
+      "lat": null,
+      "lng": null,
+      "disconnected": false
+    },
+    {
+      "name": "ZZ전자",
+      "lat": null,
+      "lng": null,
+      "disconnected": false
+    },
     {
       "name": "ㅇㅇ전자",
       "lat": 37.2794307522912,
