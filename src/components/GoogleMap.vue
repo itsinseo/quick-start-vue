@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, reactive, watch } from 'vue';
 
 import { Loader } from '@googlemaps/js-api-loader'
 import { MarkerClusterer } from '@googlemaps/markerclusterer'
@@ -10,6 +10,19 @@ const props = defineProps({
     required: true
   },
 })
+
+const emits = defineEmits(['update:isGlobal']);
+
+const changeIsGlobal = () => {
+  emits('update:isGlobal', false);
+}
+
+const mapBounds = reactive({
+  latMin: null,
+  latMax: null,
+  lngMin: null,
+  lngMax: null
+});
 
 let map;
 let zoomLevel = 2;
@@ -92,8 +105,8 @@ function initMap() {
 
       marker.addListener("click", () => {
         infoWindow.setOptions({
-        pixelOffset: new google.maps.Size(0, 0)
-      })
+          pixelOffset: new google.maps.Size(0, 0)
+        })
         infoWindow.setContent(formatMarkerInfo(coordinate))
         infoWindow.open(map, marker)
       })
@@ -135,8 +148,22 @@ function initMap() {
 
       infoWindow.open(map, clustererMarker);
     }
+
+    map.addListener("bounds_changed", () => {
+      const rawBounds = map.getBounds();
+      mapBounds.latMin = rawBounds.Wh.lo;
+      mapBounds.latMax = rawBounds.Wh.hi;
+      mapBounds.lngMin = rawBounds.Gh.lo;
+      mapBounds.lngMax = rawBounds.Gh.hi;
+    })
   });
 }
+
+watch(mapBounds, () => {
+  if (mapBounds.latMin > 32 && mapBounds.latMax < 40 && mapBounds.lngMin > 120 && mapBounds.lngMax < 135) {
+    changeIsGlobal();
+  }
+})
 
 onMounted(() => {
   initMap();

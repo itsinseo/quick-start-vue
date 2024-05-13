@@ -20,21 +20,22 @@ globalMarkerList.value.map((marker) => {
 })
 
 const isGlobal = ref(globalMarkerList.value.length !== domesticMarkerList.value.length);
-console.log(isGlobal.value)
 
 const needGoogleMap = isGlobal.value;
+
+const updateIsGlobal = (newValue) => {
+  isGlobal.value = newValue;
+}
 
 </script>
 
 <template>
-  <div class="wrapper-container">
-    <div class="wrapper-container" v-if="needGoogleMap">
-      <Button v-if="isGlobal" label="국내 지도" icon="pi pi-map" @click="isGlobal = !isGlobal" class="button-test" />
-      <Button v-else label="전세계 지도" icon="pi pi-globe" @click="isGlobal = !isGlobal" class="button-test" />
-    </div>
-    <GoogleMap :markerList="globalMarkerList" v-if="isGlobal" />
-    <KakaoMap :markerList="domesticMarkerList" v-else />
+  <div class="wrapper-container" v-if="needGoogleMap">
+    <Button v-if="isGlobal" label="국내 지도" icon="pi pi-map" @click="isGlobal = !isGlobal" class="button-test" />
+    <Button v-else label="전세계 지도" icon="pi pi-globe" @click="isGlobal = !isGlobal" class="button-test" />
   </div>
+  <GoogleMap :markerList="globalMarkerList" v-if="isGlobal" @update:isGlobal="updateIsGlobal" />
+  <KakaoMap :markerList="domesticMarkerList" v-else @update:isGlobal="updateIsGlobal" />
 </template>
 
 <style></style>

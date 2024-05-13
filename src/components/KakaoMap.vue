@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, reactive, watch } from 'vue'
 
 const props = defineProps({
   markerList: {
@@ -8,12 +8,21 @@ const props = defineProps({
   },
 })
 
+const emits = defineEmits(['update:isGlobal']);
+
+const changeIsGlobal = () => {
+  emits('update:isGlobal', true);
+}
+
+const mapBounds = reactive({
+  latMin: null,
+  latMax: null,
+  lngMin: null,
+  lngMax: null
+});
+
 let map = null;
 const sampleMarkerList = props.markerList;
-
-onMounted(() => {
-  initMap();
-})
 
 function initMap() {
   var container = document.getElementById('map');
@@ -71,7 +80,21 @@ function initMap() {
 
   var zoomControl = new kakao.maps.ZoomControl();
   map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+
+  kakao.maps.event.addListener(map, 'bounds_changed', () => {
+    const rawBounds = map.getBounds();
+    mapBounds.latMin = rawBounds.qa;
+    mapBounds.latMax = rawBounds.pa;
+    mapBounds.lngMin = rawBounds.ha;
+    mapBounds.lngMax = rawBounds.oa;
+  })
 }
+
+watch(mapBounds, () => {
+  if (mapBounds.latMin < 31 && mapBounds.latMax > 41 && mapBounds.lngMin < 119 && mapBounds.lngMax > 136) {
+    changeIsGlobal();
+  }
+})
 
 function makeOverListener(map, marker, infowindow) {
   return function () {
@@ -91,7 +114,7 @@ function setClustererOverlay(clusterer) {
     customOverlay = new kakao.maps.CustomOverlay({
       position: cluster.getCenter(),
       xAnchor: 0.5,
-      yAnchor: 1.1,
+      yAnchor: 1.1 + 1 / map.getLevel(),
     });
 
     var markerContentList = `<div style="background-color: white">
@@ -132,6 +155,10 @@ function formatDate(date) {
   });
   return formattedDate.replace(/(\d{1,2})\/(\d{1,2})\/(\d{4}), (\d{1,2}):(\d{1,2}):(\d{1,2})/, '$3-$1-$2 $4:$5:$6');
 }
+
+onMounted(() => {
+  initMap();
+})
 
 </script>
 
