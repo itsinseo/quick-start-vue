@@ -18,42 +18,19 @@ const changeIsGlobal = () => {
 }
 
 const mapBounds = reactive({
-  latMin: null,
-  latMax: null,
-  lngMin: null,
-  lngMax: null
+  minLat: null,
+  maxLat: null,
+  minLng: null,
+  maxLng: null
 });
 
 let map;
 let zoomLevel = 2;
-let centerPosition = { lat: 35.95, lng: 127.75 };
+let centerPosition = { lat: 35.86, lng: 128.23 };
 const sampleMarkerList = props.markerList;
 
 function formatMarkerInfo(coordinate) {
   return coordinate.name
-}
-
-function codeAddress(address) {
-  return new Promise((resolve, reject) => {
-    var geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ 'address': address }, function (results, status) {
-      if (status == 'OK') {
-        resolve(results);
-      } else {
-        reject(new Error(status));
-      }
-    });
-  });
-}
-
-function testGoogleGeocoding() {
-  codeAddress('서울시 강남구 도곡로 7길')
-    .then(coords => {
-      console.log(coords[0].formatted_address + ": " + coords[0].geometry.location.toString());
-    })
-    .catch(error => {
-      alert("에러: " + error);
-    });
 }
 
 function initMap() {
@@ -161,6 +138,8 @@ function initMap() {
 
 watch(mapBounds, () => {
   if (mapBounds.latMin > 32 && mapBounds.latMax < 40 && mapBounds.lngMin > 120 && mapBounds.lngMax < 135) {
+    map.setCenter(new google.maps.LatLng(35.86, 128.23));
+    map.setZoom(6);
     changeIsGlobal();
   }
 })

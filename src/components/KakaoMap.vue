@@ -15,10 +15,10 @@ const changeIsGlobal = () => {
 }
 
 const mapBounds = reactive({
-  latMin: null,
-  latMax: null,
-  lngMin: null,
-  lngMax: null
+  minLat: null,
+  maxLat: null,
+  minLng: null,
+  maxLng: null
 });
 
 let map = null;
@@ -27,7 +27,7 @@ const sampleMarkerList = props.markerList;
 function initMap() {
   var container = document.getElementById('map');
   var options = {
-    center: new kakao.maps.LatLng(35.95, 127.75),
+    center: new kakao.maps.LatLng(35.86, 128.23),
     level: 13,
   };
 
@@ -91,7 +91,10 @@ function initMap() {
 }
 
 watch(mapBounds, () => {
-  if (mapBounds.latMin < 31 && mapBounds.latMax > 41 && mapBounds.lngMin < 119 && mapBounds.lngMax > 136) {
+  if (mapBounds.latMin < 30 || mapBounds.latMax > 43) {
+    const rokCenter = new kakao.maps.LatLng(35.86, 128.23);
+    map.setCenter(rokCenter);
+    map.setLevel(13);
     changeIsGlobal();
   }
 })
@@ -164,7 +167,7 @@ onMounted(() => {
 
 <template>
   <div id="map">
-    <ProgressSpinner />
+    <!-- <ProgressSpinner /> -->
   </div>
 </template>
 

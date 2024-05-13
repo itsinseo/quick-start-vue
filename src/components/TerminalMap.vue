@@ -34,8 +34,12 @@ const updateIsGlobal = (newValue) => {
     <Button v-if="isGlobal" label="국내 지도" icon="pi pi-map" @click="isGlobal = !isGlobal" class="button-test" />
     <Button v-else label="전세계 지도" icon="pi pi-globe" @click="isGlobal = !isGlobal" class="button-test" />
   </div>
-  <GoogleMap :markerList="globalMarkerList" v-if="isGlobal" @update:isGlobal="updateIsGlobal" />
-  <KakaoMap :markerList="domesticMarkerList" v-else @update:isGlobal="updateIsGlobal" />
+  <KeepAlive>
+    <GoogleMap :markerList="globalMarkerList" v-if="isGlobal" @update:isGlobal="updateIsGlobal" />
+  </KeepAlive>
+  <KeepAlive>
+    <KakaoMap :markerList="domesticMarkerList" v-if="!isGlobal" @update:isGlobal="updateIsGlobal" />
+  </KeepAlive>
 </template>
 
 <style></style>
