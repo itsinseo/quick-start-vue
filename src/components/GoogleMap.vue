@@ -126,6 +126,41 @@ function initMap() {
       infoWindow.open(map, clustererMarker);
     }
 
+    markerClusterer.renderer.render = function (cluster, stats, map) {
+      const count = cluster.count
+      const position = cluster.position;
+
+      var color = "#008000";
+      var disconnectedCount = 0;
+      // color = count > Math.max(10, stats.clusters.markers.mean) ? "#ff0000" : "#0000ff";
+
+      cluster.markers.map((marker) => {
+        if (marker.data.disconnected === true) {
+          color = "#ff0000";
+          disconnectedCount++;
+        }
+      })
+
+      const svg = ` <svg fill="${color}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="50" height="50">
+                      <circle cx="120" cy="120" opacity=".6" r="70" />
+                      <circle cx="120" cy="120" opacity=".3" r="90" />
+                      <circle cx="120" cy="120" opacity=".2" r="110" />
+                      <text x="50%" y="50%" style="fill:#fff" text-anchor="middle" font-size="50" dominant-baseline="middle" font-family="roboto,arial,sans-serif">${count}</text>
+                    </svg>`;
+      const title = `${disconnectedCount}대 미수신`, zIndex = Number(google.maps.Marker.MAX_ZINDEX) + count;
+      const parser = new DOMParser();
+      const svgEl = parser.parseFromString(svg, "image/svg+xml").documentElement;
+      svgEl.setAttribute("transform", "translate(0 25)");
+      const clusterOptions2 = {
+        map,
+        position,
+        zIndex,
+        title,
+        content: svgEl
+      };
+      return new google.maps.marker.AdvancedMarkerElement(clusterOptions2);
+    }
+
     map.addListener("bounds_changed", () => {
       const rawBounds = map.getBounds();
       mapBounds.latMin = rawBounds.Wh.lo;
