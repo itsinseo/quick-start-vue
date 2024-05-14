@@ -21,6 +21,26 @@ const mapBounds = reactive({
   maxLng: null
 });
 
+const clusterStyles = [{
+  width: '52px', height: '52px',
+  background: 'url(cluster-green.png) no-repeat',
+  color: '#FFFFFF',
+  textAlign: 'center',
+  lineHeight: '52px'
+}, {
+  width: '52px', height: '52px',
+  background: 'url(cluster-blue.png) no-repeat',
+  color: '#FFFFFF',
+  textAlign: 'center',
+  lineHeight: '52px'
+}, {
+  width: '52px', height: '52px',
+  background: 'url(cluster-dark-blue.png) no-repeat',
+  color: '#FFFFFF',
+  textAlign: 'center',
+  lineHeight: '52px'
+}];
+
 let map = null;
 const sampleMarkerList = props.markerList;
 
@@ -40,6 +60,10 @@ function initMap() {
     minLevel: 6,
     disableClickZoom: true
   });
+
+  // TODO: find way to "calculate" by markers' property
+  clusterer.setCalculator([5, 10]);
+  clusterer.setStyles(clusterStyles);
 
   var imageSrcGreen = '/marker-green.png';
   var imageSrcRed = '/marker-red.png';
