@@ -18,7 +18,7 @@ const props = defineProps({
 
 const emits = defineEmits(['updateIsGlobal']);
 
-const updateIsGlobal = () => {
+const switchToGoogleMap = () => {
   emits('updateIsGlobal', {
     isGlobal: true,
     lat: mapCenter.value.lat,
@@ -37,31 +37,33 @@ const mapCenter = ref({
   lng: null,
   level: null
 });
-const mapSwitchLevel = 6;
+const mapSwitchLevel = 5;
 const initialLevel = props.needGoogleMap === true ? mapSwitchLevel : 13;
 
-const clusterStyles = [{
-  width: '52px', height: '52px',
-  background: 'url(/map-images/cluster-green.png) no-repeat',
-  color: '#FFFFFF',
-  textAlign: 'center',
-  lineHeight: '52px'
-}, {
-  width: '52px', height: '52px',
-  background: 'url(/map-images/cluster-blue.png) no-repeat',
-  color: '#FFFFFF',
-  textAlign: 'center',
-  lineHeight: '52px'
-}, {
-  width: '52px', height: '52px',
-  background: 'url(/map-images/cluster-dark-blue.png) no-repeat',
-  color: '#FFFFFF',
-  textAlign: 'center',
-  lineHeight: '52px'
-}];
+// const clusterStyles = [{
+//   width: '52px', height: '52px',
+//   background: 'url(/map-images/cluster-green.png) no-repeat',
+//   color: '#FFFFFF',
+//   textAlign: 'center',
+//   lineHeight: '52px'
+// }, {
+//   width: '52px', height: '52px',
+//   background: 'url(/map-images/cluster-blue.png) no-repeat',
+//   color: '#FFFFFF',
+//   textAlign: 'center',
+//   lineHeight: '52px'
+// }, {
+//   width: '52px', height: '52px',
+//   background: 'url(/map-images/cluster-dark-blue.png) no-repeat',
+//   color: '#FFFFFF',
+//   textAlign: 'center',
+//   lineHeight: '52px'
+// }];
 
 let map = null;
 const sampleMarkerList = props.markerList;
+var infoWindow;
+var customOverlay;
 
 function initMap() {
   var container = document.getElementById('map');
@@ -73,6 +75,17 @@ function initMap() {
   // 지도 객체는 반응형 관리 대상이 아니므로 initMap에서 선언
   map = new kakao.maps.Map(container, options);
 
+  infoWindow = new kakao.maps.InfoWindow({
+    content: null,
+    removable: true
+  })
+
+  customOverlay = new kakao.maps.CustomOverlay({
+    position: null,
+    xAnchor: 0.5,
+    yAnchor: 1.1 + 1 / map.getLevel(),
+  });
+
   var clusterer = new kakao.maps.MarkerClusterer({
     map: map,
     averageCenter: true,
@@ -80,8 +93,8 @@ function initMap() {
     disableClickZoom: true
   });
 
-  clusterer.setCalculator([5, 10]);
-  clusterer.setStyles(clusterStyles);
+  // clusterer.setCalculator([5, 10]);
+  // clusterer.setStyles(clusterStyles);
 
   var imageSrcGreen = '/map-images/marker-green.png';
   var imageSrcRed = '/map-images/marker-red.png';
@@ -106,12 +119,11 @@ function initMap() {
     });
     marker.data = data;
 
-    var infowindow = new kakao.maps.InfoWindow({
-      content: `<div style="width: 150px; text-align: center; padding: 6px 0; font-size: 1rem">${data.name}<br>${infoWindowContent}</div>`
+    kakao.maps.event.addListener(marker, 'click', () => {
+      infoWindow.setContent(`<div style="width: 150px; text-align: center; padding: 6px 0; font-size: 1rem">${data.name}<br>${infoWindowContent}</div>`);
+      customOverlay.setMap(null);
+      infoWindow.open(map, marker);
     });
-
-    kakao.maps.event.addListener(marker, 'mouseover', makeOverListener(map, marker, infowindow));
-    kakao.maps.event.addListener(marker, 'mouseout', makeOutListener(infowindow));
 
     clusterer.addMarker(marker);
   });
@@ -119,7 +131,7 @@ function initMap() {
   setClustererOverlay(clusterer)
 
   var zoomControl = new kakao.maps.ZoomControl();
-  map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+  map.addControl(zoomControl, kakao.maps.ControlPosition.BOTTOMRIGHT);
 
   kakao.maps.event.addListener(map, 'bounds_changed', () => {
     const rawBounds = map.getBounds();
@@ -130,6 +142,7 @@ function initMap() {
   })
 
   kakao.maps.event.addListener(map, 'zoom_changed', () => {
+    customOverlay.setMap(null);
     mapCenter.value.level = map.getLevel();
   })
 }
@@ -141,7 +154,7 @@ watch([mapBounds, mapCenter], () => {
     const rawCenter = map.getCenter();
     mapCenter.value.lat = rawCenter.getLat();
     mapCenter.value.lng = rawCenter.getLng();
-    updateIsGlobal();
+    switchToGoogleMap();
   }
 })
 
@@ -151,26 +164,10 @@ watch(props.mapCenter, () => {
   map.setCenter(new kakao.maps.LatLng(props.mapCenter.lat, props.mapCenter.lng));
 })
 
-function makeOverListener(map, marker, infowindow) {
-  return function () {
-    infowindow.open(map, marker);
-  };
-}
-
-function makeOutListener(infowindow) {
-  return function () {
-    infowindow.close();
-  };
-}
-
+// TODO: find way to close customOverlay
 function setClustererOverlay(clusterer) {
-  var customOverlay;
-  kakao.maps.event.addListener(clusterer, 'clusterover', function (cluster) {
-    customOverlay = new kakao.maps.CustomOverlay({
-      position: cluster.getCenter(),
-      xAnchor: 0.5,
-      yAnchor: 1.1 + 1 / map.getLevel(),
-    });
+  kakao.maps.event.addListener(clusterer, 'clusterclick', function (cluster) {
+    customOverlay.setPosition(cluster.getCenter());
 
     var markerContentList = `<div style="background-color: white">
         <table>
@@ -190,11 +187,8 @@ function setClustererOverlay(clusterer) {
 
     customOverlay.setContent(markerContentList);
 
+    infoWindow.setMap(null);
     customOverlay.setMap(map);
-  })
-
-  kakao.maps.event.addListener(clusterer, 'clusterout', function (cluster) {
-    customOverlay.setMap(null);
   })
 }
 

@@ -46,6 +46,9 @@ const updateIsGlobal = (newValue) => {
 </script>
 
 <template>
+  <div v-if="needGoogleMap">
+    <p>동 단위까지 줌인 시 카카오 지도로 전환됩니다.</p>
+  </div>
   <KeepAlive>
     <GoogleMap v-if="isGlobal" :markerList="globalMarkerList" :mapCenter="mapCenter" @updateIsGlobal="updateIsGlobal" />
   </KeepAlive>
