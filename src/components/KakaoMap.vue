@@ -1,17 +1,29 @@
 <script setup>
-import { onMounted, reactive, watch } from 'vue'
+import { onMounted, ref, reactive, watch } from 'vue'
 
 const props = defineProps({
   markerList: {
     type: Array,
     required: true
   },
+  mapCenter: {
+    type: Object,
+    required: true
+  },
+  needGoogleMap: {
+    type: Boolean,
+    required: true
+  }
 })
 
-const emits = defineEmits(['update:isGlobal']);
+const emits = defineEmits(['updateIsGlobal']);
 
-const changeIsGlobal = () => {
-  emits('update:isGlobal', true);
+const updateIsGlobal = () => {
+  emits('updateIsGlobal', {
+    isGlobal: true,
+    lat: mapCenter.value.lat,
+    lng: mapCenter.value.lng
+  });
 }
 
 const mapBounds = reactive({
@@ -20,22 +32,29 @@ const mapBounds = reactive({
   minLng: null,
   maxLng: null
 });
+const mapCenter = ref({
+  lat: null,
+  lng: null,
+  level: null
+});
+const mapSwitchLevel = 6;
+const initialLevel = props.needGoogleMap === true ? mapSwitchLevel : 13;
 
 const clusterStyles = [{
   width: '52px', height: '52px',
-  background: 'url(cluster-green.png) no-repeat',
+  background: 'url(/map-images/cluster-green.png) no-repeat',
   color: '#FFFFFF',
   textAlign: 'center',
   lineHeight: '52px'
 }, {
   width: '52px', height: '52px',
-  background: 'url(cluster-blue.png) no-repeat',
+  background: 'url(/map-images/cluster-blue.png) no-repeat',
   color: '#FFFFFF',
   textAlign: 'center',
   lineHeight: '52px'
 }, {
   width: '52px', height: '52px',
-  background: 'url(cluster-dark-blue.png) no-repeat',
+  background: 'url(/map-images/cluster-dark-blue.png) no-repeat',
   color: '#FFFFFF',
   textAlign: 'center',
   lineHeight: '52px'
@@ -47,8 +66,8 @@ const sampleMarkerList = props.markerList;
 function initMap() {
   var container = document.getElementById('map');
   var options = {
-    center: new kakao.maps.LatLng(35.86, 128.23),
-    level: 13,
+    center: new kakao.maps.LatLng(props.mapCenter.lat, props.mapCenter.lng),
+    level: initialLevel
   };
 
   // 지도 객체는 반응형 관리 대상이 아니므로 initMap에서 선언
@@ -57,28 +76,25 @@ function initMap() {
   var clusterer = new kakao.maps.MarkerClusterer({
     map: map,
     averageCenter: true,
-    minLevel: 6,
+    minLevel: mapSwitchLevel + 1,
     disableClickZoom: true
   });
 
-  // TODO: find way to "calculate" by markers' property
   clusterer.setCalculator([5, 10]);
   clusterer.setStyles(clusterStyles);
 
-  var imageSrcGreen = '/marker-green.png';
-  var imageSrcRed = '/marker-red.png';
+  var imageSrcGreen = '/map-images/marker-green.png';
+  var imageSrcRed = '/map-images/marker-red.png';
   var imageSize = new kakao.maps.Size(29, 42);
 
   // 마커 클러스터러로 관리할 마커 객체는 생성할 때 지도 객체를 설정하지 않음 - 클러스터러가 이미 지도에 매핑되어 있음
   sampleMarkerList.map((data) => {
     var imageSrc = imageSrcGreen;
-    var lastCommunicationTime = new Date();
     if (data.disconnected === true) {
       imageSrc = imageSrcRed;
-      lastCommunicationTime = new Date(70);
     }
 
-    var infoWindowContent = formatDate(lastCommunicationTime);
+    var infoWindowContent = "";
 
     var marker = new kakao.maps.Marker({
       position: new kakao.maps.LatLng(data.lat, data.lng),
@@ -112,15 +128,27 @@ function initMap() {
     mapBounds.lngMin = rawBounds.ha;
     mapBounds.lngMax = rawBounds.oa;
   })
+
+  kakao.maps.event.addListener(map, 'zoom_changed', () => {
+    mapCenter.value.level = map.getLevel();
+  })
 }
 
-watch(mapBounds, () => {
-  if (mapBounds.latMin < 30 || mapBounds.latMax > 43) {
-    const rokCenter = new kakao.maps.LatLng(35.86, 128.23);
-    map.setCenter(rokCenter);
-    map.setLevel(13);
-    changeIsGlobal();
+// switch to Google Map
+watch([mapBounds, mapCenter], () => {
+  if (props.needGoogleMap && (mapBounds.latMin < 31 || mapBounds.latMax > 41 || mapBounds.lngMin < 119 || mapBounds.lngMax > 136 || mapCenter.value.level > mapSwitchLevel)) {
+    map.setLevel(mapSwitchLevel);
+    const rawCenter = map.getCenter();
+    mapCenter.value.lat = rawCenter.getLat();
+    mapCenter.value.lng = rawCenter.getLng();
+    updateIsGlobal();
   }
+})
+
+// switch from Google Map
+watch(props.mapCenter, () => {
+  map.setLevel(mapSwitchLevel);
+  map.setCenter(new kakao.maps.LatLng(props.mapCenter.lat, props.mapCenter.lng));
 })
 
 function makeOverListener(map, marker, infowindow) {
@@ -170,19 +198,6 @@ function setClustererOverlay(clusterer) {
   })
 }
 
-function formatDate(date) {
-  const formattedDate = date.toLocaleString('en', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  });
-  return formattedDate.replace(/(\d{1,2})\/(\d{1,2})\/(\d{4}), (\d{1,2}):(\d{1,2}):(\d{1,2})/, '$3-$1-$2 $4:$5:$6');
-}
-
 onMounted(() => {
   initMap();
 })
@@ -191,7 +206,6 @@ onMounted(() => {
 
 <template>
   <div id="map">
-    <!-- <ProgressSpinner /> -->
   </div>
 </template>
 

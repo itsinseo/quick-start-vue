@@ -11,6 +11,11 @@ const maxLat = 38.61;
 const minLng = 124.60;
 const maxLng = 131.87;
 
+const mapCenter = ref({
+  lat: 35.86,
+  lng: 128.23
+});
+
 const allMarkerList = ref(MarkerList.markerList);
 const globalMarkerList = ref([]);
 const domesticMarkerList = ref([]);
@@ -32,27 +37,22 @@ const needGoogleMap = isGlobal.value;
 
 const updateIsGlobal = (newValue) => {
   if (needGoogleMap) {
-    isGlobal.value = newValue;
+    isGlobal.value = newValue.isGlobal;
+    mapCenter.value.lat = newValue.lat;
+    mapCenter.value.lng = newValue.lng;
   }
 }
 
 </script>
 
 <template>
-  <div class="wrapper-container" v-if="needGoogleMap">
-    <Button v-if="isGlobal" label="국내 지도" icon="pi pi-map" @click="isGlobal = !isGlobal" class="button-test" />
-    <Button v-else label="전세계 지도" icon="pi pi-globe" @click="isGlobal = !isGlobal" class="button-test" />
-  </div>
   <KeepAlive>
-    <GoogleMap :markerList="globalMarkerList" v-if="isGlobal" @update:isGlobal="updateIsGlobal" />
+    <GoogleMap v-if="isGlobal" :markerList="globalMarkerList" :mapCenter="mapCenter" @updateIsGlobal="updateIsGlobal" />
   </KeepAlive>
   <KeepAlive>
-    <KakaoMap :markerList="domesticMarkerList" v-if="!isGlobal" @update:isGlobal="updateIsGlobal" />
+    <KakaoMap v-if="!isGlobal" :markerList="domesticMarkerList" :mapCenter="mapCenter" :needGoogleMap="needGoogleMap"
+      @updateIsGlobal="updateIsGlobal" />
   </KeepAlive>
-  <DataTable :value="lostMarkerList">
-    <Column field="name" header="업체명" />
-    <Column field="disconnected" header="통신 상태" />
-  </DataTable>
 </template>
 
 <style></style>

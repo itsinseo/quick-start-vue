@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, watch } from 'vue';
+import { onMounted, ref, reactive, watch } from 'vue';
 
 import { Loader } from '@googlemaps/js-api-loader'
 import { MarkerClusterer } from '@googlemaps/markerclusterer'
@@ -9,13 +9,25 @@ const props = defineProps({
     type: Array,
     required: true
   },
+  mapCenter: {
+    type: Object,
+    required: true
+  }
 })
 
-const emits = defineEmits(['update:isGlobal']);
+const emits = defineEmits(['updateIsGlobal']);
 
-const changeIsGlobal = () => {
-  emits('update:isGlobal', false);
+const updateIsGlobal = () => {
+  emits('updateIsGlobal', {
+    isGlobal: false,
+    lat: mapCenter.value.lat,
+    lng: mapCenter.value.lng
+  });
 }
+
+let map;
+
+const sampleMarkerList = props.markerList;
 
 const mapBounds = reactive({
   minLat: null,
@@ -23,11 +35,13 @@ const mapBounds = reactive({
   minLng: null,
   maxLng: null
 });
-
-let map;
-let zoomLevel = 2;
-let centerPosition = { lat: 35.86, lng: 128.23 };
-const sampleMarkerList = props.markerList;
+const mapCenter = ref({
+  lat: null,
+  lng: null,
+  level: null
+});
+const mapSwitchZoom = 13;
+const initialZoom = 2;
 
 function formatMarkerInfo(coordinate) {
   return coordinate.name
@@ -44,16 +58,12 @@ function initMap() {
     const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
 
     map = new Map(document.getElementById("map"), {
-      center: centerPosition,
-      zoom: zoomLevel,
+      center: props.mapCenter,
+      zoom: initialZoom,
       gestureHandling: "greedy",
-      mapId: "DEMO_GLOBAL_MAP",
+      mapId: "GOOGLE_MAP",
       streetViewControl: false,
-      mapTypeControl: true,
-      mapTypeControlOptions: {
-        style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-        mapTypeIds: ["roadmap", "terrain"],
-      },
+      mapTypeControl: false,
       scaleControl: true,
       minZoom: 2,
       maxZoom: 15,
@@ -132,7 +142,6 @@ function initMap() {
 
       var color = "#008000";
       var disconnectedCount = 0;
-      // color = count > Math.max(10, stats.clusters.markers.mean) ? "#ff0000" : "#0000ff";
 
       cluster.markers.map((marker) => {
         if (marker.data.disconnected === true) {
@@ -168,15 +177,28 @@ function initMap() {
       mapBounds.lngMin = rawBounds.Gh.lo;
       mapBounds.lngMax = rawBounds.Gh.hi;
     })
+
+    map.addListener("zoom_changed", () => {
+      mapCenter.value.level = map.getZoom();
+    })
   });
 }
 
-watch(mapBounds, () => {
-  if (mapBounds.latMin > 32 && mapBounds.latMax < 40 && mapBounds.lngMin > 120 && mapBounds.lngMax < 135) {
-    map.setCenter(new google.maps.LatLng(35.86, 128.23));
-    map.setZoom(6);
-    changeIsGlobal();
+// switch to Kakao Map
+watch([mapBounds, mapCenter], () => {
+  if (mapBounds.latMin > 32 && mapBounds.latMax < 40 && mapBounds.lngMin > 120 && mapBounds.lngMax < 135 && mapCenter.value.level > mapSwitchZoom) {
+    map.setZoom(mapSwitchZoom);
+    const rawCenter = map.getCenter();
+    mapCenter.value.lat = rawCenter.lat();
+    mapCenter.value.lng = rawCenter.lng();
+    updateIsGlobal();
   }
+})
+
+// switch from Kakao Map
+watch(props.mapCenter, () => {
+  map.setZoom(mapSwitchZoom);
+  map.setCenter(new google.maps.LatLng(props.mapCenter.lat, props.mapCenter.lng));
 })
 
 onMounted(() => {
@@ -186,9 +208,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- <Button label="Geocoding TEST" icon="pi pi-wrench" @click="testGoogleGeocoding" class="button-test"></Button> -->
   <div id="map">
-    <ProgressSpinner />
   </div>
 </template>
 
