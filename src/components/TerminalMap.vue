@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import GoogleMap from '@/components/GoogleMap.vue'
 import KakaoMap from '@/components/KakaoMap.vue'
 
-import MarkerList from '@/data/abroad-marker-list.json'
+import MarkerList from '@/data/domestic-marker-list.json'
 
 const minLat = 33.11;
 const maxLat = 38.61;

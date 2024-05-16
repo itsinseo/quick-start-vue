@@ -62,6 +62,8 @@ const initialLevel = props.needGoogleMap === true ? mapSwitchLevel : 13;
 
 let map = null;
 const sampleMarkerList = props.markerList;
+var markers = [];
+var markerClusterer;
 var infoWindow;
 var customOverlay;
 
@@ -75,6 +77,29 @@ function initMap() {
   // 지도 객체는 반응형 관리 대상이 아니므로 initMap에서 선언
   map = new kakao.maps.Map(container, options);
 
+  var zoomControl = new kakao.maps.ZoomControl();
+  map.addControl(zoomControl, kakao.maps.ControlPosition.BOTTOMRIGHT);
+
+  // clusterer.setCalculator([5, 10]);
+  // clusterer.setStyles(clusterStyles);
+
+  renderMarkersAndClusters(sampleMarkerList);
+
+  kakao.maps.event.addListener(map, 'bounds_changed', () => {
+    const rawBounds = map.getBounds();
+    mapBounds.latMin = rawBounds.qa;
+    mapBounds.latMax = rawBounds.pa;
+    mapBounds.lngMin = rawBounds.ha;
+    mapBounds.lngMax = rawBounds.oa;
+  })
+
+  kakao.maps.event.addListener(map, 'zoom_changed', () => {
+    customOverlay.setMap(null);
+    mapCenter.value.level = map.getLevel();
+  })
+}
+
+function renderMarkersAndClusters(markerList) {
   infoWindow = new kakao.maps.InfoWindow({
     content: null,
     removable: true
@@ -86,22 +111,19 @@ function initMap() {
     yAnchor: 1.1 + 1 / map.getLevel(),
   });
 
-  var clusterer = new kakao.maps.MarkerClusterer({
+  markerClusterer = new kakao.maps.MarkerClusterer({
     map: map,
     averageCenter: true,
     minLevel: mapSwitchLevel + 1,
     disableClickZoom: true
   });
 
-  // clusterer.setCalculator([5, 10]);
-  // clusterer.setStyles(clusterStyles);
-
   var imageSrcGreen = '/map-images/marker-green.png';
   var imageSrcRed = '/map-images/marker-red.png';
   var imageSize = new kakao.maps.Size(29, 42);
 
   // 마커 클러스터러로 관리할 마커 객체는 생성할 때 지도 객체를 설정하지 않음 - 클러스터러가 이미 지도에 매핑되어 있음
-  sampleMarkerList.map((data) => {
+  markerList.map((data) => {
     var imageSrc = imageSrcGreen;
     if (data.disconnected === true) {
       imageSrc = imageSrcRed;
@@ -125,26 +147,12 @@ function initMap() {
       infoWindow.open(map, marker);
     });
 
-    clusterer.addMarker(marker);
+    markerClusterer.addMarker(marker);
+
+    markers.push(marker);
   });
 
-  setClustererOverlay(clusterer)
-
-  var zoomControl = new kakao.maps.ZoomControl();
-  map.addControl(zoomControl, kakao.maps.ControlPosition.BOTTOMRIGHT);
-
-  kakao.maps.event.addListener(map, 'bounds_changed', () => {
-    const rawBounds = map.getBounds();
-    mapBounds.latMin = rawBounds.qa;
-    mapBounds.latMax = rawBounds.pa;
-    mapBounds.lngMin = rawBounds.ha;
-    mapBounds.lngMax = rawBounds.oa;
-  })
-
-  kakao.maps.event.addListener(map, 'zoom_changed', () => {
-    customOverlay.setMap(null);
-    mapCenter.value.level = map.getLevel();
-  })
+  setClustererOverlay(markerClusterer)
 }
 
 // switch to Google Map
@@ -196,9 +204,44 @@ onMounted(() => {
   initMap();
 })
 
+function clearMap() {
+  infoWindow.setMap(null);
+  customOverlay.setMap(null);
+  markerClusterer.clear();
+}
+
+function showConnected() {
+  clearMap();
+
+  markers.map((marker) => {
+    if (!marker.data.disconnected) {
+      markerClusterer.addMarker(marker);
+    }
+  })
+}
+function showDisconnected() {
+  clearMap();
+
+  markers.map((marker) => {
+    if (marker.data.disconnected) {
+      markerClusterer.addMarker(marker);
+    }
+  })
+}
+function showAll() {
+  clearMap();
+
+  markers.map((marker) => {
+    markerClusterer.addMarker(marker);
+  })
+}
+
 </script>
 
 <template>
+  <Button @click="showConnected" icon="pi pi-filter" label="Connected" class="button-test" />
+  <Button @click="showDisconnected" icon="pi pi-filter" label="Disconnected" class="button-test" />
+  <Button @click="showAll" icon="pi pi-filter-slash" class="button-test" />
   <div id="map">
   </div>
 </template>
