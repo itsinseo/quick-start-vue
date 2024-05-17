@@ -1,9 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
+import dayjs from 'dayjs';
 import { Loader } from '@googlemaps/js-api-loader'
 
-import commRawData from '@/data/comm-raw-data.json'
+import commRawData from '@/data/merged-240517.json'
 
 const commDataList = commRawData;
 
@@ -20,29 +21,19 @@ const countryList = [
   '중국',
   '폴란드'
 ]
-const selectedCountry = ref();
+const selectedCountry = ref("대한민국");
 const inputText = ref();
 const formattedAddress = ref();
 const formattedCoordinate = ref();
 
 const apiThreshold = 20;
-const dt = ref();
 const geocodedDataList = ref([]);
-
-const exportCSV = () => {
-  dt.value.exportCSV();
-};
 
 function codeAddress(address, region) {
   return new Promise((resolve, reject) => {
     var geocoder = new google.maps.Geocoder();
     geocoder.geocode({ 'address': address }, function (results, status) {
       if (status == 'OK') {
-        results[0].address_components.map((addr_component) => {
-          if (addr_component.types[0] === 'country' && addr_component.long_name !== region) {
-            reject(new Error(`COUNTRY_INFO_NOT_MATCHING - Given:${region}, Result:${addr_component.long_name}`))
-          }
-        })
         resolve(results);
       } else {
         geocoder.geocode({ 'address': region }, function (secondaryResults, secondaryStatus) {
@@ -124,6 +115,86 @@ onMounted(() => {
   initMap();
 })
 
+const today = computed(() => dayjs());
+
+const dt = ref();
+const geocodedDataArray = ref([]);
+const columns = [
+  // "state",
+  "region",
+  "tid",
+  // "contactNo",
+  "tmVer",
+  // "tmCreatedAt",
+  "customer",
+  // "manager",
+  "deliveredAt",
+  "emplacement",
+  "memo",
+  "company",
+  "division",
+  // "etc",
+  // "label",
+  // "lrCtn",
+  // "lrUsim",
+  // "lrImei",
+  // "lrSp",
+  // "lrRate",
+  // "simIccid",
+  // "simMsisdn",
+  // "simImsi",
+  // "simImei",
+  // "simSp",
+  // "simRate",
+  // "atValue",
+  // "recvData",
+  "lastCommedAt",
+  "commState",
+  "formattedAddr",
+  "lat",
+  "lng"
+];
+
+const defineCommState = () => {
+  commDataList.map((d) => {
+    if (d.lastCommedAt) {
+      const tmp = today.value.diff(dayjs(d.lastCommedAt, 'YYYY-MM-DD HH:mm:ss.0'), 'h');
+      d.commState = tmp < 6 ? 'green' : tmp < 24 ? 'yellow' : 'red';
+    } else {
+      d.commState = 'red';
+    }
+  })
+}
+
+defineCommState();
+
+function addGeocodingResults() {
+  commDataList.map((commData) => {
+    var tempData = commData;
+    if (!commData.hasOwnProperty('lat')) {
+      tempData.formattedAddr = null;
+      tempData.lat = null;
+      tempData.lng = null;
+      codeAddress(tempData.emplacement, tempData.region)
+        .then(coords => {
+          tempData.formattedAddr = coords[0].formatted_address;
+          tempData.lat = coords[0].geometry.location.lat();
+          tempData.lng = coords[0].geometry.location.lng();
+        })
+        .catch(error => {
+          console.log(tempData.emplacement + ": " + error)
+        })
+        .finally(() => {
+          geocodedDataArray.value.push(tempData);
+        })
+    }
+  })
+}
+
+const exportCSV2 = () => {
+  dt.value.exportCSV();
+}
+
 </script>
 
 <template>
@@ -136,20 +207,12 @@ onMounted(() => {
       <Textarea type="text" v-model="formattedCoordinate" autoResize rows="3" cols="20" />
     </div>
   </div>
-  <DataTable :value="geocodedDataList" ref="dt" removableSort paginator :rows="10"
-    :rowsPerPageOptions="[5, 10, 20, 50]">
-    <template #header>
-      <div style="text-align: left">
-        <Button @click="googleGeocoding" label="Geocoding" icon="pi pi-google" class="button-test" />
-        <Button icon="pi pi-download" label="CSV" @click="exportCSV($event)" class="button-test" />
-      </div>
-    </template>
-    <Column field="tid" header="터미널ID" sortable />
-    <Column field="address" header="주소" />
-    <Column field="region" header="국가" />
-    <Column field="formattedAddress" header="변환된 주소" />
-    <Column field="coordinate" header="좌표값" />
-    <Column field="memo" header="비고" />
+  <InputText type="text" v-model="today" class="button-test" style="width: 20rem;" />
+  <Button @click="addGeocodingResults" label="Geocode" icon="pi pi-google" class="button-test" />
+  <Button @click="exportCSV2" label="CSV" icon="pi pi-download" class="button-test" />
+  <DataTable :value="geocodedDataArray" ref="dt" paginator :rows="10" :rowsPerPageOptions="[10, 20, 50]">
+    <template #empty> No data to geocode. </template>
+    <Column v-for="col of columns" :field="col" :header="col" />
   </DataTable>
 </template>
 
