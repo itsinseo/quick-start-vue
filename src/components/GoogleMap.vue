@@ -1,5 +1,7 @@
 <script setup>
-import { onMounted, ref, reactive, watch } from 'vue';
+import { onMounted, ref, reactive, computed, watch } from 'vue';
+
+import dayjs from 'dayjs';
 
 import { Loader } from '@googlemaps/js-api-loader'
 import { MarkerClusterer } from '@googlemaps/markerclusterer'
@@ -27,7 +29,7 @@ const switchToKakaoMap = () => {
 
 let map;
 
-const sampleMarkerList = props.markerList;
+const propsMarkerList = props.markerList;
 
 const mapBounds = reactive({
   minLat: null,
@@ -46,10 +48,6 @@ const initialZoom = 2;
 var markers = [];
 var markerClusterer;
 var infoWindow;
-
-function formatMarkerInfo(coordinate) {
-  return coordinate.name
-}
 
 function initMap() {
   const loader = new Loader({
@@ -81,7 +79,7 @@ function initMap() {
       },
     });
 
-    renderMarkersAndClusterers(sampleMarkerList);
+    renderMarkersAndClusterers(propsMarkerList);
 
     map.addListener("bounds_changed", () => {
       const rawBounds = map.getBounds();
@@ -102,14 +100,24 @@ function renderMarkersAndClusterers(markerList) {
   infoWindow = new google.maps.InfoWindow({
     content: ""
   });
-  markerList.map((coordinate, i) => {
+  markerList.map((markerData, i) => {
+    var formattedCustomer = "";
+    if (!markerData.customer) {
+      formattedCustomer = "없음";
+    } else if (markerData.customer.substr(0, 3) === '(주)') {
+      formattedCustomer = markerData.customer.substr(3, 2);
+    } else {
+      formattedCustomer = markerData.customer.substr(0, 2);
+    }
+
     const pinGlyph = new google.maps.marker.PinElement({
-      glyph: coordinate.name.substr(0, 2),
+      glyph: formattedCustomer,
       glyphColor: "white",
-      background: coordinate.disconnected === true ? "red" : "green"
+      background: markerData.commState,
+      scale: 1.1
     });
     const marker = new google.maps.marker.AdvancedMarkerElement({
-      position: coordinate,
+      position: new google.maps.LatLng(markerData.lat, markerData.lng),
       content: pinGlyph.element,
     });
 
@@ -117,12 +125,13 @@ function renderMarkersAndClusterers(markerList) {
       infoWindow.setOptions({
         pixelOffset: new google.maps.Size(0, 0)
       })
-      infoWindow.setContent(formatMarkerInfo(coordinate))
+      infoWindow.setContent(` ${marker.data.customer}<br>
+                              ${marker.data.lastCommedAt}  `)
       infoWindow.open(map, marker)
     })
 
-    marker.title = coordinate.name;
-    marker.data = coordinate;
+    marker.title = markerData.customer ? markerData.customer : "업체명 없음";
+    marker.data = markerData;
 
     markers.push(marker);
   });
@@ -133,14 +142,17 @@ function renderMarkersAndClusterers(markerList) {
         <table>
           <tr>
             <th style="background-color: lightblue">업체명</th>
-            <th style="background-color: lightblue">통신 상태</th>
+            <th style="background-color: lightblue">통신 기록</th>
           </tr>`;
     cluster.markers.map((marker) => {
-      var markerConnection = marker.data.disconnected === true ? " 연결 끊김 " : "";
+      var color = marker.data.commState;
+      if (color === 'yellow') {
+        color = 'gold'
+      }
       markerContentList += `
           <tr>
             <td>${marker.title}</td>
-            <td style="color: red">${markerConnection}</td>
+            <td style="color: ${color}">${marker.data.lastCommedAt}</td>
           </tr>`;
     });
     markerContentList += `</table>`;
@@ -167,8 +179,8 @@ function renderMarkersAndClusterers(markerList) {
     var disconnectedCount = 0;
 
     cluster.markers.map((marker) => {
-      if (marker.data.disconnected === true) {
-        color = "#ff0000";
+      if (marker.data.commState === 'red') {
+        color = '#ff0000';
         disconnectedCount++;
       }
     })
@@ -227,7 +239,8 @@ function showConnected() {
   clearMap();
 
   markers.map((marker) => {
-    if (!marker.data.disconnected) {
+    if (marker.data.commState !== 'red') {
+      console.log("ok")
       markerClusterer.addMarker(marker);
     }
   })
@@ -236,7 +249,7 @@ function showDisconnected() {
   clearMap();
 
   markers.map((marker) => {
-    if (marker.data.disconnected) {
+    if (marker.data.commState === 'red') {
       markerClusterer.addMarker(marker);
     }
   })

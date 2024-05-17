@@ -1,10 +1,12 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+
+import dayjs from 'dayjs';
 
 import GoogleMap from '@/components/GoogleMap.vue'
 import KakaoMap from '@/components/KakaoMap.vue'
 
-import MarkerList from '@/data/domestic-marker-list.json'
+import commRawData from '@/data/merged-240517.json'
 
 const minLat = 33.11;
 const maxLat = 38.61;
@@ -16,17 +18,27 @@ const mapCenter = ref({
   lng: 128.23
 });
 
-const allMarkerList = ref(MarkerList.markerList);
+const today = computed(() => dayjs());
+
+const allMarkerList = ref(commRawData);
 const globalMarkerList = ref([]);
 const domesticMarkerList = ref([]);
 const lostMarkerList = ref([]);
-allMarkerList.value.map((marker) => {
-  if (marker.lat === null || marker.lng === null) {
-    lostMarkerList.value.push(marker);
+allMarkerList.value.map((markerData) => {
+  // define commState
+  if (markerData.lastCommedAt) {
+    const tmp = today.value.diff(dayjs(markerData.lastCommedAt, 'YYYY-MM-DD HH:mm:ss.0'), 'h');
+    markerData.commState = tmp < 6 ? 'green' : tmp < 24 ? 'yellow' : 'red';
   } else {
-    globalMarkerList.value.push(marker);
-    if (marker.lat >= minLat && marker.lat <= maxLat && marker.lng >= minLng && marker.lng <= maxLng) {
-      domesticMarkerList.value.push(marker);
+    markerData.commState = 'red';
+  }
+  // determine lost, global
+  if (markerData.lat === null || markerData.lng === null) {
+    lostMarkerList.value.push(markerData);
+  } else {
+    globalMarkerList.value.push(markerData);
+    if (markerData.lat >= minLat && markerData.lat <= maxLat && markerData.lng >= minLng && markerData.lng <= maxLng) {
+      domesticMarkerList.value.push(markerData);
     }
   }
 })

@@ -1,6 +1,8 @@
 <script setup>
 import { onMounted, ref, reactive, watch } from 'vue'
 
+import dayjs from 'dayjs'
+
 const props = defineProps({
   markerList: {
     type: Array,
@@ -61,7 +63,7 @@ const initialLevel = props.needGoogleMap === true ? mapSwitchLevel : 13;
 // }];
 
 let map = null;
-const sampleMarkerList = props.markerList;
+const propsMarkerList = props.markerList;
 var markers = [];
 var markerClusterer;
 var infoWindow;
@@ -83,7 +85,7 @@ function initMap() {
   // clusterer.setCalculator([5, 10]);
   // clusterer.setStyles(clusterStyles);
 
-  renderMarkersAndClusters(sampleMarkerList);
+  renderMarkersAndClusters(propsMarkerList);
 
   kakao.maps.event.addListener(map, 'bounds_changed', () => {
     const rawBounds = map.getBounds();
@@ -114,35 +116,36 @@ function renderMarkersAndClusters(markerList) {
   markerClusterer = new kakao.maps.MarkerClusterer({
     map: map,
     averageCenter: true,
-    minLevel: mapSwitchLevel + 1,
+    minLevel: 1,
     disableClickZoom: true
   });
 
   var imageSrcGreen = '/map-images/marker-green.png';
+  var imageSrcYellow = '/map-images/marker-yellow.png';
   var imageSrcRed = '/map-images/marker-red.png';
   var imageSize = new kakao.maps.Size(29, 42);
 
   // 마커 클러스터러로 관리할 마커 객체는 생성할 때 지도 객체를 설정하지 않음 - 클러스터러가 이미 지도에 매핑되어 있음
-  markerList.map((data) => {
+  markerList.map((markerData) => {
     var imageSrc = imageSrcGreen;
-    if (data.disconnected === true) {
+    if (markerData.commState === 'yellow') {
+      imageSrc = imageSrcYellow;
+    } else if (markerData.commState === 'red') {
       imageSrc = imageSrcRed;
     }
 
-    var infoWindowContent = "";
-
     var marker = new kakao.maps.Marker({
-      position: new kakao.maps.LatLng(data.lat, data.lng),
-      title: data.name,
+      position: new kakao.maps.LatLng(markerData.lat, markerData.lng),
+      title: markerData.customer,
       image: new kakao.maps.MarkerImage(
         imageSrc,
         imageSize
       )
     });
-    marker.data = data;
+    marker.data = markerData;
 
     kakao.maps.event.addListener(marker, 'click', () => {
-      infoWindow.setContent(`<div style="width: 150px; text-align: center; padding: 6px 0; font-size: 1rem">${data.name}<br>${infoWindowContent}</div>`);
+      infoWindow.setContent(`<div style="width: 150px; text-align: center; padding: 6px 0; font-size: 1rem">${markerData.customer}<br>${markerData.lastCommedAt}</div>`);
       customOverlay.setMap(null);
       infoWindow.open(map, marker);
     });
@@ -181,14 +184,17 @@ function setClustererOverlay(clusterer) {
         <table>
           <tr>
             <th style="background-color: lightblue">업체명</th>
-            <th style="background-color: lightblue">통신 상태</th>
+            <th style="background-color: lightblue">통신 기록</th>
           </tr>`;
     cluster.getMarkers().map((marker) => {
-      var markerConnection = marker.data.disconnected === true ? " 연결 끊김 " : "";
+      var color = marker.data.commState;
+      if (color === 'yellow') {
+        color = 'gold'
+      }
       markerContentList += `
           <tr>
-            <td>${marker.data.name}</td>
-            <td style="color: red">${markerConnection}</td>
+            <td>${marker.data.customer}</td>
+            <td style="color: ${color}">${marker.data.lastCommedAt}</td>
           </tr>`;
     });
     markerContentList += `</table></div>`;
@@ -214,7 +220,7 @@ function showConnected() {
   clearMap();
 
   markers.map((marker) => {
-    if (!marker.data.disconnected) {
+    if (marker.data.commState !== 'red') {
       markerClusterer.addMarker(marker);
     }
   })
@@ -223,7 +229,7 @@ function showDisconnected() {
   clearMap();
 
   markers.map((marker) => {
-    if (marker.data.disconnected) {
+    if (marker.data.commState === 'red') {
       markerClusterer.addMarker(marker);
     }
   })
