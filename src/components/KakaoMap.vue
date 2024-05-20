@@ -1,8 +1,6 @@
 <script setup>
 import { onMounted, ref, reactive, watch } from 'vue'
 
-import dayjs from 'dayjs'
-
 const props = defineProps({
   markerList: {
     type: Array,

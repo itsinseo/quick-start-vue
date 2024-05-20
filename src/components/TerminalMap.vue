@@ -21,8 +21,8 @@ const mapCenter = ref({
 const today = computed(() => dayjs());
 
 const allMarkerList = ref(commRawData);
-const globalMarkerList = ref([]);
-const domesticMarkerList = ref([]);
+const markerList = ref([]);
+var domesticMarkerCount = 0;
 const lostMarkerList = ref([]);
 allMarkerList.value.map((markerData) => {
   // define commState
@@ -36,14 +36,14 @@ allMarkerList.value.map((markerData) => {
   if (markerData.lat === null || markerData.lng === null) {
     lostMarkerList.value.push(markerData);
   } else {
-    globalMarkerList.value.push(markerData);
+    markerList.value.push(markerData);
     if (markerData.lat >= minLat && markerData.lat <= maxLat && markerData.lng >= minLng && markerData.lng <= maxLng) {
-      domesticMarkerList.value.push(markerData);
+      domesticMarkerCount++;
     }
   }
 })
 
-const isGlobal = ref(globalMarkerList.value.length !== domesticMarkerList.value.length);
+const isGlobal = ref(markerList.value.length !== domesticMarkerCount);
 
 const needGoogleMap = isGlobal.value;
 
@@ -59,13 +59,13 @@ const updateIsGlobal = (newValue) => {
 
 <template>
   <div v-if="needGoogleMap">
-    <p>동 단위까지 줌인 시 카카오 지도로 전환됩니다.</p>
+    <p>우리나라 동 단위까지 줌인 시 카카오 지도로 전환됩니다.</p>
   </div>
   <KeepAlive>
-    <GoogleMap v-if="isGlobal" :markerList="globalMarkerList" :mapCenter="mapCenter" @updateIsGlobal="updateIsGlobal" />
+    <GoogleMap v-if="isGlobal" :markerList="markerList" :mapCenter="mapCenter" @updateIsGlobal="updateIsGlobal" />
   </KeepAlive>
   <KeepAlive>
-    <KakaoMap v-if="!isGlobal" :markerList="domesticMarkerList" :mapCenter="mapCenter" :needGoogleMap="needGoogleMap"
+    <KakaoMap v-if="!isGlobal" :markerList="markerList" :mapCenter="mapCenter" :needGoogleMap="needGoogleMap"
       @updateIsGlobal="updateIsGlobal" />
   </KeepAlive>
 </template>
