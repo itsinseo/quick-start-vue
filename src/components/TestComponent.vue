@@ -200,16 +200,16 @@ const exportCSV2 = () => {
 <template>
   <div class="wrapper-container">
     <Dropdown v-model="selectedCountry" :options="countryList" placeholder="국가 선택" style="min-width: 10rem;" />
-    <InputText type="text" v-model="inputText" class="button-test" />
-    <Button @click="testGoogleGeocoding(inputText)" label="Test Geocoding" icon="pi pi-wrench" class="button-test" />
+    <InputText type="text" v-model="inputText" class="user-interaction" />
+    <Button @click="testGoogleGeocoding(inputText)" label="Test Geocoding" icon="pi pi-wrench" class="user-interaction" />
     <div class="wrapper-container">
       <Textarea type="text" v-model="formattedAddress" autoResize rows="3" cols="20" />
       <Textarea type="text" v-model="formattedCoordinate" autoResize rows="3" cols="20" />
     </div>
   </div>
-  <InputText type="text" v-model="today" class="button-test" style="width: 20rem;" />
-  <Button @click="addGeocodingResults" label="Geocode" icon="pi pi-google" class="button-test" />
-  <Button @click="exportCSV2" label="CSV" icon="pi pi-download" class="button-test" />
+  <InputText type="text" v-model="today" class="user-interaction" style="width: 20rem;" />
+  <Button @click="addGeocodingResults" label="Geocode" icon="pi pi-google" class="user-interaction" />
+  <Button @click="exportCSV2" label="CSV" icon="pi pi-download" class="user-interaction" />
   <DataTable :value="geocodedDataArray" ref="dt" paginator :rows="10" :rowsPerPageOptions="[10, 20, 50]">
     <template #empty> No data to geocode. </template>
     <Column v-for="col of columns" :field="col" :header="col" />
@@ -217,7 +217,7 @@ const exportCSV2 = () => {
 </template>
 
 <style scoped>
-.button-test {
+.user-interaction {
   display: inline;
 }
 </style>

@@ -43,7 +43,7 @@ const locationList = [
   { name: "일본" }
 ]
 
-const initFilter = () => {
+const clearFilter = () => {
   filters.value = {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     terminal_id: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -150,7 +150,7 @@ function resetObject(obj) {
   }
 }
 
-initFilter();
+clearFilter();
 
 const windowWidth = ref(window.innerWidth);
 
@@ -203,8 +203,7 @@ onBeforeUnmount(() => {
               class="select-location" />
           </div>
           <div class="col">
-            <Button type="button" icon="pi pi-filter-slash" outlined @click="initFilter()"
-              class="button-filter-clear" />
+            <Button type="button" icon="pi pi-filter-slash" outlined @click="clearFilter()" />
           </div>
         </div>
       </div>

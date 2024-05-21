@@ -107,7 +107,7 @@ const totalRouterCount = ref(simData.value[0].totalCnt)
   </div>
 </template>
 
-<style>
+<style scoped>
 th {
   background-color: #f3fbfd;
   font-weight: bold;

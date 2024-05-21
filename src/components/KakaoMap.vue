@@ -10,6 +10,10 @@ const props = defineProps({
     type: Object,
     required: true
   },
+  filterOptions: {
+    type: Object,
+    required: true
+  },
   needGoogleMap: {
     type: Boolean,
     required: true
@@ -40,26 +44,6 @@ const mapCenter = ref({
 const mapSwitchLevel = 5;
 const initialLevel = props.needGoogleMap === true ? mapSwitchLevel : 13;
 
-// const clusterStyles = [{
-//   width: '52px', height: '52px',
-//   background: 'url(/map-images/cluster-green.png) no-repeat',
-//   color: '#FFFFFF',
-//   textAlign: 'center',
-//   lineHeight: '52px'
-// }, {
-//   width: '52px', height: '52px',
-//   background: 'url(/map-images/cluster-blue.png) no-repeat',
-//   color: '#FFFFFF',
-//   textAlign: 'center',
-//   lineHeight: '52px'
-// }, {
-//   width: '52px', height: '52px',
-//   background: 'url(/map-images/cluster-dark-blue.png) no-repeat',
-//   color: '#FFFFFF',
-//   textAlign: 'center',
-//   lineHeight: '52px'
-// }];
-
 let map = null;
 const propsMarkerList = props.markerList;
 var markers = [];
@@ -79,9 +63,6 @@ function initMap() {
 
   var zoomControl = new kakao.maps.ZoomControl();
   map.addControl(zoomControl, kakao.maps.ControlPosition.BOTTOMRIGHT);
-
-  // clusterer.setCalculator([5, 10]);
-  // clusterer.setStyles(clusterStyles);
 
   renderMarkersAndClusters(propsMarkerList);
 
@@ -108,7 +89,7 @@ function renderMarkersAndClusters(markerList) {
   customOverlay = new kakao.maps.CustomOverlay({
     position: null,
     xAnchor: 0.5,
-    yAnchor: 1.1 + 1 / map.getLevel(),
+    yAnchor: 1
   });
 
   markerClusterer = new kakao.maps.MarkerClusterer({
@@ -153,7 +134,7 @@ function renderMarkersAndClusters(markerList) {
     markers.push(marker);
   });
 
-  setClustererOverlay(markerClusterer)
+  setClustererOverlay(markerClusterer);
 }
 
 // switch to Google Map
@@ -173,12 +154,14 @@ watch(props.mapCenter, () => {
   map.setCenter(new kakao.maps.LatLng(props.mapCenter.lat, props.mapCenter.lng));
 })
 
-// TODO: find way to close customOverlay
 function setClustererOverlay(clusterer) {
   kakao.maps.event.addListener(clusterer, 'clusterclick', function (cluster) {
     customOverlay.setPosition(cluster.getCenter());
 
-    var markerContentList = `<div style="background-color: white">
+    var markerContentList = `
+    <div style="background: #fff; padding: 10px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-height:15rem; overflow:auto" onclick="this.style.display='none'">
+      <div style="background-color: white">
         <table>
           <tr>
             <th style="background-color: lightblue">업체명</th>
@@ -195,17 +178,40 @@ function setClustererOverlay(clusterer) {
             <td style="color: ${color}">${marker.data.lastCommedAt}</td>
           </tr>`;
     });
-    markerContentList += `</table></div>`;
+    markerContentList += `</table></div></div>`;
 
     customOverlay.setContent(markerContentList);
 
     infoWindow.setMap(null);
     customOverlay.setMap(map);
   })
+
+  var tempInfoWindow = new kakao.maps.InfoWindow({
+    content: null
+  })
+  kakao.maps.event.addListener(clusterer, 'clusterover', (cluster) => {
+    var disconnectedCount = 0;
+    cluster.getMarkers().map((marker) => {
+      if (marker.data.commState === 'red') {
+        disconnectedCount++;
+      }
+    })
+    tempInfoWindow.setContent(disconnectedCount + "대 미수신");
+    tempInfoWindow.setPosition(cluster.getCenter());
+    tempInfoWindow.open(map);
+  })
+  kakao.maps.event.addListener(clusterer, 'clusterout', (cluster) => {
+    tempInfoWindow.setMap(null);
+  })
 }
 
 onMounted(() => {
   initMap();
+})
+
+const filterOptions = props.filterOptions;
+watch(filterOptions, () => {
+  filterByOptions();
 })
 
 function clearMap() {
@@ -214,38 +220,26 @@ function clearMap() {
   markerClusterer.clear();
 }
 
-function showConnected() {
+function filterByOptions() {
   clearMap();
-
   markers.map((marker) => {
-    if (marker.data.commState !== 'red') {
+    if (
+      (!filterOptions.selectedBizcode || (marker.data.tid && marker.data.tid.startsWith(filterOptions.selectedBizcode)))
+      &&
+      (!filterOptions.selectedCompany || (marker.data.company && marker.data.company === filterOptions.selectedCompany))
+      &&
+      (!filterOptions.selectedRegion || (marker.data.region && marker.data.region === filterOptions.selectedRegion))
+      &&
+      (!filterOptions.selectedStatus || (marker.data.commState && marker.data.commState === filterOptions.selectedStatus))
+    ) {
       markerClusterer.addMarker(marker);
     }
-  })
-}
-function showDisconnected() {
-  clearMap();
-
-  markers.map((marker) => {
-    if (marker.data.commState === 'red') {
-      markerClusterer.addMarker(marker);
-    }
-  })
-}
-function showAll() {
-  clearMap();
-
-  markers.map((marker) => {
-    markerClusterer.addMarker(marker);
   })
 }
 
 </script>
 
 <template>
-  <Button @click="showConnected" icon="pi pi-filter" label="Connected" class="button-test" />
-  <Button @click="showDisconnected" icon="pi pi-filter" label="Disconnected" class="button-test" />
-  <Button @click="showAll" icon="pi pi-filter-slash" class="button-test" />
   <div id="map">
   </div>
 </template>

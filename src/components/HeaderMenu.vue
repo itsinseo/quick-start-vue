@@ -36,7 +36,6 @@ const importedRoutes = ref(router.options.routes.filter((route) => route.name));
         <router-link v-if="item.path" v-slot="{ href, navigate }" :to="item.path" custom>
           <a :href="href" v-bind="props.action" @click="navigate">
             <span :class="item.meta?.icon" />
-            &nbsp;
             <span class="ml-2">{{ item.meta?.title }}</span>
           </a>
         </router-link>
@@ -63,7 +62,7 @@ const importedRoutes = ref(router.options.routes.filter((route) => route.name));
 
 .p-menuitem {
   border-radius: 6px;
-  border: 1px solid #e2e8f0;
+  /* border: 1px solid #e2e8f0; */
   margin: 2px;
   padding: 2px;
 }
