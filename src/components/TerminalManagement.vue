@@ -159,7 +159,7 @@ const resizeWindowWidth = () => {
 }
 
 const isLargeWindow = computed(() => {
-  return windowWidth.value > 960 ? true : false
+  return windowWidth.value > 960;
 })
 
 onMounted(() => {
@@ -181,7 +181,7 @@ onBeforeUnmount(() => {
         <div class="grid">
           <div class="col">
             <Button v-if="isLargeWindow" label="추가" @click="desktopDialog = true" />
-            <Button v-else label="TEST" icon="pi pi-wrench" @click="mobileDialog = true" />
+            <Button v-else label="추가" @click="mobileDialog = true" />
           </div>
           <div class="col">
             <IconField iconPosition="left" class="icon-field-search">
@@ -421,7 +421,6 @@ onBeforeUnmount(() => {
           <small>고객사(출고)</small>
         </div>
         <div class="col-6 flex flex-column">
-          <!-- TODO: apply disabled by watching customer -->
           <Dropdown v-model="installInfo.department" :options=null showClear disabled />
           <small>사업부</small>
         </div>
@@ -540,7 +539,6 @@ onBeforeUnmount(() => {
               <small>고객사(출고)</small>
             </div>
             <div class="col-6 flex flex-column">
-              <!-- TODO: apply disabled by watching customer -->
               <Dropdown v-model="installInfo.department" :options=null showClear disabled />
               <small>사업부</small>
             </div>

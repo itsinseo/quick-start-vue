@@ -138,7 +138,7 @@ function clearFilter() {
     <p>우리나라 동 단위까지 줌인 시 카카오 지도로 전환됩니다.</p>
   </div>
   <div class="grid">
-    <div class="col">
+    <div class="col-6 lg:col-2">
       <Dropdown v-model="filterOptions.selectedBizcode" :options="TM_BIZCODE" optionLabel="label" optionValue="code"
         optionGroupLabel="label" optionGroupChildren="items" showClear placeholder="터미널 코드" class="user-interaction">
         <template #optiongroup="slotProps">
@@ -146,20 +146,20 @@ function clearFilter() {
         </template>
       </Dropdown>
     </div>
-    <div class="col">
+    <div class="col-6 lg:col-2">
       <Dropdown v-model="filterOptions.selectedCompany" :options="TM_COMPANY" optionLabel="name" optionValue="code"
         showClear placeholder="고객사" class="user-interaction" />
     </div>
-    <div class="col">
+    <div class="col-6 lg:col-2">
       <Dropdown v-model="filterOptions.selectedRegion" :options="TM_COUNTRY" optionLabel="name" optionValue="code"
         showClear placeholder="국가" class="user-interaction" />
     </div>
-    <div class="col">
+    <div class="col-6 lg:col-2">
       <Dropdown v-model="filterOptions.selectedStatus" :options="TM_STATUS" optionLabel="name" optionValue="code"
         showClear placeholder="통신 상태" class="user-interaction" />
     </div>
-    <div class="col">
-      <Button @click="clearFilter" icon="pi pi-filter-slash" class="user-interaction" />
+    <div class="col-6 lg:col-2">
+      <Button @click="clearFilter" icon="pi pi-filter-slash" class="user-interaction button-filter" />
     </div>
   </div>
   <KeepAlive>
@@ -179,5 +179,14 @@ function clearFilter() {
 
 div[class^="col"] {
   padding: 0.2rem;
+}
+
+.user-interaction {
+  width: 100%;
+  height: 40px;
+}
+
+.button-filter {
+  width: 20%;
 }
 </style>
