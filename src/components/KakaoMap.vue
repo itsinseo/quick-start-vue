@@ -89,7 +89,7 @@ function renderMarkersAndClusters(markerList) {
   customOverlay = new kakao.maps.CustomOverlay({
     position: null,
     xAnchor: 0.5,
-    yAnchor: 1
+    yAnchor: 1.05
   });
 
   markerClusterer = new kakao.maps.MarkerClusterer({
@@ -186,8 +186,9 @@ function setClustererOverlay(clusterer) {
     customOverlay.setMap(map);
   })
 
-  var tempInfoWindow = new kakao.maps.InfoWindow({
-    content: null
+  var tempCustomOverlay = new kakao.maps.CustomOverlay({
+    content: null,
+    yAnchor: -1
   })
   kakao.maps.event.addListener(clusterer, 'clusterover', (cluster) => {
     var disconnectedCount = 0;
@@ -196,13 +197,17 @@ function setClustererOverlay(clusterer) {
         disconnectedCount++;
       }
     })
-    tempInfoWindow.setContent(disconnectedCount + "대 미수신");
-    tempInfoWindow.setPosition(cluster.getCenter());
-    tempInfoWindow.open(map);
+    tempCustomOverlay.setContent(
+      `<div style="background-color: white; padding: 10px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        ${disconnectedCount}대 미수신
+      </div>`
+    );
+    tempCustomOverlay.setPosition(cluster.getCenter());
+    tempCustomOverlay.setMap(map);
   })
   kakao.maps.event.addListener(clusterer, 'clusterout', (cluster) => {
-    tempInfoWindow.setMap(null);
-  })
+    tempCustomOverlay.setMap(null);
+  });
 }
 
 onMounted(() => {
