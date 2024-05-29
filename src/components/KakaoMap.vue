@@ -68,10 +68,10 @@ function initMap() {
 
   kakao.maps.event.addListener(map, 'bounds_changed', () => {
     const rawBounds = map.getBounds();
-    mapBounds.latMin = rawBounds.qa;
-    mapBounds.latMax = rawBounds.pa;
-    mapBounds.lngMin = rawBounds.ha;
-    mapBounds.lngMax = rawBounds.oa;
+    mapBounds.latMin = rawBounds.getNorthEast().getLat();
+    mapBounds.latMax = rawBounds.getSouthWest().getLat();
+    mapBounds.lngMin = rawBounds.getNorthEast().getLng();
+    mapBounds.lngMax = rawBounds.getSouthWest().getLng();
   })
 
   kakao.maps.event.addListener(map, 'zoom_changed', () => {
