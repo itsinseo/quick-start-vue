@@ -54,7 +54,7 @@ var infoWindow;
 function initMap() {
   const loader = new Loader({
     apiKey: import.meta.env.VITE_GMAPS_KEY,
-    version: "weekly"
+    version: "3.55"
   });
 
   loader.load().then(async () => {
@@ -84,11 +84,11 @@ function initMap() {
     renderMarkersAndClusterers(propsMarkerList);
 
     map.addListener("bounds_changed", () => {
-      const rawBounds = map.getBounds();
-      mapBounds.latMin = rawBounds.Wh.lo;
-      mapBounds.latMax = rawBounds.Wh.hi;
-      mapBounds.lngMin = rawBounds.Gh.lo;
-      mapBounds.lngMax = rawBounds.Gh.hi;
+      const rawBounds = map.getBounds().toJSON();
+      mapBounds.latMin = rawBounds.north;
+      mapBounds.latMax = rawBounds.south;
+      mapBounds.lngMin = rawBounds.west;
+      mapBounds.lngMax = rawBounds.east;
     })
 
     map.addListener("zoom_changed", () => {
