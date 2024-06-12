@@ -51,8 +51,13 @@ var markerClusterer;
 var infoWindow;
 var customOverlay;
 
+var initialLatMin = 90;
+var initialLatMax = -90;
+var initialLngMin = 180;
+var initialLngMax = -180;
+
 function initMap() {
-  var container = document.getElementById('map');
+  var container = document.getElementById('kakao-map');
   var options = {
     center: new kakao.maps.LatLng(props.mapCenter.lat, props.mapCenter.lng),
     level: initialLevel
@@ -78,6 +83,11 @@ function initMap() {
     customOverlay.setMap(null);
     mapCenter.value.level = map.getLevel();
   })
+
+  // var initialSw = new kakao.maps.LatLng(initialLatMin, initialLngMin);
+  // var initialNe = new kakao.maps.LatLng(initialLatMax, initialLngMax);
+  // var initialBounds = new kakao.maps.LatLngBounds(initialSw, initialNe);
+  // map.setBounds(initialBounds);
 }
 
 function renderMarkersAndClusters(markerList) {
@@ -113,8 +123,15 @@ function renderMarkersAndClusters(markerList) {
       imageSrc = imageSrcRed;
     }
 
+    const markerLat = markerData.lat;
+    const markerLng = markerData.lng;
+    initialLatMin = Math.min(initialLatMin, markerLat);
+    initialLatMax = Math.max(initialLatMax, markerLat);
+    initialLngMin = Math.min(initialLngMin, markerLng);
+    initialLngMax = Math.max(initialLngMax, markerLng);
+
     var marker = new kakao.maps.Marker({
-      position: new kakao.maps.LatLng(markerData.lat, markerData.lng),
+      position: new kakao.maps.LatLng(markerLat, markerLng),
       title: markerData.customer,
       image: new kakao.maps.MarkerImage(
         imageSrc,
@@ -245,8 +262,7 @@ function filterByOptions() {
 </script>
 
 <template>
-  <div id="map">
-  </div>
+  <div id="kakao-map" style="width: 80vw; height: 65vh;"></div>
 </template>
 
 <style></style>

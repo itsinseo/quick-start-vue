@@ -51,6 +51,11 @@ var markers = [];
 var markerClusterer;
 var infoWindow;
 
+var initialLatMin = 90;
+var initialLatMax = -90;
+var initialLngMin = 180;
+var initialLngMax = -180;
+
 function initMap() {
   const loader = new Loader({
     apiKey: import.meta.env.VITE_GMAPS_KEY,
@@ -61,7 +66,7 @@ function initMap() {
     const { Map, InfoWindow } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
 
-    map = new Map(document.getElementById("map"), {
+    map = new Map(document.getElementById("google-map"), {
       center: props.mapCenter,
       zoom: initialZoom,
       gestureHandling: "greedy",
@@ -95,6 +100,13 @@ function initMap() {
       infoWindow.close();
       mapCenter.value.level = map.getZoom();
     })
+
+    map.fitBounds({
+      south: initialLatMin,
+      north: initialLatMax,
+      west: initialLngMin,
+      east: initialLngMax,
+    },)
   });
 }
 
@@ -119,8 +131,15 @@ function renderMarkersAndClusterers(markerList) {
       background: markerData.commState === 'yellow' ? 'orange' : markerData.commState,
       scale: 1.1
     });
+
+    const markerLat = markerData.lat;
+    const markerLng = markerData.lng;
+    initialLatMin = Math.min(initialLatMin, markerLat);
+    initialLatMax = Math.max(initialLatMax, markerLat);
+    initialLngMin = Math.min(initialLngMin, markerLng);
+    initialLngMax = Math.max(initialLngMax, markerLng);
     const marker = new google.maps.marker.AdvancedMarkerElement({
-      position: new google.maps.LatLng(markerData.lat, markerData.lng),
+      position: new google.maps.LatLng(markerLat, markerLng),
       content: pinGlyph.element,
     });
 
@@ -257,12 +276,10 @@ function filterByOptions() {
     }
   })
 }
-
 </script>
 
 <template>
-  <div id="map">
-  </div>
+  <div id="google-map" style="width:80vw; height: 65vh;"></div>
 </template>
 
 <style></style>
