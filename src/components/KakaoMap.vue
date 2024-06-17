@@ -84,10 +84,12 @@ function initMap() {
     mapCenter.value.level = map.getLevel();
   })
 
-  // var initialSw = new kakao.maps.LatLng(initialLatMin, initialLngMin);
-  // var initialNe = new kakao.maps.LatLng(initialLatMax, initialLngMax);
-  // var initialBounds = new kakao.maps.LatLngBounds(initialSw, initialNe);
-  // map.setBounds(initialBounds);
+  var initialSw = new kakao.maps.LatLng(initialLatMin, initialLngMin);
+  var initialNe = new kakao.maps.LatLng(initialLatMax, initialLngMax);
+  var initialBounds = new kakao.maps.LatLngBounds(initialSw, initialNe);
+  if (!props.needGoogleMap) {
+    map.setBounds(initialBounds);
+  }
 }
 
 function renderMarkersAndClusters(markerList) {

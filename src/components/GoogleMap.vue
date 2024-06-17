@@ -66,7 +66,7 @@ function initMap() {
     const { Map, InfoWindow } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
 
-    map = new Map(document.getElementById("google-map"), {
+    map = new google.maps.Map(document.getElementById("google-map"), {
       center: props.mapCenter,
       zoom: initialZoom,
       gestureHandling: "greedy",
@@ -101,12 +101,19 @@ function initMap() {
       mapCenter.value.level = map.getZoom();
     })
 
+    // google map bug: fitBounds doesn't work if previous bounds are larger
+    map.fitBounds({
+      south: -60,
+      north: -60,
+      west: -60,
+      east: -60,
+    });
     map.fitBounds({
       south: initialLatMin,
       north: initialLatMax,
       west: initialLngMin,
       east: initialLngMax,
-    },)
+    }, 10)
   });
 }
 
@@ -213,7 +220,8 @@ function renderMarkersAndClusterers(markerList) {
                       <circle cx="120" cy="120" opacity=".2" r="110" />
                       <text x="50%" y="50%" style="fill:#fff" text-anchor="middle" font-size="50" dominant-baseline="middle" font-family="roboto,arial,sans-serif">${count}</text>
                     </svg>`;
-    const title = `${disconnectedCount}대 미수신`, zIndex = Number(google.maps.Marker.MAX_ZINDEX) + count;
+    const title = `${disconnectedCount}대 미수신`;
+    const zIndex = Number(google.maps.Marker.MAX_ZINDEX) + count;
     const parser = new DOMParser();
     const svgEl = parser.parseFromString(svg, "image/svg+xml").documentElement;
     svgEl.setAttribute("transform", "translate(0 25)");
