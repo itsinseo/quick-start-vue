@@ -151,8 +151,7 @@ function renderMarkersAndClusterers(markerList) {
                               ${marker.data.lastCommedAt}  `)
       infoWindow.open(map, marker)
     })
-
-    marker.title = markerData.customer ? markerData.customer : "업체명 없음";
+    marker.title = markerData.customer;
     marker.data = markerData;
 
     markers.push(marker);
@@ -279,7 +278,7 @@ function filterByOptions() {
 </script>
 
 <template>
-  <div id="google-map" style="width:80vw; height: 65vh;"></div>
+  <div id="google-map" style="width:90vw; height: 65vh;"></div>
 </template>
 
 <style></style>

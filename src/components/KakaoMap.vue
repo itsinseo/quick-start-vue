@@ -177,7 +177,8 @@ function setClustererOverlay(clusterer) {
 
     var markerContentList = `
     <div style="background: #fff; padding: 10px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      max-height:15rem; overflow:auto" onclick="this.style.display='none'">
+      max-height:15rem; overflow:auto">
+      <button onclick="this.parentElement.style.display='none'" style="position: relative; float:right; font-size: 0.6rem">X</button>
       <div style="background-color: white">
         <table>
           <tr>
@@ -189,10 +190,11 @@ function setClustererOverlay(clusterer) {
       if (color === 'yellow') {
         color = 'gold'
       }
+      var lastCommedAt = marker.data.lastCommedAt === null ? "통신 기록 없음" : marker.data.lastCommedAt;
       markerContentList += `
           <tr>
             <td>${marker.data.customer}</td>
-            <td style="color: ${color}">${marker.data.lastCommedAt}</td>
+            <td style="color: ${color}">${lastCommedAt}</td>
           </tr>`;
     });
     markerContentList += `</table></div></div>`;
@@ -262,7 +264,7 @@ function filterByOptions() {
 </script>
 
 <template>
-  <div id="kakao-map" style="width: 80vw; height: 65vh;"></div>
+  <div id="kakao-map" style="width: 90vw; height: 65vh;"></div>
 </template>
 
 <style></style>

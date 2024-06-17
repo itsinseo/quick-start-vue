@@ -14,8 +14,8 @@ const minLng = 124.60;
 const maxLng = 131.87;
 
 const mapCenter = ref({
-  lat: 35.86,
-  lng: 128.23
+  lat: (minLat + maxLat) / 2,
+  lng: (minLng + maxLng) / 2,
 });
 
 const today = computed(() => dayjs());
@@ -25,6 +25,13 @@ const globalMarkerList = ref([]);
 const domesticMarkerList = ref([]);
 const lostMarkerList = ref([]);
 allMarkerList.value.map((markerData) => {
+  // replaceMarkerNullData
+  if (!markerData.customer) {
+    markerData.customer = '업체명 없음';
+  }
+  if (!markerData.lastCommedAt) {
+    markerData.lastCommedAt = '통신 기록 없음';
+  }
   // define commState
   if (markerData.lastCommedAt) {
     const tmp = today.value.diff(dayjs(markerData.lastCommedAt, 'YYYY-MM-DD HH:mm:ss.0'), 'h');
