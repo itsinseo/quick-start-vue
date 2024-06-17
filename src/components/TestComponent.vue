@@ -4,7 +4,7 @@ import { ref, computed, onMounted } from 'vue';
 import dayjs from 'dayjs';
 import { Loader } from '@googlemaps/js-api-loader'
 
-import commRawData from '@/data/merged-240517.json'
+import commRawData from '@/data/MOCK_DATA_240617.json'
 
 const commDataList = commRawData;
 
@@ -91,7 +91,7 @@ function googleGeocoding() {
 function initMap() {
   const loader = new Loader({
     apiKey: import.meta.env.VITE_GMAPS_KEY,
-    version: "weekly"
+    version: "3.55"
   });
 
   loader.load().then(async () => {
@@ -124,14 +124,14 @@ const columns = [
   "region",
   "tid",
   // "contactNo",
-  "tmVer",
+  // "tmVer",
   // "tmCreatedAt",
   "customer",
   // "manager",
-  "deliveredAt",
-  "emplacement",
-  "memo",
-  "company",
+  // "deliveredAt",
+  // "emplacement",
+  // "memo",
+  // "company",
   "division",
   // "etc",
   // "label",
@@ -149,7 +149,7 @@ const columns = [
   // "atValue",
   // "recvData",
   "lastCommedAt",
-  "commState",
+  // "commState",
   "formattedAddr",
   "lat",
   "lng"
@@ -208,7 +208,7 @@ const exportCSV2 = () => {
     </div>
   </div>
   <InputText type="text" v-model="today" class="user-interaction" style="width: 20rem;" />
-  <Button @click="addGeocodingResults" label="Geocode" icon="pi pi-google" class="user-interaction" />
+  <Button @click="addGeocodingResults" label="Geocode" icon="pi pi-google" disabled class="user-interaction" />
   <Button @click="exportCSV2" label="CSV" icon="pi pi-download" class="user-interaction" />
   <DataTable :value="geocodedDataArray" ref="dt" paginator :rows="10" :rowsPerPageOptions="[10, 20, 50]">
     <template #empty> No data to geocode. </template>

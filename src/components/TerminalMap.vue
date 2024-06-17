@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import GoogleMap from '@/components/GoogleMap.vue'
 import KakaoMap from '@/components/KakaoMap.vue'
 
-import commRawData from '@/data/merged-240517.json'
+import commRawData from '@/data/MOCK_DATA_240617.json'
 
 const minLat = 33.11;
 const maxLat = 38.61;
