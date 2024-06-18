@@ -24,8 +24,8 @@ const emits = defineEmits(['updateIsGlobal']);
 const switchToKakaoMap = () => {
   emits('updateIsGlobal', {
     isGlobal: false,
-    lat: mapCenter.value.lat,
-    lng: mapCenter.value.lng
+    lat: googleMapCenter.value.lat,
+    lng: googleMapCenter.value.lng
   });
 }
 
@@ -39,7 +39,7 @@ const mapBounds = reactive({
   minLng: null,
   maxLng: null
 });
-const mapCenter = ref({
+const googleMapCenter = ref({
   lat: null,
   lng: null,
   level: null
@@ -98,7 +98,7 @@ function initMap() {
 
     map.addListener("zoom_changed", () => {
       infoWindow.close();
-      mapCenter.value.level = map.getZoom();
+      googleMapCenter.value.level = map.getZoom();
     })
 
     // google map bug: fitBounds doesn't work if previous bounds are larger
@@ -237,12 +237,12 @@ function renderMarkersAndClusterers(markerList) {
 }
 
 // switch to Kakao Map
-watch([mapBounds, mapCenter], () => {
-  if (mapBounds.latMin > 32 && mapBounds.latMax < 40 && mapBounds.lngMin > 120 && mapBounds.lngMax < 135 && mapCenter.value.level > mapSwitchZoom) {
+watch([mapBounds, googleMapCenter], () => {
+  if (mapBounds.latMin > 32 && mapBounds.latMax < 40 && mapBounds.lngMin > 120 && mapBounds.lngMax < 135 && googleMapCenter.value.level > mapSwitchZoom) {
     map.setZoom(mapSwitchZoom);
     const rawCenter = map.getCenter();
-    mapCenter.value.lat = rawCenter.lat();
-    mapCenter.value.lng = rawCenter.lng();
+    googleMapCenter.value.lat = rawCenter.lat();
+    googleMapCenter.value.lng = rawCenter.lng();
     switchToKakaoMap();
   }
 })

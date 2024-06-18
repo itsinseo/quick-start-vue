@@ -50,8 +50,7 @@ allMarkerList.value.map((markerData) => {
   }
 })
 
-const isGlobal = ref(globalMarkerList.value.length !== domesticMarkerList.value.length || domesticMarkerList.value.length === 0);
-
+const isGlobal = ref(globalMarkerList.value.length > domesticMarkerList.value.length || domesticMarkerList.value.length === 0);
 const needGoogleMap = isGlobal.value;
 
 const updateIsGlobal = (newValue) => {

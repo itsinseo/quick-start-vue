@@ -25,8 +25,8 @@ const emits = defineEmits(['updateIsGlobal']);
 const switchToGoogleMap = () => {
   emits('updateIsGlobal', {
     isGlobal: true,
-    lat: mapCenter.value.lat,
-    lng: mapCenter.value.lng
+    lat: kakaoMapCenter.value.lat,
+    lng: kakaoMapCenter.value.lng
   });
 }
 
@@ -36,7 +36,7 @@ const mapBounds = reactive({
   minLng: null,
   maxLng: null
 });
-const mapCenter = ref({
+const kakaoMapCenter = ref({
   lat: null,
   lng: null,
   level: null
@@ -81,7 +81,7 @@ function initMap() {
 
   kakao.maps.event.addListener(map, 'zoom_changed', () => {
     customOverlay.setMap(null);
-    mapCenter.value.level = map.getLevel();
+    kakaoMapCenter.value.level = map.getLevel();
   })
 
   var initialSw = new kakao.maps.LatLng(initialLatMin, initialLngMin);
@@ -157,12 +157,12 @@ function renderMarkersAndClusters(markerList) {
 }
 
 // switch to Google Map
-watch([mapBounds, mapCenter], () => {
-  if (props.needGoogleMap && (mapBounds.latMin < 31 || mapBounds.latMax > 41 || mapBounds.lngMin < 119 || mapBounds.lngMax > 136 || mapCenter.value.level > mapSwitchLevel)) {
+watch([mapBounds, kakaoMapCenter], () => {
+  if (props.needGoogleMap && (mapBounds.latMin < 31 || mapBounds.latMax > 41 || mapBounds.lngMin < 119 || mapBounds.lngMax > 136 || kakaoMapCenter.value.level > mapSwitchLevel)) {
     map.setLevel(mapSwitchLevel);
     const rawCenter = map.getCenter();
-    mapCenter.value.lat = rawCenter.getLat();
-    mapCenter.value.lng = rawCenter.getLng();
+    kakaoMapCenter.value.lat = rawCenter.getLat();
+    kakaoMapCenter.value.lng = rawCenter.getLng();
     switchToGoogleMap();
   }
 })
