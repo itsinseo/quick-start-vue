@@ -33,5 +33,5 @@ coverage
 .env
 .env.local
 /src/reference/
-/src/data/terminal-communication.json
+/src/data/terminal-*.json
 /src/data/merged*.json

@@ -3,10 +3,10 @@ import { ref, computed } from 'vue';
 
 import dayjs from 'dayjs';
 
-import GoogleMap from '@/components/GoogleMap.vue'
-import KakaoMap from '@/components/KakaoMap.vue'
+import GoogleMap from '@/components/GoogleMap.vue';
+import KakaoMap from '@/components/KakaoMap.vue';
 
-import commRawData from '@/data/MOCK_DATA_240617.json'
+import commRawData from '@/data/MOCK_DATA_240617.json';
 // const props = defineProps({
 //   tableMapCenter: {
 //     type: Object,
@@ -22,11 +22,11 @@ const koreaLngMax = 135;
 
 const googleMapCenter = ref({
   lat: (koreaLatMin + koreaLatMax) / 2,
-  lng: (koreaLngMin + koreaLngMax) / 2,
+  lng: (koreaLngMin + koreaLngMax) / 2
 });
 const kakaoMapCenter = ref({
   lat: (koreaLatMin + koreaLatMax) / 2,
-  lng: (koreaLngMin + koreaLngMax) / 2,
+  lng: (koreaLngMin + koreaLngMax) / 2
 });
 
 const today = computed(() => dayjs());
@@ -45,7 +45,10 @@ allMarkerList.value.map(markerData => {
   }
   // define commState
   if (markerData.lastCommedAt) {
-    const tmp = today.value.diff(dayjs(markerData.lastCommedAt, 'YYYY-MM-DD HH:mm:ss.0'), 'h');
+    const tmp = today.value.diff(
+      dayjs(markerData.lastCommedAt, 'YYYY-MM-DD HH:mm:ss.0'),
+      'h'
+    );
     markerData.commState = tmp < 6 ? 'green' : tmp < 24 ? 'yellow' : 'red';
   } else {
     markerData.commState = 'red';
@@ -55,13 +58,21 @@ allMarkerList.value.map(markerData => {
     lostMarkerList.value.push(markerData);
   } else {
     globalMarkerList.value.push(markerData);
-    if (markerData.lat >= koreaLatMin && markerData.lat <= koreaLatMax && markerData.lng >= koreaLngMin && markerData.lng <= koreaLngMax) {
+    if (
+      markerData.lat >= koreaLatMin &&
+      markerData.lat <= koreaLatMax &&
+      markerData.lng >= koreaLngMin &&
+      markerData.lng <= koreaLngMax
+    ) {
       domesticMarkerList.value.push(markerData);
     }
   }
 });
 
-const isGlobal = ref(globalMarkerList.value.length > domesticMarkerList.value.length || domesticMarkerList.value.length === 0);
+const isGlobal = ref(
+  globalMarkerList.value.length > domesticMarkerList.value.length ||
+    domesticMarkerList.value.length === 0
+);
 const needGoogleMap = isGlobal.value;
 
 const updateGoogleMapCenter = newValue => {
@@ -82,30 +93,78 @@ const filterOptions = ref({
   selectedBizcode: null,
   selectedRegion: null,
   selectedCompany: null,
-  selectedStatus: null,
+  selectedStatus: null
 });
 const TM_BIZCODE = [
   {
     label: '3세대',
     items: [
       { label: 'LTM - LG전자', code: 'LTM', svc: 'NRL', sn: '001', corp: 'LG' },
-      { label: 'TSC - 삼성전자', code: 'TSC', svc: '9', sn: '00001', corp: 'SAMSUNG' },
-      { label: 'CTM - 중소기업', code: 'CTM', svc: 'NRC', sn: '001', corp: null },
+      {
+        label: 'TSC - 삼성전자',
+        code: 'TSC',
+        svc: '9',
+        sn: '00001',
+        corp: 'SAMSUNG'
+      },
+      {
+        label: 'CTM - 중소기업',
+        code: 'CTM',
+        svc: 'NRC',
+        sn: '001',
+        corp: null
+      },
       { label: 'BTM - 해외', code: 'BTM', svc: 'NRE', sn: '001', corp: null },
-      { label: 'ATM - 아모레', code: 'ATM', svc: 'NRA', sn: '001', corp: null },
-    ],
+      { label: 'ATM - 아모레', code: 'ATM', svc: 'NRA', sn: '001', corp: null }
+    ]
   },
   {
     label: '1, 2세대',
     items: [
-      { label: 'LTM - LG전자 2G', code: 'LTM', svc: 'KRL', sn: '001', corp: 'LG' },
-      { label: 'CTM - 중소기업 2G', code: 'CTM', svc: 'KRC', sn: '001', corp: null },
-      { label: 'BTM - 해외 2G', code: 'BTM', svc: 'KRE', sn: '001', corp: null },
-      { label: 'ATM - 아모레 2G', code: 'ATM', svc: 'KRA', sn: '001', corp: null },
-      { label: 'TAP - 아모레 1G', code: 'TAP', svc: '000', sn: '001', corp: null },
-      { label: 'TSC - 삼성전자 1G', code: 'TSC', svc: '0', sn: '00001', corp: 'SAMSUNG' },
-    ],
-  },
+      {
+        label: 'LTM - LG전자 2G',
+        code: 'LTM',
+        svc: 'KRL',
+        sn: '001',
+        corp: 'LG'
+      },
+      {
+        label: 'CTM - 중소기업 2G',
+        code: 'CTM',
+        svc: 'KRC',
+        sn: '001',
+        corp: null
+      },
+      {
+        label: 'BTM - 해외 2G',
+        code: 'BTM',
+        svc: 'KRE',
+        sn: '001',
+        corp: null
+      },
+      {
+        label: 'ATM - 아모레 2G',
+        code: 'ATM',
+        svc: 'KRA',
+        sn: '001',
+        corp: null
+      },
+      {
+        label: 'TAP - 아모레 1G',
+        code: 'TAP',
+        svc: '000',
+        sn: '001',
+        corp: null
+      },
+      {
+        label: 'TSC - 삼성전자 1G',
+        code: 'TSC',
+        svc: '0',
+        sn: '00001',
+        corp: 'SAMSUNG'
+      }
+    ]
+  }
 ];
 const TM_COUNTRY = [
   { name: '대한민국', code: '대한민국' },
@@ -119,33 +178,33 @@ const TM_COUNTRY = [
   { name: '인도네시아', code: '인도네시아' },
   { name: '말레이시아', code: '말레이시아' },
   { name: '브라질', code: '브라질' },
-  { name: '이집트', code: '이집트' },
+  { name: '이집트', code: '이집트' }
 ];
 const TM_COMPANY = [
   {
     name: 'LG',
     code: 'LG',
-    divisions: ['H&A사업부', 'HE사업부', 'VS사업부', 'LG마그나'],
+    divisions: ['H&A사업부', 'HE사업부', 'VS사업부', 'LG마그나']
   },
   {
     name: 'SAMSUNG',
     code: 'SAMSUNG',
-    divisions: ['생활가전사업부', '무선사업부'],
-  },
+    divisions: ['생활가전사업부', '무선사업부']
+  }
 ];
 const TM_STATUS = [
   {
     name: '정상',
-    code: 'green',
+    code: 'green'
   },
   {
     name: '수신 지연',
-    code: 'yellow',
+    code: 'yellow'
   },
   {
     name: '미수신',
-    code: 'red',
-  },
+    code: 'red'
+  }
 ];
 function clearFilter() {
   filterOptions.value.selectedBizcode = null;
@@ -170,37 +229,82 @@ function clearFilter() {
   </div>
   <div class="grid">
     <div class="col-6 lg:col-2">
-      <Dropdown v-model="filterOptions.selectedBizcode" :options="TM_BIZCODE" optionLabel="label" optionValue="code"
-        optionGroupLabel="label" optionGroupChildren="items" showClear placeholder="터미널 코드" class="user-interaction">
+      <Dropdown
+        v-model="filterOptions.selectedBizcode"
+        :options="TM_BIZCODE"
+        optionLabel="label"
+        optionValue="code"
+        optionGroupLabel="label"
+        optionGroupChildren="items"
+        showClear
+        placeholder="터미널 코드"
+        class="user-interaction"
+      >
         <template #optiongroup="slotProps">
           <div>{{ slotProps.option.label }}</div>
         </template>
       </Dropdown>
     </div>
     <div class="col-6 lg:col-2">
-      <Dropdown v-model="filterOptions.selectedCompany" :options="TM_COMPANY" optionLabel="name" optionValue="code"
-        showClear placeholder="고객사" class="user-interaction" />
+      <Dropdown
+        v-model="filterOptions.selectedCompany"
+        :options="TM_COMPANY"
+        optionLabel="name"
+        optionValue="code"
+        showClear
+        placeholder="고객사"
+        class="user-interaction"
+      />
     </div>
     <div class="col-6 lg:col-2">
-      <Dropdown v-model="filterOptions.selectedRegion" :options="TM_COUNTRY" optionLabel="name" optionValue="code"
-        showClear placeholder="국가" class="user-interaction" />
+      <Dropdown
+        v-model="filterOptions.selectedRegion"
+        :options="TM_COUNTRY"
+        optionLabel="name"
+        optionValue="code"
+        showClear
+        placeholder="국가"
+        class="user-interaction"
+      />
     </div>
     <div class="col-6 lg:col-2">
-      <Dropdown v-model="filterOptions.selectedStatus" :options="TM_STATUS" optionLabel="name" optionValue="code"
-        showClear placeholder="통신 상태" class="user-interaction" />
+      <Dropdown
+        v-model="filterOptions.selectedStatus"
+        :options="TM_STATUS"
+        optionLabel="name"
+        optionValue="code"
+        showClear
+        placeholder="통신 상태"
+        class="user-interaction"
+      />
     </div>
     <div class="col-6 lg:col-2">
-      <Button @click="clearFilter" icon="pi pi-filter-slash" class="user-interaction button-filter" />
+      <Button
+        @click="clearFilter"
+        icon="pi pi-filter-slash"
+        class="user-interaction button-filter"
+      />
     </div>
   </div>
-  <div id="temp-div" style="width:90vw; height: 65vh;">
+  <div id="temp-div" style="width: 90vw; height: 65vh">
     <KeepAlive>
-      <GoogleMap v-if="isGlobal" :markerList="globalMarkerList" :mapCenter="googleMapCenter"
-        :filterOptions="filterOptions" @updateIsGlobal="updateKakaoMapCenter" />
+      <GoogleMap
+        v-if="isGlobal"
+        :markerList="globalMarkerList"
+        :mapCenter="googleMapCenter"
+        :filterOptions="filterOptions"
+        @updateIsGlobal="updateKakaoMapCenter"
+      />
     </KeepAlive>
     <KeepAlive>
-      <KakaoMap v-if="!isGlobal" :markerList="domesticMarkerList" :mapCenter="kakaoMapCenter"
-        :filterOptions="filterOptions" :needGoogleMap="needGoogleMap" @updateIsGlobal="updateGoogleMapCenter" />
+      <KakaoMap
+        v-if="!isGlobal"
+        :markerList="domesticMarkerList"
+        :mapCenter="kakaoMapCenter"
+        :filterOptions="filterOptions"
+        :needGoogleMap="needGoogleMap"
+        @updateIsGlobal="updateGoogleMapCenter"
+      />
     </KeepAlive>
   </div>
 </template>
@@ -210,7 +314,7 @@ function clearFilter() {
   margin: 0;
 }
 
-div[class^="col"] {
+div[class^='col'] {
   padding: 0.2rem;
 }
 

@@ -6,7 +6,7 @@
     "rate": 1.97,
     "bizCode": "LAB",
     "routerCnt": 240,
-    "monthlyFee": 472.80,
+    "monthlyFee": 472.8,
     "totalCnt": 510,
     "totalRate": 986.67
   },
@@ -50,7 +50,7 @@
     "rate": 2.02,
     "bizCode": "LTM",
     "routerCnt": 25,
-    "monthlyFee": 50.50,
+    "monthlyFee": 50.5,
     "totalCnt": 510,
     "totalRate": 986.67
   },
@@ -69,10 +69,10 @@
     "currencyCode": "EUR",
     "serviceProfile": "T1_150MB",
     "vat": 0,
-    "rate": 2.50,
+    "rate": 2.5,
     "bizCode": "LTM",
     "routerCnt": 11,
-    "monthlyFee": 27.50,
+    "monthlyFee": 27.5,
     "totalCnt": 510,
     "totalRate": 986.67
   },
@@ -91,10 +91,10 @@
     "currencyCode": "EUR",
     "serviceProfile": "T1_150MB",
     "vat": 0,
-    "rate": 2.50,
+    "rate": 2.5,
     "bizCode": "LAB",
     "routerCnt": 2,
-    "monthlyFee": 5.00,
+    "monthlyFee": 5.0,
     "totalCnt": 510,
     "totalRate": 986.67
   },

@@ -1,6 +1,5 @@
 <script setup>
-import TerminalStatus from '@/components/TerminalStatus.vue'
-
+import TerminalStatus from '@/components/TerminalStatus.vue';
 </script>
 
 <template>

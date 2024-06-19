@@ -1,33 +1,33 @@
 <script setup>
-import { onMounted, ref, reactive, watch } from "vue";
+import { onMounted, ref, reactive, watch } from 'vue';
 
 const props = defineProps({
   markerList: {
     type: Array,
-    required: true,
+    required: true
   },
   mapCenter: {
     type: Object,
-    required: true,
+    required: true
   },
   filterOptions: {
     type: Object,
-    required: true,
+    required: true
   },
   needGoogleMap: {
     type: Boolean,
-    required: true,
-  },
+    required: true
+  }
 });
 const propsMarkerList = props.markerList;
 const filterOptions = props.filterOptions;
 
-const emits = defineEmits(["updateIsGlobal"]);
+const emits = defineEmits(['updateIsGlobal']);
 const switchToGoogleMap = () => {
-  emits("updateIsGlobal", {
+  emits('updateIsGlobal', {
     isGlobal: true,
     lat: kakaoMapCenter.value.lat,
-    lng: kakaoMapCenter.value.lng,
+    lng: kakaoMapCenter.value.lng
   });
 };
 
@@ -35,12 +35,12 @@ const mapBounds = reactive({
   minLat: null,
   maxLat: null,
   minLng: null,
-  maxLng: null,
+  maxLng: null
 });
 const kakaoMapCenter = ref({
   lat: null,
   lng: null,
-  level: null,
+  level: null
 });
 
 const mapSwitchLevel = 5;
@@ -61,10 +61,10 @@ var infoWindow;
 var customOverlay;
 
 function initMap() {
-  var container = document.getElementById("kakao-map");
+  var container = document.getElementById('kakao-map');
   var options = {
     center: new kakao.maps.LatLng(props.mapCenter.lat, props.mapCenter.lng),
-    level: initialLevel,
+    level: initialLevel
   };
 
   // 지도 객체는 반응형 관리 대상이 아니므로 initMap에서 선언
@@ -75,7 +75,7 @@ function initMap() {
 
   renderMarkersAndClusters(propsMarkerList);
 
-  kakao.maps.event.addListener(map, "bounds_changed", () => {
+  kakao.maps.event.addListener(map, 'bounds_changed', () => {
     const rawBounds = map.getBounds();
     mapBounds.latMin = rawBounds.getNorthEast().getLat();
     mapBounds.latMax = rawBounds.getSouthWest().getLat();
@@ -83,7 +83,7 @@ function initMap() {
     mapBounds.lngMax = rawBounds.getSouthWest().getLng();
   });
 
-  kakao.maps.event.addListener(map, "zoom_changed", () => {
+  kakao.maps.event.addListener(map, 'zoom_changed', () => {
     infoWindow.setMap(null);
     customOverlay.setMap(null);
     kakaoMapCenter.value.level = map.getLevel();
@@ -100,33 +100,33 @@ function initMap() {
 function renderMarkersAndClusters(markerList) {
   infoWindow = new kakao.maps.InfoWindow({
     content: null,
-    removable: true,
+    removable: true
   });
 
   customOverlay = new kakao.maps.CustomOverlay({
     position: null,
     xAnchor: 0.5,
-    yAnchor: 1.05,
+    yAnchor: 1.05
   });
 
   markerClusterer = new kakao.maps.MarkerClusterer({
     map: map,
     averageCenter: true,
     minLevel: 1,
-    disableClickZoom: true,
+    disableClickZoom: true
   });
 
-  var imageSrcGreen = "/map-images/marker-green.png";
-  var imageSrcYellow = "/map-images/marker-yellow.png";
-  var imageSrcRed = "/map-images/marker-red.png";
+  var imageSrcGreen = '/map-images/marker-green.png';
+  var imageSrcYellow = '/map-images/marker-yellow.png';
+  var imageSrcRed = '/map-images/marker-red.png';
   var imageSize = new kakao.maps.Size(29, 42);
 
   // 마커 클러스터러로 관리할 마커 객체는 생성할 때 지도 객체를 설정하지 않음 - 클러스터러가 이미 지도에 매핑되어 있음
-  markerList.map((markerData) => {
+  markerList.map(markerData => {
     var imageSrc = imageSrcGreen;
-    if (markerData.commState === "yellow") {
+    if (markerData.commState === 'yellow') {
       imageSrc = imageSrcYellow;
-    } else if (markerData.commState === "red") {
+    } else if (markerData.commState === 'red') {
       imageSrc = imageSrcRed;
     }
 
@@ -140,11 +140,11 @@ function renderMarkersAndClusters(markerList) {
     var marker = new kakao.maps.Marker({
       position: new kakao.maps.LatLng(markerLat, markerLng),
       title: markerData.customer,
-      image: new kakao.maps.MarkerImage(imageSrc, imageSize),
+      image: new kakao.maps.MarkerImage(imageSrc, imageSize)
     });
     marker.data = markerData;
 
-    kakao.maps.event.addListener(marker, "click", () => {
+    kakao.maps.event.addListener(marker, 'click', () => {
       infoWindow.setContent(
         ` <div style="width: 150px; text-align: center; padding: 6px 0; font-size: 1rem">
             ${markerData.tid}<br>
@@ -165,7 +165,7 @@ function renderMarkersAndClusters(markerList) {
 }
 
 function setClustererOverlay(clusterer) {
-  kakao.maps.event.addListener(clusterer, "clusterclick", function (cluster) {
+  kakao.maps.event.addListener(clusterer, 'clusterclick', function (cluster) {
     customOverlay.setPosition(cluster.getCenter());
 
     var markerContentList = ` <div style="background: #fff; padding: 10px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -180,10 +180,10 @@ function setClustererOverlay(clusterer) {
                                       <th style="background-color: lightblue">통신 기록</th>
                                     </tr>`;
     var markerCount = 1;
-    cluster.getMarkers().map((marker) => {
+    cluster.getMarkers().map(marker => {
       var color = marker.data.commState;
-      if (color === "yellow") {
-        color = "gold";
+      if (color === 'yellow') {
+        color = 'gold';
       }
       markerContentList += `<tr>
                               <td>${markerCount}</td>
@@ -203,12 +203,12 @@ function setClustererOverlay(clusterer) {
 
   var tempCustomOverlay = new kakao.maps.CustomOverlay({
     content: null,
-    yAnchor: -1,
+    yAnchor: -1
   });
-  kakao.maps.event.addListener(clusterer, "clusterover", (cluster) => {
+  kakao.maps.event.addListener(clusterer, 'clusterover', cluster => {
     var disconnectedCount = 0;
-    cluster.getMarkers().map((marker) => {
-      if (marker.data.commState === "red") {
+    cluster.getMarkers().map(marker => {
+      if (marker.data.commState === 'red') {
         disconnectedCount++;
       }
     });
@@ -218,7 +218,7 @@ function setClustererOverlay(clusterer) {
     tempCustomOverlay.setPosition(cluster.getCenter());
     tempCustomOverlay.setMap(map);
   });
-  kakao.maps.event.addListener(clusterer, "clusterout", (cluster) => {
+  kakao.maps.event.addListener(clusterer, 'clusterout', cluster => {
     tempCustomOverlay.setMap(null);
   });
 }
@@ -253,7 +253,7 @@ watch(filterOptions, () => {
   infoWindow.setMap(null);
   customOverlay.setMap(null);
   markerClusterer.clear();
-  markers.map((marker) => {
+  markers.map(marker => {
     if (
       (!filterOptions.selectedBizcode ||
         (marker.data.tid &&

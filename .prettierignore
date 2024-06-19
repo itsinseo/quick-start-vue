@@ -1,0 +1,12 @@
+# Dependency directories
+node_modules
+
+# Build directories
+dist
+
+# IDE directories
+.idea
+.vscode
+
+# Static files
+public

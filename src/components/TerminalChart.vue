@@ -82,7 +82,6 @@ const setPieChartData = () => {
   };
 };
 setPieChartData();
-
 </script>
 
 <template>

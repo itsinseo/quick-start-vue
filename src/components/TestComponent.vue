@@ -2,9 +2,9 @@
 import { ref, computed, onMounted } from 'vue';
 
 import dayjs from 'dayjs';
-import { Loader } from '@googlemaps/js-api-loader'
+import { Loader } from '@googlemaps/js-api-loader';
 
-import commRawData from '@/data/MOCK_DATA_240617.json'
+import commRawData from '@/data/MOCK_DATA_240617.json';
 
 const commDataList = commRawData;
 
@@ -20,8 +20,8 @@ const countryList = [
   '인도네시아',
   '중국',
   '폴란드'
-]
-const selectedCountry = ref("대한민국");
+];
+const selectedCountry = ref('대한민국');
 const inputText = ref();
 const formattedAddress = ref();
 const formattedCoordinate = ref();
@@ -32,17 +32,20 @@ const geocodedDataList = ref([]);
 function codeAddress(address, region) {
   return new Promise((resolve, reject) => {
     var geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ 'address': address }, function (results, status) {
+    geocoder.geocode({ address: address }, function (results, status) {
       if (status == 'OK') {
         resolve(results);
       } else {
-        geocoder.geocode({ 'address': region }, function (secondaryResults, secondaryStatus) {
-          if (secondaryStatus == 'OK') {
-            resolve(secondaryResults);
-          } else {
-            reject(new Error(secondaryStatus));
+        geocoder.geocode(
+          { address: region },
+          function (secondaryResults, secondaryStatus) {
+            if (secondaryStatus == 'OK') {
+              resolve(secondaryResults);
+            } else {
+              reject(new Error(secondaryStatus));
+            }
           }
-        })
+        );
       }
     });
   });
@@ -52,7 +55,7 @@ function googleGeocoding() {
   try {
     var count = 0;
 
-    commDataList.map((commData) => {
+    commDataList.map(commData => {
       count++;
       const emplacement = commData.emplacement;
       const region = commData.region;
@@ -64,7 +67,7 @@ function googleGeocoding() {
         formattedAddress: null,
         coordinate: null,
         memo: null
-      }
+      };
       codeAddress(emplacement, region)
         .then(coords => {
           geocodedData.formattedAddress = coords[0].formatted_address;
@@ -78,24 +81,24 @@ function googleGeocoding() {
           geocodedData.address = emplacement;
           geocodedData.region = region;
           geocodedDataList.value.push(geocodedData);
-        })
+        });
       if (count === apiThreshold) {
         throw count;
       }
-    })
+    });
   } catch (e) {
-    console.log("API call threshold: " + e)
+    console.log('API call threshold: ' + e);
   }
 }
 
 function initMap() {
   const loader = new Loader({
     apiKey: import.meta.env.VITE_GMAPS_KEY,
-    version: "3.55"
+    version: '3.55'
   });
 
   loader.load().then(async () => {
-    const { Map } = await google.maps.importLibrary("maps");
+    const { Map } = await google.maps.importLibrary('maps');
   });
 }
 
@@ -106,14 +109,14 @@ function testGoogleGeocoding(address) {
       formattedCoordinate.value = coords[0].geometry.location.toString();
     })
     .catch(error => {
-      formattedAddress.value = address + ": " + error;
+      formattedAddress.value = address + ': ' + error;
       formattedCoordinate.value = null;
-    })
+    });
 }
 
 onMounted(() => {
   initMap();
-})
+});
 
 const today = computed(() => dayjs());
 
@@ -121,18 +124,18 @@ const dt = ref();
 const geocodedDataArray = ref([]);
 const columns = [
   // "state",
-  "region",
-  "tid",
+  'region',
+  'tid',
   // "contactNo",
   // "tmVer",
   // "tmCreatedAt",
-  "customer",
+  'customer',
   // "manager",
   // "deliveredAt",
   // "emplacement",
   // "memo",
   // "company",
-  "division",
+  'division',
   // "etc",
   // "label",
   // "lrCtn",
@@ -148,28 +151,31 @@ const columns = [
   // "simRate",
   // "atValue",
   // "recvData",
-  "lastCommedAt",
+  'lastCommedAt',
   // "commState",
-  "formattedAddr",
-  "lat",
-  "lng"
+  'formattedAddr',
+  'lat',
+  'lng'
 ];
 
 const defineCommState = () => {
-  commDataList.map((d) => {
+  commDataList.map(d => {
     if (d.lastCommedAt) {
-      const tmp = today.value.diff(dayjs(d.lastCommedAt, 'YYYY-MM-DD HH:mm:ss.0'), 'h');
+      const tmp = today.value.diff(
+        dayjs(d.lastCommedAt, 'YYYY-MM-DD HH:mm:ss.0'),
+        'h'
+      );
       d.commState = tmp < 6 ? 'green' : tmp < 24 ? 'yellow' : 'red';
     } else {
       d.commState = 'red';
     }
-  })
-}
+  });
+};
 
 defineCommState();
 
 function addGeocodingResults() {
-  commDataList.map((commData) => {
+  commDataList.map(commData => {
     var tempData = commData;
     if (!commData.hasOwnProperty('lat')) {
       tempData.formattedAddr = null;
@@ -182,35 +188,78 @@ function addGeocodingResults() {
           tempData.lng = coords[0].geometry.location.lng();
         })
         .catch(error => {
-          console.log(tempData.emplacement + ": " + error)
+          console.log(tempData.emplacement + ': ' + error);
         })
         .finally(() => {
           geocodedDataArray.value.push(tempData);
-        })
+        });
     }
-  })
+  });
 }
 
 const exportCSV2 = () => {
   dt.value.exportCSV();
-}
-
+};
 </script>
 
 <template>
   <div class="wrapper-container">
-    <Dropdown v-model="selectedCountry" :options="countryList" placeholder="국가 선택" style="min-width: 10rem;" />
+    <Dropdown
+      v-model="selectedCountry"
+      :options="countryList"
+      placeholder="국가 선택"
+      style="min-width: 10rem"
+    />
     <InputText type="text" v-model="inputText" class="user-interaction" />
-    <Button @click="testGoogleGeocoding(inputText)" label="Test Geocoding" icon="pi pi-wrench" class="user-interaction" />
+    <Button
+      @click="testGoogleGeocoding(inputText)"
+      label="Test Geocoding"
+      icon="pi pi-wrench"
+      class="user-interaction"
+    />
     <div class="wrapper-container">
-      <Textarea type="text" v-model="formattedAddress" autoResize rows="3" cols="20" />
-      <Textarea type="text" v-model="formattedCoordinate" autoResize rows="3" cols="20" />
+      <Textarea
+        type="text"
+        v-model="formattedAddress"
+        autoResize
+        rows="3"
+        cols="20"
+      />
+      <Textarea
+        type="text"
+        v-model="formattedCoordinate"
+        autoResize
+        rows="3"
+        cols="20"
+      />
     </div>
   </div>
-  <InputText type="text" v-model="today" class="user-interaction" style="width: 20rem;" />
-  <Button @click="addGeocodingResults" label="Geocode" icon="pi pi-google" disabled class="user-interaction" />
-  <Button @click="exportCSV2" label="CSV" icon="pi pi-download" class="user-interaction" />
-  <DataTable :value="geocodedDataArray" ref="dt" paginator :rows="10" :rowsPerPageOptions="[10, 20, 50]">
+  <InputText
+    type="text"
+    v-model="today"
+    class="user-interaction"
+    style="width: 20rem"
+  />
+  <Button
+    @click="addGeocodingResults"
+    label="Geocode"
+    icon="pi pi-google"
+    disabled
+    class="user-interaction"
+  />
+  <Button
+    @click="exportCSV2"
+    label="CSV"
+    icon="pi pi-download"
+    class="user-interaction"
+  />
+  <DataTable
+    :value="geocodedDataArray"
+    ref="dt"
+    paginator
+    :rows="10"
+    :rowsPerPageOptions="[10, 20, 50]"
+  >
     <template #empty> No data to geocode. </template>
     <Column v-for="col of columns" :field="col" :header="col" />
   </DataTable>

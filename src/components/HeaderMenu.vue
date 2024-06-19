@@ -8,24 +8,25 @@ defineProps({
   title: {
     type: String,
     required: true
-  },
-})
+  }
+});
 
-const route = useRoute()
+const route = useRoute();
 
 const pageTitle = ref('');
 
 watchEffect(() => {
-  pageTitle.value = route.meta.title
-})
+  pageTitle.value = route.meta.title;
+});
 
-const importedRoutes = ref(router.options.routes.filter((route) => route.name));
-
+const importedRoutes = ref(router.options.routes.filter(route => route.name));
 </script>
 
 <template>
   <div class="container-header">
-    <h1><a href="/">{{ title }}</a></h1>
+    <h1>
+      <a href="/">{{ title }}</a>
+    </h1>
     <Divider layout="vertical" />
     <h2 class="page-title">{{ pageTitle }}</h2>
   </div>
@@ -33,7 +34,12 @@ const importedRoutes = ref(router.options.routes.filter((route) => route.name));
   <div class="menu-bar">
     <Menubar :model="importedRoutes">
       <template #item="{ item, props, hasSubmenu }">
-        <router-link v-if="item.path" v-slot="{ href, navigate }" :to="item.path" custom>
+        <router-link
+          v-if="item.path"
+          v-slot="{ href, navigate }"
+          :to="item.path"
+          custom
+        >
           <a :href="href" v-bind="props.action" @click="navigate">
             <span :class="item.meta?.icon" />
             <span class="ml-2">{{ item.meta?.title }}</span>
@@ -68,7 +74,7 @@ const importedRoutes = ref(router.options.routes.filter((route) => route.name));
 }
 
 @media (max-width: 960px) {
-  .container-header>*:not(.page-title) {
+  .container-header > *:not(.page-title) {
     display: none;
   }
 

@@ -1,6 +1,5 @@
 <script setup>
-import TerminalManagement from '@/components/TerminalManagement.vue'
-
+import TerminalManagement from '@/components/TerminalManagement.vue';
 </script>
 
 <template>

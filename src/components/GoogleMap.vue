@@ -7,16 +7,16 @@ import { MarkerClusterer } from '@googlemaps/markerclusterer';
 const props = defineProps({
   markerList: {
     type: Array,
-    required: true,
+    required: true
   },
   mapCenter: {
     type: Object,
-    required: true,
+    required: true
   },
   filterOptions: {
     type: Object,
-    required: true,
-  },
+    required: true
+  }
 });
 const propsMarkerList = props.markerList;
 const filterOptions = props.filterOptions;
@@ -26,21 +26,20 @@ const switchToKakaoMap = () => {
   emits('updateIsGlobal', {
     isGlobal: false,
     lat: googleMapCenter.value.lat,
-    lng: googleMapCenter.value.lng,
+    lng: googleMapCenter.value.lng
   });
-
 };
 
 const mapBounds = reactive({
   minLat: null,
   maxLat: null,
   minLng: null,
-  maxLng: null,
+  maxLng: null
 });
 const googleMapCenter = ref({
   lat: null,
   lng: null,
-  level: null,
+  level: null
 });
 
 const mapSwitchZoom = 14;
@@ -62,12 +61,13 @@ var infoWindow;
 function initMap() {
   const loader = new Loader({
     apiKey: import.meta.env.VITE_GMAPS_KEY,
-    version: '3.55',
+    version: '3.55'
   });
 
   loader.load().then(async () => {
     const { Map, InfoWindow } = await google.maps.importLibrary('maps');
-    const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary('marker');
+    const { AdvancedMarkerElement, PinElement } =
+      await google.maps.importLibrary('marker');
 
     map = new google.maps.Map(document.getElementById('google-map'), {
       center: props.mapCenter,
@@ -84,9 +84,9 @@ function initMap() {
           south: -60,
           north: 75,
           west: -180,
-          east: 180,
-        },
-      },
+          east: 180
+        }
+      }
     });
 
     renderMarkersAndClusterers(propsMarkerList);
@@ -109,23 +109,23 @@ function initMap() {
       south: -60,
       north: -60,
       west: -60,
-      east: -60,
+      east: -60
     });
     map.fitBounds(
       {
         south: initialLatMin,
         north: initialLatMax,
         west: initialLngMin,
-        east: initialLngMax,
+        east: initialLngMax
       },
-      10,
+      10
     );
   });
 }
 
 function renderMarkersAndClusterers(markerList) {
   infoWindow = new google.maps.InfoWindow({
-    content: '',
+    content: ''
   });
   markerList.map((markerData, i) => {
     var formattedCustomer;
@@ -141,8 +141,9 @@ function renderMarkersAndClusterers(markerList) {
       glyph: formattedCustomer,
       glyphColor: 'white',
       borderColor: 'gray',
-      background: markerData.commState === 'yellow' ? 'orange' : markerData.commState,
-      scale: 1.1,
+      background:
+        markerData.commState === 'yellow' ? 'orange' : markerData.commState,
+      scale: 1.1
     });
 
     const markerLat = markerData.lat;
@@ -154,12 +155,12 @@ function renderMarkersAndClusterers(markerList) {
     initialLngMax = Math.max(initialLngMax, markerLng);
     const marker = new google.maps.marker.AdvancedMarkerElement({
       position: new google.maps.LatLng(markerLat, markerLng),
-      content: pinGlyph.element,
+      content: pinGlyph.element
     });
 
     marker.addListener('click', () => {
       infoWindow.setOptions({
-        pixelOffset: new google.maps.Size(0, 0),
+        pixelOffset: new google.maps.Size(0, 0)
       });
       infoWindow.setContent(` ${marker.data.tid}<br>
                               ${marker.data.customer}<br>
@@ -200,13 +201,13 @@ function renderMarkersAndClusterers(markerList) {
 
     infoWindow.close();
     infoWindow.setOptions({
-      pixelOffset: new google.maps.Size(0, -10),
+      pixelOffset: new google.maps.Size(0, -10)
     });
     infoWindow.setContent(markerContentList);
 
     // infoWindow.open 전달용 가상 marker
     var clustererMarker = new google.maps.marker.AdvancedMarkerElement({
-      position: cluster.position,
+      position: cluster.position
     });
 
     infoWindow.open(map, clustererMarker);
@@ -242,7 +243,7 @@ function renderMarkersAndClusterers(markerList) {
       position,
       zIndex,
       title,
-      content: svgEl,
+      content: svgEl
     };
     return new google.maps.marker.AdvancedMarkerElement(clusterOptions);
   };
@@ -268,7 +269,9 @@ watch([mapBounds, googleMapCenter], () => {
 // switch from Kakao Map & initial render
 watch(props.mapCenter, () => {
   map.setZoom(mapSwitchZoom);
-  map.setCenter(new google.maps.LatLng(props.mapCenter.lat, props.mapCenter.lng));
+  map.setCenter(
+    new google.maps.LatLng(props.mapCenter.lat, props.mapCenter.lng)
+  );
 });
 
 watch(filterOptions, () => {
@@ -276,10 +279,18 @@ watch(filterOptions, () => {
   infoWindow.close();
   markers.map(marker => {
     if (
-      (!filterOptions.selectedBizcode || (marker.data.tid && marker.data.tid.startsWith(filterOptions.selectedBizcode))) &&
-      (!filterOptions.selectedCompany || (marker.data.company && marker.data.company === filterOptions.selectedCompany)) &&
-      (!filterOptions.selectedRegion || (marker.data.region && marker.data.region === filterOptions.selectedRegion)) &&
-      (!filterOptions.selectedStatus || (marker.data.commState && marker.data.commState === filterOptions.selectedStatus))
+      (!filterOptions.selectedBizcode ||
+        (marker.data.tid &&
+          marker.data.tid.startsWith(filterOptions.selectedBizcode))) &&
+      (!filterOptions.selectedCompany ||
+        (marker.data.company &&
+          marker.data.company === filterOptions.selectedCompany)) &&
+      (!filterOptions.selectedRegion ||
+        (marker.data.region &&
+          marker.data.region === filterOptions.selectedRegion)) &&
+      (!filterOptions.selectedStatus ||
+        (marker.data.commState &&
+          marker.data.commState === filterOptions.selectedStatus))
     ) {
       markerClusterer.addMarker(marker);
     }
