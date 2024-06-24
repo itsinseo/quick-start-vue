@@ -1004,7 +1004,7 @@
     "tid": "ABC2401XYZ001",
     "customer": "강남테크",
     "division": "Research and Development",
-    "lastCommedAt": "2024-06-17 18:21:55",
+    "lastCommedAt": "2024-06-23 18:21:55",
     "formattedAddr": null,
     "lat": 37.514575,
     "lng": 127.0495556
@@ -1014,7 +1014,7 @@
     "tid": "ABC2401XYZ002",
     "customer": "강남테크2",
     "division": "Research and Development",
-    "lastCommedAt": "2024-06-17 18:21:55",
+    "lastCommedAt": "2024-06-23 18:21:55",
     "formattedAddr": null,
     "lat": 37.514575,
     "lng": 127.0495556
@@ -1024,7 +1024,7 @@
     "tid": "ABC2401XYZ003",
     "customer": "강북테크",
     "division": "Research and Development",
-    "lastCommedAt": "2024-06-17 18:21:55",
+    "lastCommedAt": "2024-06-23 18:21:55",
     "formattedAddr": null,
     "lat": 37.63695556,
     "lng": 127.0277194

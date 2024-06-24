@@ -175,7 +175,7 @@ function renderMarkersAndClusterers(markerList) {
 
   markerClusterer = new MarkerClusterer({ markers, map });
   markerClusterer.onClusterClick = function (event, cluster, map) {
-    var markerContentList = ` <div style="max-height:15rem; overflow:auto">
+    var markerContentList = ` <div style="max-height: 15rem; overflow: auto">
                                 <table>
                                   <tr>
                                     <th style="background-color: lightblue">No.</th>
@@ -183,14 +183,15 @@ function renderMarkersAndClusterers(markerList) {
                                     <th style="background-color: lightblue">업체명</th>
                                     <th style="background-color: lightblue">통신 기록</th>
                                   </tr>`;
-    var markerCount = 1;
-    cluster.markers.map(marker => {
+    var markerCount = 0;
+    const clusterMarkers = cluster.markers;
+    clusterMarkers.map(marker => {
       var color = marker.data.commState;
       if (color === 'yellow') {
         color = 'gold';
       }
       markerContentList += `<tr>
-                            <td>${markerCount}</td>
+                            <td>${clusterMarkers.length - markerCount}</td>
                             <td>${marker.data.tid}</td>
                             <td>${marker.title}</td>
                             <td style="color: ${color}">${marker.data.lastCommedAt}</td>

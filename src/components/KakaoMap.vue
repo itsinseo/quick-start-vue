@@ -179,14 +179,15 @@ function setClustererOverlay(clusterer) {
                                       <th style="background-color: lightblue">업체명</th>
                                       <th style="background-color: lightblue">통신 기록</th>
                                     </tr>`;
-    var markerCount = 1;
-    cluster.getMarkers().map(marker => {
+    var markerCount = 0;
+    const clusterMarkers = cluster.getMarkers();
+    clusterMarkers.map(marker => {
       var color = marker.data.commState;
       if (color === 'yellow') {
         color = 'gold';
       }
       markerContentList += `<tr>
-                              <td>${markerCount}</td>
+                              <td>${clusterMarkers.length - markerCount}</td>
                               <td>${marker.data.tid}</td>
                               <td>${marker.data.customer}</td>
                               <td style="color: ${color}">${marker.data.lastCommedAt}</td>
