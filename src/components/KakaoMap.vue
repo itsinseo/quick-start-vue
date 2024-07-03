@@ -1,5 +1,7 @@
 <script setup>
-import { onMounted, ref, reactive, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+
+import { MAP } from '@/config/index.js';
 
 const props = defineProps({
   markerList: {
@@ -31,7 +33,7 @@ const switchToGoogleMap = () => {
   });
 };
 
-const mapBounds = reactive({
+const mapBounds = ref({
   minLat: null,
   maxLat: null,
   minLng: null,
@@ -43,20 +45,18 @@ const kakaoMapCenter = ref({
   level: null
 });
 
-const mapSwitchLevel = 5;
-const initialLevel = props.needGoogleMap ? mapSwitchLevel : 13;
-const koreaLatMin = 32;
-const koreaLatMax = 40;
-const koreaLngMin = 120;
-const koreaLngMax = 135;
-var initialLatMin = 90;
-var initialLatMax = -90;
-var initialLngMin = 180;
-var initialLngMax = -180;
+const mapSwitchLevel = ref(5);
+const initialLevel = props.needGoogleMap ? mapSwitchLevel.value : 13;
+
+// Kakao Map 전용, 최초 렌더링 범위 결정용
+const initialLatMin = ref(90);
+const initialLatMax = ref(-90);
+const initialLngMin = ref(180);
+const initialLngMax = ref(-180);
 
 let map = null;
-var markers = [];
-var markerClusterer;
+const markers = ref([]);
+const markerClusterer = ref();
 var infoWindow;
 var customOverlay;
 
@@ -77,10 +77,10 @@ function initMap() {
 
   kakao.maps.event.addListener(map, 'bounds_changed', () => {
     const rawBounds = map.getBounds();
-    mapBounds.latMin = rawBounds.getNorthEast().getLat();
-    mapBounds.latMax = rawBounds.getSouthWest().getLat();
-    mapBounds.lngMin = rawBounds.getNorthEast().getLng();
-    mapBounds.lngMax = rawBounds.getSouthWest().getLng();
+    mapBounds.value.latMin = rawBounds.getNorthEast().getLat();
+    mapBounds.value.latMax = rawBounds.getSouthWest().getLat();
+    mapBounds.value.lngMin = rawBounds.getNorthEast().getLng();
+    mapBounds.value.lngMax = rawBounds.getSouthWest().getLng();
   });
 
   kakao.maps.event.addListener(map, 'zoom_changed', () => {
@@ -89,8 +89,14 @@ function initMap() {
     kakaoMapCenter.value.level = map.getLevel();
   });
 
-  var initialSw = new kakao.maps.LatLng(initialLatMin, initialLngMin);
-  var initialNe = new kakao.maps.LatLng(initialLatMax, initialLngMax);
+  var initialSw = new kakao.maps.LatLng(
+    initialLatMin.value,
+    initialLngMin.value
+  );
+  var initialNe = new kakao.maps.LatLng(
+    initialLatMax.value,
+    initialLngMax.value
+  );
   var initialBounds = new kakao.maps.LatLngBounds(initialSw, initialNe);
   if (!props.needGoogleMap) {
     map.setBounds(initialBounds);
@@ -109,7 +115,7 @@ function renderMarkersAndClusters(markerList) {
     yAnchor: 1.05
   });
 
-  markerClusterer = new kakao.maps.MarkerClusterer({
+  markerClusterer.value = new kakao.maps.MarkerClusterer({
     map: map,
     averageCenter: true,
     minLevel: 1,
@@ -132,10 +138,10 @@ function renderMarkersAndClusters(markerList) {
 
     const markerLat = markerData.lat;
     const markerLng = markerData.lng;
-    initialLatMin = Math.min(initialLatMin, markerLat);
-    initialLatMax = Math.max(initialLatMax, markerLat);
-    initialLngMin = Math.min(initialLngMin, markerLng);
-    initialLngMax = Math.max(initialLngMax, markerLng);
+    initialLatMin.value = Math.min(initialLatMin.value, markerLat);
+    initialLatMax.value = Math.max(initialLatMax.value, markerLat);
+    initialLngMin.value = Math.min(initialLngMin.value, markerLng);
+    initialLngMax.value = Math.max(initialLngMax.value, markerLng);
 
     var marker = new kakao.maps.Marker({
       position: new kakao.maps.LatLng(markerLat, markerLng),
@@ -156,12 +162,12 @@ function renderMarkersAndClusters(markerList) {
       infoWindow.open(map, marker);
     });
 
-    markerClusterer.addMarker(marker);
+    markerClusterer.value.addMarker(marker);
 
-    markers.push(marker);
+    markers.value.push(marker);
   });
 
-  setClustererOverlay(markerClusterer);
+  setClustererOverlay(markerClusterer.value);
 }
 
 function setClustererOverlay(clusterer) {
@@ -225,16 +231,16 @@ function setClustererOverlay(clusterer) {
 }
 
 // switch to Google Map
-watch([mapBounds, kakaoMapCenter], () => {
+watch([mapBounds.value, kakaoMapCenter.value], () => {
   if (
     props.needGoogleMap &&
-    (mapBounds.latMin < koreaLatMin ||
-      mapBounds.latMax > koreaLatMax ||
-      mapBounds.lngMin < koreaLngMin ||
-      mapBounds.lngMax > koreaLngMax ||
-      kakaoMapCenter.value.level > mapSwitchLevel)
+    (mapBounds.value.latMin < MAP.KOREA_LAT_MIN ||
+      mapBounds.value.latMax > MAP.KOREA_LAT_MAX ||
+      mapBounds.value.lngMin < MAP.KOREA_LNG_MIN ||
+      mapBounds.value.lngMax > MAP.KOREA_LNG_MAX ||
+      kakaoMapCenter.value.level > mapSwitchLevel.value)
   ) {
-    map.setLevel(mapSwitchLevel);
+    map.setLevel(mapSwitchLevel.value);
     const rawCenter = map.getCenter();
     kakaoMapCenter.value.lat = rawCenter.getLat();
     kakaoMapCenter.value.lng = rawCenter.getLng();
@@ -244,7 +250,7 @@ watch([mapBounds, kakaoMapCenter], () => {
 
 // switch from Google Map
 watch(props.mapCenter, () => {
-  map.setLevel(mapSwitchLevel);
+  map.setLevel(mapSwitchLevel.value);
   map.setCenter(
     new kakao.maps.LatLng(props.mapCenter.lat, props.mapCenter.lng)
   );
@@ -253,8 +259,8 @@ watch(props.mapCenter, () => {
 watch(filterOptions, () => {
   infoWindow.setMap(null);
   customOverlay.setMap(null);
-  markerClusterer.clear();
-  markers.map(marker => {
+  markerClusterer.value.clear();
+  markers.value.map(marker => {
     if (
       (!filterOptions.selectedBizcode ||
         (marker.data.tid &&
@@ -269,7 +275,7 @@ watch(filterOptions, () => {
         (marker.data.commState &&
           marker.data.commState === filterOptions.selectedStatus))
     ) {
-      markerClusterer.addMarker(marker);
+      markerClusterer.value.addMarker(marker);
     }
   });
 });

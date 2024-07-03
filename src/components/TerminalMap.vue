@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed } from 'vue';
 
+import { MAP } from '@/config/index.js';
+
 import dayjs from 'dayjs';
 
 import GoogleMap from '@/components/GoogleMap.vue';
@@ -15,18 +17,13 @@ import commRawData from '@/data/MOCK_DATA_240617.json';
 // });
 // const tableMapCenter = props.tableMapCenter;
 
-const koreaLatMin = 32;
-const koreaLatMax = 40;
-const koreaLngMin = 120;
-const koreaLngMax = 135;
-
 const googleMapCenter = ref({
-  lat: (koreaLatMin + koreaLatMax) / 2,
-  lng: (koreaLngMin + koreaLngMax) / 2
+  lat: (MAP.KOREA_LAT_MIN + MAP.KOREA_LAT_MAX) / 2,
+  lng: (MAP.KOREA_LNG_MIN + MAP.KOREA_LNG_MAX) / 2
 });
 const kakaoMapCenter = ref({
-  lat: (koreaLatMin + koreaLatMax) / 2,
-  lng: (koreaLngMin + koreaLngMax) / 2
+  lat: (MAP.KOREA_LAT_MIN + MAP.KOREA_LAT_MAX) / 2,
+  lng: (MAP.KOREA_LNG_MIN + MAP.KOREA_LNG_MAX) / 2
 });
 
 const today = computed(() => dayjs());
@@ -59,10 +56,10 @@ allMarkerList.value.map(markerData => {
   } else {
     globalMarkerList.value.push(markerData);
     if (
-      markerData.lat >= koreaLatMin &&
-      markerData.lat <= koreaLatMax &&
-      markerData.lng >= koreaLngMin &&
-      markerData.lng <= koreaLngMax
+      markerData.lat >= MAP.KOREA_LAT_MIN &&
+      markerData.lat <= MAP.KOREA_LAT_MAX &&
+      markerData.lng >= MAP.KOREA_LNG_MIN &&
+      markerData.lng <= MAP.KOREA_LNG_MAX
     ) {
       domesticMarkerList.value.push(markerData);
     }
@@ -95,77 +92,7 @@ const filterOptions = ref({
   selectedCompany: null,
   selectedStatus: null
 });
-const TM_BIZCODE = [
-  {
-    label: '3세대',
-    items: [
-      { label: 'LTM - LG전자', code: 'LTM', svc: 'NRL', sn: '001', corp: 'LG' },
-      {
-        label: 'TSC - 삼성전자',
-        code: 'TSC',
-        svc: '9',
-        sn: '00001',
-        corp: 'SAMSUNG'
-      },
-      {
-        label: 'CTM - 중소기업',
-        code: 'CTM',
-        svc: 'NRC',
-        sn: '001',
-        corp: null
-      },
-      { label: 'BTM - 해외', code: 'BTM', svc: 'NRE', sn: '001', corp: null },
-      { label: 'ATM - 아모레', code: 'ATM', svc: 'NRA', sn: '001', corp: null }
-    ]
-  },
-  {
-    label: '1, 2세대',
-    items: [
-      {
-        label: 'LTM - LG전자 2G',
-        code: 'LTM',
-        svc: 'KRL',
-        sn: '001',
-        corp: 'LG'
-      },
-      {
-        label: 'CTM - 중소기업 2G',
-        code: 'CTM',
-        svc: 'KRC',
-        sn: '001',
-        corp: null
-      },
-      {
-        label: 'BTM - 해외 2G',
-        code: 'BTM',
-        svc: 'KRE',
-        sn: '001',
-        corp: null
-      },
-      {
-        label: 'ATM - 아모레 2G',
-        code: 'ATM',
-        svc: 'KRA',
-        sn: '001',
-        corp: null
-      },
-      {
-        label: 'TAP - 아모레 1G',
-        code: 'TAP',
-        svc: '000',
-        sn: '001',
-        corp: null
-      },
-      {
-        label: 'TSC - 삼성전자 1G',
-        code: 'TSC',
-        svc: '0',
-        sn: '00001',
-        corp: 'SAMSUNG'
-      }
-    ]
-  }
-];
+const TM_BIZCODE = [];
 const TM_COUNTRY = [
   { name: '대한민국', code: '대한민국' },
   { name: '폴란드', code: '폴란드' },
@@ -180,18 +107,7 @@ const TM_COUNTRY = [
   { name: '브라질', code: '브라질' },
   { name: '이집트', code: '이집트' }
 ];
-const TM_COMPANY = [
-  {
-    name: 'LG',
-    code: 'LG',
-    divisions: ['H&A사업부', 'HE사업부', 'VS사업부', 'LG마그나']
-  },
-  {
-    name: 'SAMSUNG',
-    code: 'SAMSUNG',
-    divisions: ['생활가전사업부', '무선사업부']
-  }
-];
+const TM_COMPANY = [];
 const TM_STATUS = [
   {
     name: '정상',
@@ -239,6 +155,7 @@ function clearFilter() {
         showClear
         placeholder="터미널 코드"
         class="user-interaction"
+        :disabled="true"
       >
         <template #optiongroup="slotProps">
           <div>{{ slotProps.option.label }}</div>
@@ -254,6 +171,7 @@ function clearFilter() {
         showClear
         placeholder="고객사"
         class="user-interaction"
+        :disabled="true"
       />
     </div>
     <div class="col-6 lg:col-2">
@@ -263,8 +181,9 @@ function clearFilter() {
         optionLabel="name"
         optionValue="code"
         showClear
-        placeholder="국가"
+        placeholder="국가 - 검색으로 전환 중"
         class="user-interaction"
+        :disabled="true"
       />
     </div>
     <div class="col-6 lg:col-2">

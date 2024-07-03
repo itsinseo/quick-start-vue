@@ -1,5 +1,7 @@
 <script setup>
-import { onMounted, ref, reactive, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+
+import { MAP } from '@/config/index.js';
 
 import { Loader } from '@googlemaps/js-api-loader';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
@@ -30,7 +32,7 @@ const switchToKakaoMap = () => {
   });
 };
 
-const mapBounds = reactive({
+const mapBounds = ref({
   minLat: null,
   maxLat: null,
   minLng: null,
@@ -42,21 +44,18 @@ const googleMapCenter = ref({
   level: null
 });
 
-const mapSwitchZoom = 14;
-const initialZoom = 2;
-const koreaLatMin = 32;
-const koreaLatMax = 40;
-const koreaLngMin = 120;
-const koreaLngMax = 135;
-var initialLatMin = 90;
-var initialLatMax = -90;
-var initialLngMin = 180;
-var initialLngMax = -180;
+const mapSwitchZoom = ref(14);
+
+// Google 전용, 최초 렌더링 범위 결정용
+const initialLatMin = ref(90);
+const initialLatMax = ref(-90);
+const initialLngMin = ref(180);
+const initialLngMax = ref(-180);
 
 let map;
-var markers = [];
-var markerClusterer;
-var infoWindow;
+const markers = ref([]);
+let markerClusterer;
+const infoWindow = ref();
 
 function initMap() {
   const loader = new Loader({
@@ -71,7 +70,7 @@ function initMap() {
 
     map = new google.maps.Map(document.getElementById('google-map'), {
       center: props.mapCenter,
-      zoom: initialZoom,
+      zoom: 2,
       gestureHandling: 'greedy',
       mapId: 'GOOGLE_MAP',
       streetViewControl: false,
@@ -93,14 +92,14 @@ function initMap() {
 
     map.addListener('bounds_changed', () => {
       const rawBounds = map.getBounds().toJSON();
-      mapBounds.latMin = rawBounds.north;
-      mapBounds.latMax = rawBounds.south;
-      mapBounds.lngMin = rawBounds.west;
-      mapBounds.lngMax = rawBounds.east;
+      mapBounds.value.latMin = rawBounds.north;
+      mapBounds.value.latMax = rawBounds.south;
+      mapBounds.value.lngMin = rawBounds.west;
+      mapBounds.value.lngMax = rawBounds.east;
     });
 
     map.addListener('zoom_changed', () => {
-      infoWindow.close();
+      infoWindow.value.close();
       googleMapCenter.value.level = map.getZoom();
     });
 
@@ -113,10 +112,10 @@ function initMap() {
     });
     map.fitBounds(
       {
-        south: initialLatMin,
-        north: initialLatMax,
-        west: initialLngMin,
-        east: initialLngMax
+        south: initialLatMin.value,
+        north: initialLatMax.value,
+        west: initialLngMin.value,
+        east: initialLngMax.value
       },
       10
     );
@@ -124,7 +123,7 @@ function initMap() {
 }
 
 function renderMarkersAndClusterers(markerList) {
-  infoWindow = new google.maps.InfoWindow({
+  infoWindow.value = new google.maps.InfoWindow({
     content: ''
   });
   markerList.map((markerData, i) => {
@@ -149,31 +148,34 @@ function renderMarkersAndClusterers(markerList) {
     const markerLat = markerData.lat;
     const markerLng = markerData.lng;
 
-    initialLatMin = Math.min(initialLatMin, markerLat);
-    initialLatMax = Math.max(initialLatMax, markerLat);
-    initialLngMin = Math.min(initialLngMin, markerLng);
-    initialLngMax = Math.max(initialLngMax, markerLng);
+    initialLatMin.value = Math.min(initialLatMin.value, markerLat);
+    initialLatMax.value = Math.max(initialLatMax.value, markerLat);
+    initialLngMin.value = Math.min(initialLngMin.value, markerLng);
+    initialLngMax.value = Math.max(initialLngMax.value, markerLng);
     const marker = new google.maps.marker.AdvancedMarkerElement({
       position: new google.maps.LatLng(markerLat, markerLng),
       content: pinGlyph.element
     });
 
     marker.addListener('click', () => {
-      infoWindow.setOptions({
+      infoWindow.value.setOptions({
         pixelOffset: new google.maps.Size(0, 0)
       });
-      infoWindow.setContent(` ${marker.data.tid}<br>
+      infoWindow.value.setContent(` ${marker.data.tid}<br>
                               ${marker.data.customer}<br>
                               ${marker.data.lastCommedAt}  `);
-      infoWindow.open(map, marker);
+      infoWindow.value.open(map, marker);
     });
     marker.title = markerData.customer;
     marker.data = markerData;
 
-    markers.push(marker);
+    markers.value.push(marker);
   });
 
-  markerClusterer = new MarkerClusterer({ markers, map });
+  markerClusterer = new MarkerClusterer({
+    markers: markers.value,
+    map: map
+  });
   markerClusterer.onClusterClick = function (event, cluster, map) {
     var markerContentList = ` <div style="max-height: 15rem; overflow: auto">
                                 <table>
@@ -200,18 +202,18 @@ function renderMarkersAndClusterers(markerList) {
     });
     markerContentList += `</table></div>`;
 
-    infoWindow.close();
-    infoWindow.setOptions({
+    infoWindow.value.close();
+    infoWindow.value.setOptions({
       pixelOffset: new google.maps.Size(0, -10)
     });
-    infoWindow.setContent(markerContentList);
+    infoWindow.value.setContent(markerContentList);
 
     // infoWindow.open 전달용 가상 marker
     var clustererMarker = new google.maps.marker.AdvancedMarkerElement({
       position: cluster.position
     });
 
-    infoWindow.open(map, clustererMarker);
+    infoWindow.value.open(map, clustererMarker);
   };
 
   markerClusterer.renderer.render = function (cluster, stats, map) {
@@ -251,15 +253,15 @@ function renderMarkersAndClusterers(markerList) {
 }
 
 // switch to Kakao Map
-watch([mapBounds, googleMapCenter], () => {
+watch([mapBounds.value, googleMapCenter.value], () => {
   if (
-    mapBounds.latMin > koreaLatMin &&
-    mapBounds.latMax < koreaLatMax &&
-    mapBounds.lngMin > koreaLngMin &&
-    mapBounds.lngMax < koreaLngMax &&
-    googleMapCenter.value.level > mapSwitchZoom
+    mapBounds.value.latMin > MAP.KOREA_LAT_MIN &&
+    mapBounds.value.latMax < MAP.KOREA_LAT_MAX &&
+    mapBounds.value.lngMin > MAP.KOREA_LNG_MIN &&
+    mapBounds.value.lngMax < MAP.KOREA_LNG_MAX &&
+    googleMapCenter.value.level > mapSwitchZoom.value
   ) {
-    map.setZoom(mapSwitchZoom);
+    map.setZoom(mapSwitchZoom.value);
     const rawCenter = map.getCenter();
     googleMapCenter.value.lat = rawCenter.lat();
     googleMapCenter.value.lng = rawCenter.lng();
@@ -269,7 +271,7 @@ watch([mapBounds, googleMapCenter], () => {
 
 // switch from Kakao Map & initial render
 watch(props.mapCenter, () => {
-  map.setZoom(mapSwitchZoom);
+  map.setZoom(mapSwitchZoom.value);
   map.setCenter(
     new google.maps.LatLng(props.mapCenter.lat, props.mapCenter.lng)
   );
@@ -277,8 +279,8 @@ watch(props.mapCenter, () => {
 
 watch(filterOptions, () => {
   markerClusterer.clearMarkers();
-  infoWindow.close();
-  markers.map(marker => {
+  infoWindow.value.close();
+  markers.value.map(marker => {
     if (
       (!filterOptions.selectedBizcode ||
         (marker.data.tid &&
