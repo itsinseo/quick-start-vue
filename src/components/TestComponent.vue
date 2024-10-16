@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 
 import dayjs from 'dayjs';
 import { Loader } from '@googlemaps/js-api-loader';
+import { useWindowSize } from '@/utils/useWindowSize.js';
 
 import commRawData from '@/data/MOCK_DATA_240617.json';
 
@@ -200,69 +201,74 @@ function addGeocodingResults() {
 const exportCSV2 = () => {
   dt.value.exportCSV();
 };
+
+const { windowWidth, isLargeWindow } = useWindowSize();
 </script>
 
 <template>
-  <div class="wrapper-container">
-    <Dropdown
-      v-model="selectedCountry"
-      :options="countryList"
-      placeholder="국가 선택"
-      style="min-width: 10rem"
+  <div>
+    <div class="wrapper-container">
+      <Dropdown
+        v-model="selectedCountry"
+        :options="countryList"
+        placeholder="국가 선택"
+        style="min-width: 10rem"
+      />
+      <InputText type="text" v-model="inputText" class="user-interaction" />
+      <Button
+        @click="testGoogleGeocoding(inputText)"
+        label="Test Geocoding"
+        icon="pi pi-wrench"
+        class="user-interaction"
+      />
+      <div class="wrapper-container">
+        <Textarea
+          type="text"
+          v-model="formattedAddress"
+          autoResize
+          rows="3"
+          cols="20"
+        />
+        <Textarea
+          type="text"
+          v-model="formattedCoordinate"
+          autoResize
+          rows="3"
+          cols="20"
+        />
+      </div>
+    </div>
+    <InputText
+      type="text"
+      v-model="today"
+      class="user-interaction"
+      style="width: 20rem"
     />
-    <InputText type="text" v-model="inputText" class="user-interaction" />
     <Button
-      @click="testGoogleGeocoding(inputText)"
-      label="Test Geocoding"
-      icon="pi pi-wrench"
+      @click="addGeocodingResults"
+      label="Geocode"
+      icon="pi pi-google"
+      disabled
       class="user-interaction"
     />
-    <div class="wrapper-container">
-      <Textarea
-        type="text"
-        v-model="formattedAddress"
-        autoResize
-        rows="3"
-        cols="20"
-      />
-      <Textarea
-        type="text"
-        v-model="formattedCoordinate"
-        autoResize
-        rows="3"
-        cols="20"
-      />
-    </div>
+    <Button
+      @click="exportCSV2"
+      label="CSV"
+      icon="pi pi-download"
+      class="user-interaction"
+    />
+    <DataTable
+      :value="geocodedDataArray"
+      ref="dt"
+      paginator
+      :rows="10"
+      :rowsPerPageOptions="[10, 20, 50]"
+    >
+      <template #empty> No data to geocode. </template>
+      <Column v-for="col of columns" :field="col" :header="col" />
+    </DataTable>
+    <div>{{ windowWidth }} | {{ isLargeWindow }}</div>
   </div>
-  <InputText
-    type="text"
-    v-model="today"
-    class="user-interaction"
-    style="width: 20rem"
-  />
-  <Button
-    @click="addGeocodingResults"
-    label="Geocode"
-    icon="pi pi-google"
-    disabled
-    class="user-interaction"
-  />
-  <Button
-    @click="exportCSV2"
-    label="CSV"
-    icon="pi pi-download"
-    class="user-interaction"
-  />
-  <DataTable
-    :value="geocodedDataArray"
-    ref="dt"
-    paginator
-    :rows="10"
-    :rowsPerPageOptions="[10, 20, 50]"
-  >
-    <template #empty> No data to geocode. </template>
-    <Column v-for="col of columns" :field="col" :header="col" />
-  </DataTable>
 </template>
 
 <style scoped>

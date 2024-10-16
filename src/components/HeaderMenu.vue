@@ -33,14 +33,19 @@ const importedRoutes = ref(router.options.routes.filter(route => route.name));
 
   <div class="menu-bar">
     <Menubar :model="importedRoutes">
-      <template #item="{ item, props, hasSubmenu }">
+      <template #item="{ item, props }">
         <router-link
           v-if="item.path"
           v-slot="{ href, navigate }"
           :to="item.path"
           custom
         >
-          <a :href="href" v-bind="props.action" @click="navigate">
+          <a
+            :href="href"
+            v-bind="props.action"
+            :class="item.path === route.fullPath ? 'selectedMenu' : ''"
+            @click="navigate"
+          >
             <span :class="item.meta?.icon" />
             <span class="ml-2">{{ item.meta?.title }}</span>
           </a>
@@ -71,6 +76,12 @@ const importedRoutes = ref(router.options.routes.filter(route => route.name));
   /* border: 1px solid #e2e8f0; */
   margin: 2px;
   padding: 2px;
+}
+
+.selectedMenu {
+  background-color: #2ba06f;
+  color: white;
+  border-radius: 10px;
 }
 
 @media (max-width: 960px) {

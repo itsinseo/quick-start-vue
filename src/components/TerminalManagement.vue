@@ -151,11 +151,9 @@ function resetObject(obj) {
 clearFilter();
 
 const windowWidth = ref(window.innerWidth);
-
 const resizeWindowWidth = () => {
   windowWidth.value = window.innerWidth;
 };
-
 const isLargeWindow = computed(() => {
   return windowWidth.value > 960;
 });
