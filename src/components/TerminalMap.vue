@@ -95,17 +95,14 @@ const filterOptions = ref({
 const TM_BIZCODE = [];
 const TM_COUNTRY = [
   { name: '대한민국', code: '대한민국' },
-  { name: '폴란드', code: '폴란드' },
   { name: '베트남', code: '베트남' },
   { name: '중국', code: '중국' },
   { name: '미국', code: '미국' },
   { name: '인도', code: '인도' },
-  { name: '태국', code: '태국' },
   { name: '멕시코', code: '멕시코' },
   { name: '인도네시아', code: '인도네시아' },
   { name: '말레이시아', code: '말레이시아' },
-  { name: '브라질', code: '브라질' },
-  { name: '이집트', code: '이집트' }
+  { name: '브라질', code: '브라질' }
 ];
 const TM_COMPANY = [];
 const TM_STATUS = [

@@ -28,8 +28,6 @@ const terminalHeaderList = [
   { name: 'TSC', description: '삼성전자' },
   { name: 'LTM', description: 'LG' },
   { name: 'CTM', description: '중소기업' },
-  { name: 'BTM', description: '해외' },
-  { name: 'ATM', description: '아모레' },
   { name: 'MTL', description: '임시' }
 ];
 const locationList = [

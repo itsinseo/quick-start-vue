@@ -16,11 +16,9 @@ const countryList = [
   '미국',
   '베트남',
   '브라질',
-  '이집트',
   '인도',
   '인도네시아',
-  '중국',
-  '폴란드'
+  '중국'
 ];
 const selectedCountry = ref('대한민국');
 const inputText = ref();
@@ -34,13 +32,13 @@ function codeAddress(address, region) {
   return new Promise((resolve, reject) => {
     var geocoder = new google.maps.Geocoder();
     geocoder.geocode({ address: address }, function (results, status) {
-      if (status == 'OK') {
+      if (status === 'OK') {
         resolve(results);
       } else {
         geocoder.geocode(
           { address: region },
           function (secondaryResults, secondaryStatus) {
-            if (secondaryStatus == 'OK') {
+            if (secondaryStatus === 'OK') {
               resolve(secondaryResults);
             } else {
               reject(new Error(secondaryStatus));
@@ -128,8 +126,6 @@ const columns = [
   'region',
   'tid',
   // "contactNo",
-  // "tmVer",
-  // "tmCreatedAt",
   'customer',
   // "manager",
   // "deliveredAt",
@@ -139,19 +135,9 @@ const columns = [
   'division',
   // "etc",
   // "label",
-  // "lrCtn",
-  // "lrUsim",
-  // "lrImei",
-  // "lrSp",
-  // "lrRate",
   // "simIccid",
-  // "simMsisdn",
-  // "simImsi",
-  // "simImei",
   // "simSp",
   // "simRate",
-  // "atValue",
-  // "recvData",
   'lastCommedAt',
   // "commState",
   'formattedAddr',
