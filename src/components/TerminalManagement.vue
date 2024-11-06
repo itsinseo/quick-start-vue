@@ -1,13 +1,13 @@
 <script setup>
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
-import { FilterMatchMode } from 'primevue/api';
+import { FilterMatchMode } from '@primevue/core/api';
 
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 
 // Stepper requires explicit import
 import Stepper from 'primevue/stepper';
-import StepperPanel from 'primevue/stepperpanel';
+import StepPanel from 'primevue/steppanel';
 
 import kakaoGeocode from '@/utils/kakao-geocoding';
 
@@ -202,7 +202,7 @@ onBeforeUnmount(() => {
             </IconField>
           </div>
           <div class="col">
-            <Dropdown
+            <Select
               v-model="filters['terminal_id'].value"
               :options="terminalHeaderList"
               optionValue="name"
@@ -214,7 +214,7 @@ onBeforeUnmount(() => {
               <template #option="{ option }">
                 {{ option.name }} - {{ option.description }}
               </template>
-            </Dropdown>
+            </Select>
           </div>
           <div class="col">
             <MultiSelect
@@ -297,7 +297,7 @@ onBeforeUnmount(() => {
           <span style="font-weight: bold; color: red">* 터미널ID (13자리)</span>
         </div>
         <div class="col-3 flex flex-column">
-          <Dropdown
+          <Select
             v-model="codeInfo.customer"
             :options="terminalHeaderList"
             optionValue="name"
@@ -307,7 +307,7 @@ onBeforeUnmount(() => {
             <template #option="{ option }">
               {{ option.name }} - {{ option.description }}
             </template>
-          </Dropdown>
+          </Select>
           <small>고객코드(3)</small>
         </div>
         <div class="col-2 flex flex-column">
@@ -335,7 +335,7 @@ onBeforeUnmount(() => {
           <span style="font-weight: bold; color: red">* 납품정보</span>
         </div>
         <div class="col-5 flex flex-column">
-          <Calendar
+          <DatePicker
             v-model="salesInfo.date"
             dateFormat="yy-mm-dd"
             showButtonBar
@@ -359,7 +359,7 @@ onBeforeUnmount(() => {
           <small>E-mail</small>
         </div>
         <div class="col-5 flex flex-column">
-          <Dropdown v-model="salesInfo.status" :options="salesStatus" />
+          <Select v-model="salesInfo.status" :options="salesStatus" />
         </div>
       </div>
 
@@ -390,7 +390,7 @@ onBeforeUnmount(() => {
           <small>고객사(출고)</small>
         </div>
         <div class="col-4 flex flex-column">
-          <Dropdown
+          <Select
             v-model="installInfo.department"
             :options="null"
             showClear
@@ -427,7 +427,7 @@ onBeforeUnmount(() => {
           <span style="font-weight: bold; color: red">* 터미널ID (13자리)</span>
         </div>
         <div class="col-6 flex flex-column">
-          <Dropdown
+          <Select
             v-model="codeInfo.customer"
             :options="terminalHeaderList"
             optionValue="name"
@@ -437,7 +437,7 @@ onBeforeUnmount(() => {
             <template #option="{ option }">
               {{ option.name }} - {{ option.description }}
             </template>
-          </Dropdown>
+          </Select>
           <small>고객코드(3)</small>
         </div>
         <div class="col-3 flex flex-column">
@@ -463,7 +463,7 @@ onBeforeUnmount(() => {
           <span style="font-weight: bold; color: red">* 납품정보</span>
         </div>
         <div class="col-5 flex flex-column">
-          <Calendar
+          <DatePicker
             v-model="salesInfo.date"
             dateFormat="yy-mm-dd"
             showButtonBar
@@ -487,7 +487,7 @@ onBeforeUnmount(() => {
           <small>E-mail</small>
         </div>
         <div class="col-5 flex flex-column">
-          <Dropdown v-model="salesInfo.status" :options="salesStatus" />
+          <Select v-model="salesInfo.status" :options="salesStatus" />
         </div>
       </div>
 
@@ -516,7 +516,7 @@ onBeforeUnmount(() => {
           <small>고객사(출고)</small>
         </div>
         <div class="col-6 flex flex-column">
-          <Dropdown
+          <Select
             v-model="installInfo.department"
             :options="null"
             showClear
@@ -569,7 +569,7 @@ onBeforeUnmount(() => {
     style="width: 90vw; max-width: 600px"
   >
     <Stepper>
-      <StepperPanel header="ID">
+      <StepPanel header="ID">
         <template #content="{ nextCallback }">
           <div class="grid">
             <div class="col-12">
@@ -578,7 +578,7 @@ onBeforeUnmount(() => {
               >
             </div>
             <div class="col-6 flex flex-column">
-              <Dropdown
+              <Select
                 v-model="codeInfo.customer"
                 :options="terminalHeaderList"
                 optionValue="name"
@@ -588,7 +588,7 @@ onBeforeUnmount(() => {
                 <template #option="{ option }">
                   {{ option.name }} - {{ option.description }}
                 </template>
-              </Dropdown>
+              </Select>
               <small>고객코드(3)</small>
             </div>
             <div class="col-3 flex flex-column">
@@ -617,15 +617,15 @@ onBeforeUnmount(() => {
             />
           </div>
         </template>
-      </StepperPanel>
-      <StepperPanel header="납품">
+      </StepPanel>
+      <StepPanel header="납품">
         <template #content="{ prevCallback, nextCallback }">
           <div class="grid">
             <div class="col-12">
               <span style="font-weight: bold; color: red">* 납품정보</span>
             </div>
             <div class="col-5 flex flex-column">
-              <Calendar
+              <DatePicker
                 v-model="salesInfo.date"
                 dateFormat="yy-mm-dd"
                 showButtonBar
@@ -649,7 +649,7 @@ onBeforeUnmount(() => {
               <small>E-mail</small>
             </div>
             <div class="col-5 flex flex-column">
-              <Dropdown v-model="salesInfo.status" :options="salesStatus" />
+              <Select v-model="salesInfo.status" :options="salesStatus" />
             </div>
           </div>
           <div class="flex pt-4 justify-content-between">
@@ -667,8 +667,8 @@ onBeforeUnmount(() => {
             />
           </div>
         </template>
-      </StepperPanel>
-      <StepperPanel header="설치">
+      </StepPanel>
+      <StepPanel header="설치">
         <template #content="{ prevCallback }">
           <div class="grid">
             <div class="col-12">
@@ -695,7 +695,7 @@ onBeforeUnmount(() => {
               <small>고객사(출고)</small>
             </div>
             <div class="col-6 flex flex-column">
-              <Dropdown
+              <Select
                 v-model="installInfo.department"
                 :options="null"
                 showClear
@@ -723,7 +723,7 @@ onBeforeUnmount(() => {
             />
           </div>
         </template>
-      </StepperPanel>
+      </StepPanel>
     </Stepper>
   </Dialog>
 </template>

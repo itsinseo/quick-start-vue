@@ -194,7 +194,7 @@ const { windowWidth, isLargeWindow } = useWindowSize();
 <template>
   <div>
     <div class="wrapper-container">
-      <Dropdown
+      <Select
         v-model="selectedCountry"
         :options="countryList"
         placeholder="국가 선택"

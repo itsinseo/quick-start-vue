@@ -142,7 +142,7 @@ function clearFilter() {
   </div>
   <div class="grid">
     <div class="col-6 lg:col-2">
-      <Dropdown
+      <Select
         v-model="filterOptions.selectedBizcode"
         :options="TM_BIZCODE"
         optionLabel="label"
@@ -157,10 +157,10 @@ function clearFilter() {
         <template #optiongroup="slotProps">
           <div>{{ slotProps.option.label }}</div>
         </template>
-      </Dropdown>
+      </Select>
     </div>
     <div class="col-6 lg:col-2">
-      <Dropdown
+      <Select
         v-model="filterOptions.selectedCompany"
         :options="TM_COMPANY"
         optionLabel="name"
@@ -172,7 +172,7 @@ function clearFilter() {
       />
     </div>
     <div class="col-6 lg:col-2">
-      <Dropdown
+      <Select
         v-model="filterOptions.selectedRegion"
         :options="TM_COUNTRY"
         optionLabel="name"
@@ -184,7 +184,7 @@ function clearFilter() {
       />
     </div>
     <div class="col-6 lg:col-2">
-      <Dropdown
+      <Select
         v-model="filterOptions.selectedStatus"
         :options="TM_STATUS"
         optionLabel="name"
