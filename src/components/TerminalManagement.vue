@@ -1,10 +1,15 @@
 <script setup>
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
 import { FilterMatchMode } from '@primevue/core/api';
+import { useToast } from 'primevue';
+
+import QrScanner from './QrScanner.vue';
 
 import kakaoGeocode from '@/utils/kakao-geocoding';
 
 import terminalManagement from '@/data/mock-terminal-management.json';
+
+const toast = useToast();
 
 const dataList = terminalManagement;
 const filters = ref();
@@ -146,6 +151,19 @@ const isLargeWindow = computed(() => {
   return windowWidth.value > 960;
 });
 
+// QR Scan
+const showQrScanner = ref(false);
+const showQrScanResult = qrScanResult => {
+  toast.add({
+    severity: 'info',
+    summary: 'QR 스캔 성공',
+    detail: qrScanResult,
+    // group: 'tr',
+    life: 3000
+  });
+  showQrScanner.value = false;
+};
+
 onMounted(() => {
   window.addEventListener('resize', resizeWindowWidth);
 });
@@ -186,7 +204,14 @@ onBeforeUnmount(() => {
             @click="mobileDialog = true"
           />
         </div>
-        <div class="col-span-5">
+        <div class="col-span-1">
+          <Button
+            class="w-full"
+            label="QR"
+            @click.prevent="showQrScanner = !showQrScanner"
+          />
+        </div>
+        <div class="col-span-4">
           <IconField iconPosition="left">
             <InputIcon class="pi pi-search" />
             <InputText
@@ -231,6 +256,12 @@ onBeforeUnmount(() => {
             @click="clearFilter()"
           />
         </div>
+        <div v-if="showQrScanner" class="col-span-6 justify-items-center">
+          <QrScanner
+            class="h-full w-[80vw] max-w-[600px]"
+            @emit-qr-scan-result="showQrScanResult"
+          />
+        </div>
       </div>
     </template>
     <template #empty> 검색 결과가 없습니다. </template>
@@ -241,11 +272,7 @@ onBeforeUnmount(() => {
         }}
       </template>
     </Column>
-    <Column
-      class="hidden lg:table-cell"
-      field="customer"
-      header="고객사"
-    />
+    <Column class="hidden lg:table-cell" field="customer" header="고객사" />
     <Column
       class="hidden lg:table-cell"
       field="location"
