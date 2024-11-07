@@ -2,13 +2,6 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
 import { FilterMatchMode } from '@primevue/core/api';
 
-import IconField from 'primevue/iconfield';
-import InputIcon from 'primevue/inputicon';
-
-// Stepper requires explicit import
-import Stepper from 'primevue/stepper';
-import StepPanel from 'primevue/steppanel';
-
 import kakaoGeocode from '@/utils/kakao-geocoding';
 
 import terminalManagement from '@/data/mock-terminal-management.json';
@@ -120,15 +113,12 @@ function submitTerminalForm() {
 const mobileDialog = ref(false);
 function submitMobileTerminalForm() {
   callGeocodingApi();
-
   mobileDialog.value = false;
 }
 
 function callGeocodingApi() {
   kakaoGeocode(installInfo.details)
     .then(coords => {
-      console.log(coords);
-
       resetObject(codeInfo);
       resetObject(salesInfo);
       resetObject(installInfo);
@@ -181,61 +171,65 @@ onBeforeUnmount(() => {
     scrollHeight="70vh"
   >
     <template #header>
-      <div class="flex table-header">
-        <div class="grid">
-          <div class="col">
-            <Button
-              v-if="isLargeWindow"
-              label="추가"
-              @click="desktopDialog = true"
+      <div class="grid grid-cols-6">
+        <div class="col-span-1">
+          <Button
+            class="w-full"
+            v-if="isLargeWindow"
+            label="추가"
+            @click="desktopDialog = true"
+          />
+          <Button
+            class="w-full"
+            v-else
+            label="추가"
+            @click="mobileDialog = true"
+          />
+        </div>
+        <div class="col-span-5">
+          <IconField iconPosition="left">
+            <InputIcon class="pi pi-search" />
+            <InputText
+              class="w-full"
+              v-model="filters['global'].value"
+              placeholder="검색"
             />
-            <Button v-else label="추가" @click="mobileDialog = true" />
-          </div>
-          <div class="col">
-            <IconField iconPosition="left" class="icon-field-search">
-              <InputIcon class="pi pi-search" />
-              <InputText
-                v-model="filters['global'].value"
-                placeholder="검색"
-                class="input-search"
-              />
-            </IconField>
-          </div>
-          <div class="col">
-            <Select
-              v-model="filters['terminal_id'].value"
-              :options="terminalHeaderList"
-              optionValue="name"
-              optionLabel="name"
-              placeholder="터미널 코드"
-              showClear
-              class="dropdown-terminal-id"
-            >
-              <template #option="{ option }">
-                {{ option.name }} - {{ option.description }}
-              </template>
-            </Select>
-          </div>
-          <div class="col">
-            <MultiSelect
-              v-model="filters['location'].value"
-              :options="locationList"
-              optionValue="name"
-              optionLabel="name"
-              placeholder="납품처"
-              :maxSelectedLabels="1"
-              selectedItemsLabel="{0}개 국가"
-              class="select-location"
-            />
-          </div>
-          <div class="col">
-            <Button
-              type="button"
-              icon="pi pi-filter-slash"
-              outlined
-              @click="clearFilter()"
-            />
-          </div>
+          </IconField>
+        </div>
+        <div class="col-span-3">
+          <Select
+            class="w-full"
+            v-model="filters['terminal_id'].value"
+            :options="terminalHeaderList"
+            optionValue="name"
+            optionLabel="name"
+            placeholder="터미널 코드"
+            showClear
+          >
+            <template #option="{ option }">
+              {{ option.name }} - {{ option.description }}
+            </template>
+          </Select>
+        </div>
+        <div class="col-span-2">
+          <MultiSelect
+            class="w-full"
+            v-model="filters['location'].value"
+            :options="locationList"
+            optionValue="name"
+            optionLabel="name"
+            placeholder="납품처"
+            :maxSelectedLabels="1"
+            selectedItemsLabel="{0}개 국가"
+          />
+        </div>
+        <div class="col-span-1">
+          <Button
+            class="w-full"
+            icon="pi pi-filter-slash"
+            outlined
+            @click="clearFilter()"
+          />
         </div>
       </div>
     </template>
@@ -247,15 +241,19 @@ onBeforeUnmount(() => {
         }}
       </template>
     </Column>
-    <Column field="customer" header="고객사" class="th-customer"></Column>
     <Column
+      class="hidden lg:table-cell"
+      field="customer"
+      header="고객사"
+    />
+    <Column
+      class="hidden lg:table-cell"
       field="location"
       header="납품처"
       :showFilterMenu="false"
       sortable
-      class="th-location"
     ></Column>
-    <Column field="customer" class="th-customer-location" sortable>
+    <Column field="customer" sortable class="lg:hidden">
       <template #header>
         <div>고객사<br />납품처</div>
       </template>
@@ -264,301 +262,197 @@ onBeforeUnmount(() => {
         {{ data.location }}
       </template>
     </Column>
-    <Column
-      field="registered_date"
-      header="납품일자"
-      sortable
-      class="th-registered-date"
-    >
+    <Column field="registered_date" header="납품일자" sortable>
       <template #body="{ data }">
         {{ formatDate(data.registered_date) }}
       </template>
     </Column>
-    <Column field="sim" header="SIM"></Column>
-    <Column
-      field="modified_date"
-      header="최종수정"
-      sortable
-      class="th-modified-date"
-    ></Column>
+    <Column field="sim" header="SIM" />
+    <Column field="modified_date" header="최종수정" sortable />
   </DataTable>
 
-  <!-- TOOD: apply required option, watch department with customer -->
   <Dialog
     v-model:visible="desktopDialog"
     modal
     header="터미널 상세 정보"
-    style="max-width: 600px"
+    style="max-width: 900px"
     :breakpoints="{ '960px': '95vw' }"
   >
-    <div v-if="windowWidth" class="wrapper-container">
-      <div class="grid">
-        <div class="col-12">
-          <span style="font-weight: bold; color: red">* 터미널ID (13자리)</span>
-        </div>
-        <div class="col-3 flex flex-column">
-          <Select
-            v-model="codeInfo.customer"
-            :options="terminalHeaderList"
-            optionValue="name"
-            optionLabel="name"
-            placeholder="터미널 코드"
-          >
-            <template #option="{ option }">
-              {{ option.name }} - {{ option.description }}
-            </template>
-          </Select>
-          <small>고객코드(3)</small>
-        </div>
-        <div class="col-2 flex flex-column">
-          <InputMask v-model="codeInfo.year" mask="99" />
-          <small>년도(2)</small>
-        </div>
-        <div class="col-2 flex flex-column">
-          <InputMask v-model="codeInfo.week" mask="99" />
-          <small>주차(2)</small>
-        </div>
-        <div class="col-3 flex flex-column">
-          <InputMask v-model="codeInfo.server" mask="a**" />
-          <small>서버코드(3)</small>
-        </div>
-        <div class="col-2 flex flex-column">
-          <InputMask v-model="codeInfo.serial" mask="999" />
-          <small>번호(3)</small>
-        </div>
+    <div class="grid grid-cols-12">
+      <div class="col-span-12">
+        <span style="font-weight: bold; color: red">* 터미널ID (13자리)</span>
       </div>
-
-      <Divider />
-
-      <div class="grid">
-        <div class="col-12">
-          <span style="font-weight: bold; color: red">* 납품정보</span>
-        </div>
-        <div class="col-5 flex flex-column">
-          <DatePicker
-            v-model="salesInfo.date"
-            dateFormat="yy-mm-dd"
-            showButtonBar
-          />
-          <small>납품일자</small>
-        </div>
-        <div class="col-7 flex flex-column">
-          <InputText v-model="salesInfo.customer" />
-          <small>납품처</small>
-        </div>
-        <div class="col-5 flex flex-column">
-          <InputText v-model="salesInfo.manager" />
-          <small>담당자</small>
-        </div>
-        <div class="col-7 flex flex-column">
-          <InputText v-model="salesInfo.contact" />
-          <small>연락처</small>
-        </div>
-        <div class="col-7 flex flex-column">
-          <InputText v-model="salesInfo.email" />
-          <small>E-mail</small>
-        </div>
-        <div class="col-5 flex flex-column">
-          <Select v-model="salesInfo.status" :options="salesStatus" />
-        </div>
+      <div class="col-span-4 w-full">
+        <Select
+          class="w-full"
+          v-model="codeInfo.customer"
+          :options="terminalHeaderList"
+          optionValue="name"
+          optionLabel="name"
+          placeholder="고객코드(3)"
+        >
+          <template #option="{ option }">
+            {{ option.name }} - {{ option.description }}
+          </template>
+        </Select>
       </div>
-
-      <Divider />
-
-      <div class="grid">
-        <div class="col-12">
-          <span style="font-weight: bold; color: red">* 설치정보</span>
-        </div>
-        <div class="col-3 flex flex-column">
-          <InputText v-model="installInfo.region" />
-          <small>국가(Region)</small>
-        </div>
-        <div class="col-3 flex flex-column">
-          <InputText v-model="installInfo.location" />
-          <small>설치지역</small>
-        </div>
-        <div class="col-6 flex flex-column">
-          <InputText v-model="installInfo.details" />
-          <small>설치위치(상세)</small>
-        </div>
-        <div class="col-3 flex flex-column">
-          <AutoComplete
-            v-model="installInfo.customer"
-            :suggestions="filteredCustomers"
-            @complete="searchCustomers"
-          />
-          <small>고객사(출고)</small>
-        </div>
-        <div class="col-4 flex flex-column">
-          <Select
-            v-model="installInfo.department"
-            :options="null"
-            showClear
-            disabled
-          />
-          <small>사업부</small>
-        </div>
-        <div class="col-5 flex flex-column">
-          <InputText v-model="installInfo.memo" />
-          <small>비고(메모)</small>
-        </div>
+      <div class="col-span-4 lg:col-span-2">
+        <InputMask
+          class="w-full"
+          v-model="codeInfo.year"
+          mask="99"
+          placeholder="년도(2)"
+        />
       </div>
-
-      <div class="flex justify-content-end gap-2 mt-2">
-        <Button
-          type="button"
-          label="닫기"
-          icon="pi pi-times"
-          severity="secondary"
-          @click="desktopDialog = false"
-        ></Button>
-        <Button
-          type="button"
-          label="저장"
-          icon="pi pi-check"
-          @click="submitTerminalForm"
-        ></Button>
+      <div class="col-span-4 lg:col-span-2">
+        <InputMask
+          class="w-full"
+          v-model="codeInfo.week"
+          mask="99"
+          placeholder="주차(2)"
+        />
+      </div>
+      <div class="col-span-6 lg:col-span-2">
+        <InputMask
+          class="w-full"
+          v-model="codeInfo.server"
+          mask="a**"
+          placeholder="서버코드(3)"
+        />
+      </div>
+      <div class="col-span-6 lg:col-span-2">
+        <InputMask
+          class="w-full"
+          v-model="codeInfo.serial"
+          mask="999"
+          placeholder="일련번호(3)"
+        />
       </div>
     </div>
 
-    <div v-else class="wrapper-container">
-      <div v-if="currentPage === 1" class="grid">
-        <div class="col-12">
-          <span style="font-weight: bold; color: red">* 터미널ID (13자리)</span>
-        </div>
-        <div class="col-6 flex flex-column">
-          <Select
-            v-model="codeInfo.customer"
-            :options="terminalHeaderList"
-            optionValue="name"
-            optionLabel="name"
-            placeholder="터미널 코드"
-          >
-            <template #option="{ option }">
-              {{ option.name }} - {{ option.description }}
-            </template>
-          </Select>
-          <small>고객코드(3)</small>
-        </div>
-        <div class="col-3 flex flex-column">
-          <InputMask v-model="codeInfo.year" mask="99" />
-          <small>년도(2)</small>
-        </div>
-        <div class="col-3 flex flex-column">
-          <InputMask v-model="codeInfo.week" mask="99" />
-          <small>주차(2)</small>
-        </div>
-        <div class="col-6 flex flex-column">
-          <InputMask v-model="codeInfo.server" mask="a**" />
-          <small>서버코드(3)</small>
-        </div>
-        <div class="col-6 flex flex-column">
-          <InputMask v-model="codeInfo.serial" mask="999" />
-          <small>번호(3)</small>
-        </div>
-      </div>
+    <Divider />
 
-      <div v-else-if="currentPage === 2" class="grid">
-        <div class="col-12">
-          <span style="font-weight: bold; color: red">* 납품정보</span>
-        </div>
-        <div class="col-5 flex flex-column">
-          <DatePicker
-            v-model="salesInfo.date"
-            dateFormat="yy-mm-dd"
-            showButtonBar
-          />
-          <small>납품일자</small>
-        </div>
-        <div class="col-7 flex flex-column">
-          <InputText v-model="salesInfo.customer" />
-          <small>납품처</small>
-        </div>
-        <div class="col-5 flex flex-column">
-          <InputText v-model="salesInfo.manager" />
-          <small>담당자</small>
-        </div>
-        <div class="col-7 flex flex-column">
-          <InputText v-model="salesInfo.contact" />
-          <small>연락처</small>
-        </div>
-        <div class="col-7 flex flex-column">
-          <InputText v-model="salesInfo.email" />
-          <small>E-mail</small>
-        </div>
-        <div class="col-5 flex flex-column">
-          <Select v-model="salesInfo.status" :options="salesStatus" />
-        </div>
+    <div class="grid grid-cols-12">
+      <div class="col-span-12">
+        <span style="font-weight: bold; color: red">* 납품정보</span>
       </div>
+      <div class="col-span-4">
+        <DatePicker
+          class="w-full"
+          v-model="salesInfo.date"
+          dateFormat="yy-mm-dd"
+          showButtonBar
+          placeholder="납품일자"
+        />
+      </div>
+      <div class="col-span-4">
+        <InputText
+          class="w-full"
+          v-model="salesInfo.customer"
+          placeholder="납품처"
+        />
+      </div>
+      <div class="col-span-4">
+        <Select
+          class="w-full"
+          v-model="salesInfo.status"
+          :options="salesStatus"
+        />
+      </div>
+      <div class="col-span-4">
+        <InputText
+          class="w-full"
+          v-model="salesInfo.manager"
+          placeholder="담당자"
+        />
+      </div>
+      <div class="col-span-4">
+        <InputText
+          class="w-full"
+          v-model="salesInfo.contact"
+          placeholder="연락처"
+        />
+      </div>
+      <div class="col-span-4">
+        <InputText
+          class="w-full"
+          v-model="salesInfo.email"
+          placeholder="E-mail"
+        />
+      </div>
+    </div>
 
-      <div v-else-if="currentPage === 3" class="grid">
-        <div class="col-12">
-          <span style="font-weight: bold; color: red">* 설치정보</span>
-        </div>
-        <div class="col-6 flex flex-column">
-          <InputText v-model="installInfo.region" />
-          <small>국가(Region)</small>
-        </div>
-        <div class="col-6 flex flex-column">
-          <InputText v-model="installInfo.location" />
-          <small>설치지역</small>
-        </div>
-        <div class="col-12 flex flex-column">
-          <InputText v-model="installInfo.details" />
-          <small>설치위치(상세)</small>
-        </div>
-        <div class="col-6 flex flex-column">
-          <AutoComplete
-            v-model="installInfo.customer"
-            :suggestions="filteredCustomers"
-            @complete="searchCustomers"
-          />
-          <small>고객사(출고)</small>
-        </div>
-        <div class="col-6 flex flex-column">
-          <Select
-            v-model="installInfo.department"
-            :options="null"
-            showClear
-            disabled
-          />
-          <small>사업부</small>
-        </div>
-        <div class="col-12 flex flex-column">
-          <InputText v-model="installInfo.memo" />
-          <small>비고(메모)</small>
-        </div>
-      </div>
+    <Divider />
 
-      <div class="flex justify-content-end gap-2 mt-2">
-        <Button
-          type="button"
-          label="취소"
-          icon="pi pi-times"
-          severity="danger"
-          @click="desktopDialog = false"
-        />
-        <Button
-          v-if="currentPage > 1"
-          type="button"
-          label="이전"
-          severity="secondary"
-          @click="currentPage--"
-        />
-        <Button
-          v-if="currentPage < totalPages"
-          type="button"
-          label="다음"
-          @click="currentPage++"
-        />
-        <Button
-          v-if="currentPage === totalPages"
-          type="button"
-          label="제출"
-          icon="pi pi-check"
-          @click="submitTerminalForm"
+    <div class="grid grid-cols-12">
+      <div class="col-span-12">
+        <span style="font-weight: bold; color: red">* 설치정보</span>
+      </div>
+      <div class="col-span-3">
+        <InputText
+          class="w-full"
+          v-model="installInfo.region"
+          placeholder="국가(Region)"
         />
       </div>
+      <div class="col-span-3">
+        <InputText
+          class="w-full"
+          v-model="installInfo.location"
+          placeholder="설치지역"
+        />
+      </div>
+      <div class="col-span-6">
+        <InputText
+          class="w-full"
+          v-model="installInfo.details"
+          placeholder="설치위치(상세)"
+        />
+      </div>
+      <div class="col-span-3">
+        <AutoComplete
+          class="w-full"
+          v-model="installInfo.customer"
+          :suggestions="filteredCustomers"
+          @complete="searchCustomers"
+          placeholder="고객사(출고)"
+        />
+      </div>
+      <div class="col-span-3">
+        <Select
+          class="w-full"
+          v-model="installInfo.department"
+          :options="null"
+          showClear
+          disabled
+          placeholder="사업부"
+        />
+      </div>
+      <div class="col-span-6">
+        <InputText
+          class="w-full"
+          v-model="installInfo.memo"
+          placeholder="비고(메모)"
+        />
+      </div>
+    </div>
+
+    <Divider />
+
+    <div class="flex justify-end gap-2">
+      <Button
+        type="button"
+        label="닫기"
+        icon="pi pi-times"
+        severity="secondary"
+        @click="desktopDialog = false"
+      ></Button>
+      <Button
+        type="button"
+        label="저장"
+        icon="pi pi-check"
+        @click="submitTerminalForm"
+      ></Button>
     </div>
   </Dialog>
 
@@ -568,17 +462,23 @@ onBeforeUnmount(() => {
     header="터미널 상세 정보"
     style="width: 90vw; max-width: 600px"
   >
-    <Stepper>
-      <StepPanel header="ID">
-        <template #content="{ nextCallback }">
-          <div class="grid">
-            <div class="col-12">
+    <Stepper value="1">
+      <StepList>
+        <Step value="1">ID</Step>
+        <Step value="2">납품</Step>
+        <Step value="3">설치</Step>
+      </StepList>
+      <StepPanels>
+        <StepPanel v-slot="{ activateCallback }" value="1">
+          <div class="grid grid-cols-12">
+            <div class="col-span-12">
               <span style="font-weight: bold; color: red"
                 >* 터미널ID (13자리)</span
               >
             </div>
-            <div class="col-6 flex flex-column">
+            <div class="col-span-6">
               <Select
+                class="w-full"
                 v-model="codeInfo.customer"
                 :options="terminalHeaderList"
                 optionValue="name"
@@ -591,111 +491,114 @@ onBeforeUnmount(() => {
               </Select>
               <small>고객코드(3)</small>
             </div>
-            <div class="col-3 flex flex-column">
-              <InputMask v-model="codeInfo.year" mask="99" />
+            <div class="col-span-3">
+              <InputMask class="w-full" v-model="codeInfo.year" mask="99" />
               <small>년도(2)</small>
             </div>
-            <div class="col-3 flex flex-column">
-              <InputMask v-model="codeInfo.week" mask="99" />
+            <div class="col-span-3">
+              <InputMask class="w-full" v-model="codeInfo.week" mask="99" />
               <small>주차(2)</small>
             </div>
-            <div class="col-6 flex flex-column">
-              <InputMask v-model="codeInfo.server" mask="a**" />
+            <div class="col-span-6">
+              <InputMask class="w-full" v-model="codeInfo.server" mask="a**" />
               <small>서버코드(3)</small>
             </div>
-            <div class="col-6 flex flex-column">
-              <InputMask v-model="codeInfo.serial" mask="999" />
+            <div class="col-span-6">
+              <InputMask class="w-full" v-model="codeInfo.serial" mask="999" />
               <small>번호(3)</small>
             </div>
           </div>
-          <div class="flex pt-4 justify-content-end">
+          <div class="flex justify-end gap-2">
             <Button
               label="다음"
               icon="pi pi-arrow-right"
               iconPos="right"
-              @click="nextCallback"
+              @click="activateCallback('2')"
             />
           </div>
-        </template>
-      </StepPanel>
-      <StepPanel header="납품">
-        <template #content="{ prevCallback, nextCallback }">
-          <div class="grid">
-            <div class="col-12">
+        </StepPanel>
+        <StepPanel v-slot="{ activateCallback }" value="2">
+          <div class="grid grid-cols-12">
+            <div class="col-span-12">
               <span style="font-weight: bold; color: red">* 납품정보</span>
             </div>
-            <div class="col-5 flex flex-column">
+            <div class="col-span-5">
               <DatePicker
+                class="w-full"
                 v-model="salesInfo.date"
                 dateFormat="yy-mm-dd"
                 showButtonBar
               />
               <small>납품일자</small>
             </div>
-            <div class="col-7 flex flex-column">
-              <InputText v-model="salesInfo.customer" />
+            <div class="col-span-7">
+              <InputText class="w-full" v-model="salesInfo.customer" />
               <small>납품처</small>
             </div>
-            <div class="col-5 flex flex-column">
-              <InputText v-model="salesInfo.manager" />
+            <div class="col-span-5">
+              <InputText class="w-full" v-model="salesInfo.manager" />
               <small>담당자</small>
             </div>
-            <div class="col-7 flex flex-column">
-              <InputText v-model="salesInfo.contact" />
+            <div class="col-span-7">
+              <InputText class="w-full" v-model="salesInfo.contact" />
               <small>연락처</small>
             </div>
-            <div class="col-7 flex flex-column">
-              <InputText v-model="salesInfo.email" />
+            <div class="col-span-7">
+              <InputText class="w-full" v-model="salesInfo.email" />
               <small>E-mail</small>
             </div>
-            <div class="col-5 flex flex-column">
-              <Select v-model="salesInfo.status" :options="salesStatus" />
+            <div class="col-span-5">
+              <Select
+                class="w-full"
+                v-model="salesInfo.status"
+                :options="salesStatus"
+              />
             </div>
           </div>
-          <div class="flex pt-4 justify-content-between">
+          <div class="flex justify-between">
             <Button
               label="이전"
               severity="secondary"
               icon="pi pi-arrow-left"
-              @click="prevCallback"
+              @click="activateCallback('1')"
             />
             <Button
               label="다음"
               icon="pi pi-arrow-right"
               iconPos="right"
-              @click="nextCallback"
+              @click="activateCallback('3')"
             />
           </div>
-        </template>
-      </StepPanel>
-      <StepPanel header="설치">
-        <template #content="{ prevCallback }">
-          <div class="grid">
-            <div class="col-12">
+        </StepPanel>
+        <StepPanel v-slot="{ activateCallback }" value="3">
+          <div class="grid grid-cols-12">
+            <div class="col-span-12">
               <span style="font-weight: bold; color: red">* 설치정보</span>
             </div>
-            <div class="col-6 flex flex-column">
-              <InputText v-model="installInfo.region" />
+            <div class="col-span-6">
+              <InputText class="w-full" v-model="installInfo.region" />
               <small>국가(Region)</small>
             </div>
-            <div class="col-6 flex flex-column">
-              <InputText v-model="installInfo.location" />
+            <div class="col-span-6">
+              <InputText class="w-full" v-model="installInfo.location" />
               <small>설치지역</small>
             </div>
-            <div class="col-12 flex flex-column">
-              <InputText v-model="installInfo.details" />
+            <div class="col-span-12">
+              <InputText class="w-full" v-model="installInfo.details" />
               <small>설치위치(상세)</small>
             </div>
-            <div class="col-6 flex flex-column">
+            <div class="col-span-6">
               <AutoComplete
+                class="w-full"
                 v-model="installInfo.customer"
                 :suggestions="filteredCustomers"
                 @complete="searchCustomers"
               />
               <small>고객사(출고)</small>
             </div>
-            <div class="col-6 flex flex-column">
+            <div class="col-span-6">
               <Select
+                class="w-full"
                 v-model="installInfo.department"
                 :options="null"
                 showClear
@@ -703,17 +606,17 @@ onBeforeUnmount(() => {
               />
               <small>사업부</small>
             </div>
-            <div class="col-12 flex flex-column">
-              <InputText v-model="installInfo.memo" />
+            <div class="col-span-12">
+              <InputText class="w-full" v-model="installInfo.memo" />
               <small>비고(메모)</small>
             </div>
           </div>
-          <div class="flex pt-4 justify-content-between">
+          <div class="flex justify-between">
             <Button
               label="이전"
               severity="secondary"
               icon="pi pi-arrow-left"
-              @click="prevCallback"
+              @click="activateCallback('2')"
             />
             <Button
               label="완료"
@@ -722,100 +625,10 @@ onBeforeUnmount(() => {
               @click="submitMobileTerminalForm"
             />
           </div>
-        </template>
-      </StepPanel>
+        </StepPanel>
+      </StepPanels>
     </Stepper>
   </Dialog>
 </template>
 
-<style>
-th {
-  background-color: #f3fbfd;
-  font-weight: bold;
-}
-
-.grid {
-  margin: 0;
-}
-
-.p-button {
-  word-break: keep-all;
-}
-
-.p-autocomplete-input {
-  width: 100%;
-}
-
-.p-datatable-header {
-  padding: 0.2rem;
-}
-
-div[class^='col'] {
-  padding: 0.2rem;
-}
-
-.th-customer {
-  min-width: 200px;
-}
-
-.p-inputtext,
-.dropdown-terminal-id,
-.select-location,
-.p-button {
-  display: flex;
-  height: 2.5rem;
-  align-items: center;
-}
-
-.break-terminal-id {
-  display: none;
-}
-
-.p-stepper-panels {
-  padding: 0;
-}
-
-@media (max-width: 960px) {
-  .th-customer,
-  .th-location {
-    display: none;
-  }
-
-  .th-customer-location {
-    min-width: 150px;
-    max-width: 200px;
-    word-break: break-all;
-  }
-
-  .th-registered-date {
-    word-break: keep-all;
-  }
-
-  .th-modified-date {
-    word-break: keep-all;
-  }
-
-  .break-terminal-id {
-    display: inline;
-  }
-
-  .p-dialog-header,
-  .p-dialog-content {
-    padding: 1rem;
-  }
-}
-
-@media (min-width: 961px) {
-  .card {
-    width: 100%;
-  }
-
-  .icon-field-search {
-    float: left;
-  }
-
-  .th-customer-location {
-    display: none;
-  }
-}
-</style>
+<style></style>

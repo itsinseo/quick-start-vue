@@ -140,9 +140,10 @@ function clearFilter() {
   <div v-if="needGoogleMap">
     <p>우리나라 동 단위까지 줌인 시 카카오 지도로 전환됩니다.</p>
   </div>
-  <div class="grid">
-    <div class="col-6 lg:col-2">
+  <div class="grid grid-cols-12">
+    <div class="col-span-6 lg:col-span-2">
       <Select
+        class="w-full"
         v-model="filterOptions.selectedBizcode"
         :options="TM_BIZCODE"
         optionLabel="label"
@@ -151,7 +152,6 @@ function clearFilter() {
         optionGroupChildren="items"
         showClear
         placeholder="터미널 코드"
-        class="user-interaction"
         :disabled="true"
       >
         <template #optiongroup="slotProps">
@@ -159,50 +159,46 @@ function clearFilter() {
         </template>
       </Select>
     </div>
-    <div class="col-6 lg:col-2">
+    <div class="col-span-6 lg:col-span-2">
       <Select
+        class="w-full"
         v-model="filterOptions.selectedCompany"
         :options="TM_COMPANY"
         optionLabel="name"
         optionValue="code"
         showClear
         placeholder="고객사"
-        class="user-interaction"
         :disabled="true"
       />
     </div>
-    <div class="col-6 lg:col-2">
+    <div class="col-span-6 lg:col-span-2">
       <Select
+        class="w-full"
         v-model="filterOptions.selectedRegion"
         :options="TM_COUNTRY"
         optionLabel="name"
         optionValue="code"
         showClear
         placeholder="국가 - 검색으로 전환 중"
-        class="user-interaction"
         :disabled="true"
       />
     </div>
-    <div class="col-6 lg:col-2">
+    <div class="col-span-6 lg:col-span-2">
       <Select
+        class="w-full"
         v-model="filterOptions.selectedStatus"
         :options="TM_STATUS"
         optionLabel="name"
         optionValue="code"
         showClear
         placeholder="통신 상태"
-        class="user-interaction"
       />
     </div>
-    <div class="col-6 lg:col-2">
-      <Button
-        @click="clearFilter"
-        icon="pi pi-filter-slash"
-        class="user-interaction button-filter"
-      />
+    <div class="col-span-6 lg:col-span-2">
+      <Button class="w-full" @click="clearFilter" icon="pi pi-filter-slash" />
     </div>
   </div>
-  <div id="temp-div" style="width: 90vw; height: 65vh">
+  <div style="width: 90vw; height: 65vh">
     <KeepAlive>
       <GoogleMap
         v-if="isGlobal"
@@ -225,21 +221,4 @@ function clearFilter() {
   </div>
 </template>
 
-<style scoped>
-.grid {
-  margin: 0;
-}
-
-div[class^='col'] {
-  padding: 0.2rem;
-}
-
-.user-interaction {
-  width: 100%;
-  height: 40px;
-}
-
-.button-filter {
-  width: 20%;
-}
-</style>
+<style scoped></style>

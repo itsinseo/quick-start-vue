@@ -23,8 +23,8 @@ const totalRouterCount = ref(simData.value[0].totalCnt);
 </script>
 
 <template>
-  <div class="grid">
-    <div class="col-12 lg:col-6">
+  <div class="grid grid-cols-1 lg:grid-cols-2">
+    <div>
       <Panel header="사업자별 기기 현황" toggleable>
         <DataTable
           v-model:expandedRows="expandedRows"
@@ -36,7 +36,7 @@ const totalRouterCount = ref(simData.value[0].totalCnt);
           scroll-height="80vh"
         >
           <template #header>
-            <div class="flex flex-wrap justify-content-end">
+            <div class="justify-content-end flex flex-wrap">
               <Button
                 text
                 icon="pi pi-plus"
@@ -91,7 +91,7 @@ const totalRouterCount = ref(simData.value[0].totalCnt);
         </DataTable>
       </Panel>
     </div>
-    <div class="col-12 lg:col-6">
+    <div>
       <Panel header="SIM 사용 현황" toggleable>
         <DataTable
           :value="simData"
@@ -123,19 +123,11 @@ const totalRouterCount = ref(simData.value[0].totalCnt);
             </template>
           </Column>
           <Column field="monthlyFee" />
-          <!-- TODO: resolve incorrect colspan rendering -->
-          <template #groupheader="{ data }">
-            <div>(단위: {{ data.currencyCode }})</div>
-          </template>
           <ColumnGroup type="footer">
             <Row>
-              <Column footer="합계" style="background-color: aqua" />
-              <Column
-                :footer="totalRouterCount"
-                :colspan="2"
-                style="background-color: aqua"
-              />
-              <Column :footer="totalMonthlyCost" style="background-color: aqua">
+              <Column class="" footer="합계" />
+              <Column class="" :footer="totalRouterCount" :colspan="2" />
+              <Column :footer="totalMonthlyCost">
                 <template>
                   {{ totalMonthlyCost }}
                 </template>
@@ -148,15 +140,4 @@ const totalRouterCount = ref(simData.value[0].totalCnt);
   </div>
 </template>
 
-<style scoped>
-th {
-  background-color: #f3fbfd;
-  font-weight: bold;
-}
-
-@media (max-width: 960px) {
-  td {
-    padding: 0.5rem;
-  }
-}
-</style>
+<style scoped></style>

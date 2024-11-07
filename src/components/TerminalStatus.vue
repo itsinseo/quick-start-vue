@@ -68,23 +68,4 @@ initSelectedColumns();
   </DataTable>
 </template>
 
-<style>
-.p-datatable-header {
-  padding: 0.2rem;
-}
-
-.p-multiselect-label {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.p-multiselect-token {
-  margin: 0.1rem;
-}
-
-@media (max-width: 960px) {
-  .p-multiselect-chip {
-    max-width: 85vw;
-  }
-}
-</style>
+<style></style>

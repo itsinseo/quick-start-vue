@@ -23,12 +23,10 @@ const importedRoutes = ref(router.options.routes.filter(route => route.name));
 </script>
 
 <template>
-  <div class="container-header">
-    <h1>
-      <a href="/">{{ title }}</a>
-    </h1>
+  <div class="flex m-2">
+    <a class="text-4xl text-primary font-bold" href="/">{{ title }}</a>
     <Divider layout="vertical" />
-    <h2 class="page-title">{{ pageTitle }}</h2>
+    <h2 class="text-2xl self-center">{{ pageTitle }}</h2>
   </div>
 
   <div class="menu-bar">
@@ -58,56 +56,9 @@ const importedRoutes = ref(router.options.routes.filter(route => route.name));
 </template>
 
 <style>
-.container-header {
-  display: flex;
-  align-items: center;
-}
-
-.p-menubar {
-  margin: 2px;
-}
-
-.p-menuitem-content {
-  font-weight: bold;
-}
-
-.p-menuitem {
-  border-radius: 6px;
-  /* border: 1px solid #e2e8f0; */
-  margin: 2px;
-  padding: 2px;
-}
-
 .selectedMenu {
   background-color: #2ba06f;
   color: white;
   border-radius: 10px;
-}
-
-@media (max-width: 960px) {
-  .container-header > *:not(.page-title) {
-    display: none;
-  }
-
-  .page-title {
-    position: absolute;
-    top: 0;
-    right: 1rem;
-  }
-
-  .p-menubar-mobile {
-    max-width: 50%;
-    border: none;
-    margin-bottom: 1rem;
-    padding: 0;
-  }
-
-  .p-menubar-button {
-    padding: 2px;
-  }
-
-  .p-menubar-root-list {
-    flex-wrap: nowrap;
-  }
 }
 </style>

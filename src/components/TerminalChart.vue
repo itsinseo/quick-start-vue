@@ -32,44 +32,6 @@ const setMixedChartData = () => {
 };
 setMixedChartData();
 
-// const chartOptions = ref();
-// const setChartOptions = () => {
-//   const documentStyle = getComputedStyle(document.documentElement);
-//   const textColor = documentStyle.getPropertyValue('--text-color');
-//   const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
-//   const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
-
-//   chartOptions.value = {
-//     plugins: {
-//       legend: {
-//         labels: {
-//           color: textColor
-//         }
-//       }
-//     },
-//     scales: {
-//       x: {
-//         ticks: {
-//           color: textColorSecondary
-//         },
-//         grid: {
-//           color: surfaceBorder
-//         }
-//       },
-//       y: {
-//         beginAtZero: true,
-//         ticks: {
-//           color: textColorSecondary
-//         },
-//         grid: {
-//           color: surfaceBorder
-//         }
-//       }
-//     }
-//   };
-// }
-// setChartOptions();
-
 const pieChartData = ref();
 const setPieChartData = () => {
   pieChartData.value = {
@@ -85,9 +47,13 @@ setPieChartData();
 </script>
 
 <template>
-  <div class="card">
-    <Chart type="bar" :data="mixedChartData" class="w-full lg:w-30rem" />
-    <Chart type="pie" :data="pieChartData" class="w-full lg:w-30rem" />
+  <div class="grid grid-cols-6 lg:grid-cols-12">
+    <div class="col-span-6 justify-items-center">
+      <Chart class="max-h-[70vh] w-full" type="bar" :data="mixedChartData" />
+    </div>
+    <div class="col-span-6 justify-items-center">
+      <Chart class="max-h-[70vh] w-full" type="pie" :data="pieChartData" />
+    </div>
   </div>
 </template>
 

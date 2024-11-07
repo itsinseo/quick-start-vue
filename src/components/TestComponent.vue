@@ -122,24 +122,11 @@ const today = computed(() => dayjs());
 const dt = ref();
 const geocodedDataArray = ref([]);
 const columns = [
-  // "state",
   'region',
   'tid',
-  // "contactNo",
   'customer',
-  // "manager",
-  // "deliveredAt",
-  // "emplacement",
-  // "memo",
-  // "company",
   'division',
-  // "etc",
-  // "label",
-  // "simIccid",
-  // "simSp",
-  // "simRate",
   'lastCommedAt',
-  // "commState",
   'formattedAddr',
   'lat',
   'lng'
@@ -193,21 +180,21 @@ const { windowWidth, isLargeWindow } = useWindowSize();
 
 <template>
   <div>
-    <div class="wrapper-container">
+    <div>
       <Select
         v-model="selectedCountry"
         :options="countryList"
         placeholder="국가 선택"
         style="min-width: 10rem"
       />
-      <InputText type="text" v-model="inputText" class="user-interaction" />
+      <InputText type="text" v-model="inputText" />
       <Button
         @click="testGoogleGeocoding(inputText)"
         label="Test Geocoding"
         icon="pi pi-wrench"
         class="user-interaction"
       />
-      <div class="wrapper-container">
+      <div>
         <Textarea
           type="text"
           v-model="formattedAddress"
@@ -224,25 +211,14 @@ const { windowWidth, isLargeWindow } = useWindowSize();
         />
       </div>
     </div>
-    <InputText
-      type="text"
-      v-model="today"
-      class="user-interaction"
-      style="width: 20rem"
-    />
+    <InputText type="text" v-model="today" style="width: 20rem" />
     <Button
       @click="addGeocodingResults"
       label="Geocode"
       icon="pi pi-google"
       disabled
-      class="user-interaction"
     />
-    <Button
-      @click="exportCSV2"
-      label="CSV"
-      icon="pi pi-download"
-      class="user-interaction"
-    />
+    <Button @click="exportCSV2" label="CSV" icon="pi pi-download" />
     <DataTable
       :value="geocodedDataArray"
       ref="dt"
@@ -254,11 +230,13 @@ const { windowWidth, isLargeWindow } = useWindowSize();
       <Column v-for="col of columns" :field="col" :header="col" />
     </DataTable>
     <div>{{ windowWidth }} | {{ isLargeWindow }}</div>
+    <Button
+      class="bg-purple-500"
+      icon="pi pi-check"
+      disabled
+      label="TailwindCSS"
+    />
   </div>
 </template>
 
-<style scoped>
-.user-interaction {
-  display: inline;
-}
-</style>
+<style scoped></style>
