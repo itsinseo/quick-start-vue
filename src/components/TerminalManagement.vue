@@ -256,7 +256,7 @@ onBeforeUnmount(() => {
             @click="clearFilter()"
           />
         </div>
-        <div v-if="showCustomQrScanner" class="col-span-6">
+        <div v-if="showCustomQrScanner" class="col-span-6 justify-items-center">
           <CustomQrScanner
             class="h-full w-full max-w-[600px]"
             @emit-qr-scan-result="showQrScanResult"

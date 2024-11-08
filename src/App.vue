@@ -4,7 +4,7 @@ import { Toast } from 'primevue';
 </script>
 
 <template>
-  <Toast />
+  <Toast class="max-w-[90vw]" />
   <HeaderMenu title="TOC Pilot" />
 </template>
 

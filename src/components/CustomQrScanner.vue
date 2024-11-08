@@ -18,7 +18,6 @@ const validateTerminalId = decodedText => {
 };
 const onScanSuccess = (decodedText, decodedResult) => {
   if (validateTerminalId(decodedText)) {
-    stopQrScanner();
     emit('emitQrScanResult', decodedText);
   }
 };
