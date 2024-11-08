@@ -3,7 +3,7 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
 import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from 'primevue';
 
-import QrScanner from './QrScanner.vue';
+import CustomQrScanner from './CustomQrScanner.vue';
 
 import kakaoGeocode from '@/utils/kakao-geocoding';
 
@@ -152,7 +152,7 @@ const isLargeWindow = computed(() => {
 });
 
 // QR Scan
-const showQrScanner = ref(false);
+const showCustomQrScanner = ref(false);
 const showQrScanResult = qrScanResult => {
   toast.add({
     severity: 'info',
@@ -161,7 +161,7 @@ const showQrScanResult = qrScanResult => {
     // group: 'tr',
     life: 3000
   });
-  showQrScanner.value = false;
+  showCustomQrScanner.value = false;
 };
 
 onMounted(() => {
@@ -208,7 +208,7 @@ onBeforeUnmount(() => {
           <Button
             class="w-full"
             label="QR"
-            @click.prevent="showQrScanner = !showQrScanner"
+            @click.prevent="showCustomQrScanner = !showCustomQrScanner"
           />
         </div>
         <div class="col-span-4">
@@ -256,9 +256,9 @@ onBeforeUnmount(() => {
             @click="clearFilter()"
           />
         </div>
-        <div v-if="showQrScanner" class="col-span-6 justify-items-center">
-          <QrScanner
-            class="h-full w-[80vw] max-w-[600px]"
+        <div v-if="showCustomQrScanner" class="col-span-6">
+          <CustomQrScanner
+            class="h-full w-full max-w-[600px]"
             @emit-qr-scan-result="showQrScanResult"
           />
         </div>

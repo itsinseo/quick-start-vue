@@ -5,12 +5,12 @@ import { Html5QrcodeScanner, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 
 const emit = defineEmits(['emitQrScanResult']);
 
-const elementName = ref('qr-reader');
-const html5QrcodeScanner = ref();
+const formatsToSupport = [Html5QrcodeSupportedFormats.QR_CODE];
 const config = {
   fps: 30
 };
-const formatsToSupport = [Html5QrcodeSupportedFormats.QR_CODE];
+const elementName = ref('qr-reader');
+const html5QrcodeScanner = ref();
 
 const validateTerminalId = decodedText => {
   return decodedText.length === 13;
