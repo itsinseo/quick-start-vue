@@ -23,10 +23,10 @@ const importedRoutes = ref(router.options.routes.filter(route => route.name));
 </script>
 
 <template>
-  <div class="flex m-2">
-    <a class="text-4xl text-primary font-bold" href="/">{{ title }}</a>
+  <div class="m-2 flex">
+    <a class="text-4xl font-bold text-primary" href="/">{{ title }}</a>
     <Divider layout="vertical" />
-    <h2 class="text-2xl self-center">{{ pageTitle }}</h2>
+    <h2 class="self-center text-2xl">{{ pageTitle }}</h2>
   </div>
 
   <div class="menu-bar">

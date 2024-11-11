@@ -3,7 +3,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 
-const emit = defineEmits(['emitQrScanResult']);
+const emit = defineEmits(['emitQrScanResult', 'emitCameraPermissionAlert']);
 
 const formatsToSupport = [Html5QrcodeSupportedFormats.QR_CODE];
 const config = {
@@ -14,11 +14,6 @@ const html5QrScanner = ref();
 
 const validateTerminalId = decodedText => {
   return decodedText.length === 13;
-};
-const onScanSuccess = (decodedText, decodedResult) => {
-  if (validateTerminalId(decodedText)) {
-    emit('emitQrScanResult', decodedText);
-  }
 };
 
 const initQrScanner = () => {
@@ -38,29 +33,31 @@ const initQrScanner = () => {
     })
     .catch(err => {
       console.error('QR getCameras failed: ' + err);
+      emit('emitCameraPermissionAlert');
     });
 };
 const stopQrScanner = () => {
-  html5QrScanner.value
-    .stop()
-    .then(ignore => {
-      console.log('QR stopped');
-    })
-    .catch(err => {
-      console.error('QR stop failed: ' + err);
-    });
+  if (html5QrScanner.value && html5QrScanner.value.getState() === 'SCANNING') {
+    html5QrScanner.value
+      .stop()
+      .then(ignore => {
+        console.log('QR stopped');
+      })
+      .catch(err => {
+        console.error('QR stop failed: ' + err);
+      });
+  }
 };
 
-onMounted(() => {
-  initQrScanner();
-});
-onUnmounted(() => {
-  stopQrScanner();
-});
-
-const invertedCanvas = ref(null);
+const onScanSuccess = (decodedText, decodedResult) => {
+  if (validateTerminalId(decodedText)) {
+    emit('emitQrScanResult', decodedText);
+  }
+};
 
 // !EXPERIMENTAL
+const invertedCanvas = ref(null);
+
 function onScanFailure() {
   const videoElement = document.querySelector(`#${elementName.value} video`);
   if (videoElement) {
@@ -89,12 +86,7 @@ function onScanFailure() {
     invertColors(canvasContext, canvasElement.width, canvasElement.height);
 
     canvasElement.toBlob(blob => {
-      if (
-        html5QrScanner.value &&
-        html5QrScanner.value.getState() === 'SCANNING'
-      ) {
-        html5QrScanner.value.stop();
-      }
+      stopQrScanner();
 
       html5QrScanner.value
         .scanFile(blob, true)
@@ -108,7 +100,7 @@ function onScanFailure() {
             onScanSuccess,
             onScanFailure
           );
-          console.warn('QR scanFile failed: ' + err);
+          console.error('QR scanFile failed: ' + err);
         });
     }, 'image/png');
   }
@@ -126,6 +118,13 @@ function invertColors(context, width, height) {
 
   context.putImageData(imageData, 0, 0);
 }
+
+onMounted(() => {
+  initQrScanner();
+});
+onUnmounted(() => {
+  stopQrScanner();
+});
 </script>
 
 <template>

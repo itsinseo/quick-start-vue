@@ -158,7 +158,15 @@ const showQrScanResult = qrScanResult => {
     severity: 'info',
     summary: 'QR 스캔 성공',
     detail: qrScanResult,
-    // group: 'tr',
+    life: 3000
+  });
+  showCustomQrScanner.value = false;
+};
+const showCameraPermissionAlert = () => {
+  toast.add({
+    severity: 'error',
+    summary: '권한 오류',
+    detail: '카메라 접근 권한 미부여',
     life: 3000
   });
   showCustomQrScanner.value = false;
@@ -260,6 +268,7 @@ onBeforeUnmount(() => {
           <CustomQrScanner
             class="h-full w-full max-w-[600px]"
             @emit-qr-scan-result="showQrScanResult"
+            @emit-camera-permission-alert="showCameraPermissionAlert"
           />
         </div>
       </div>
