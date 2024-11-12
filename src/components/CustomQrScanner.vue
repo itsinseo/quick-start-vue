@@ -37,7 +37,7 @@ const initQrScanner = () => {
     });
 };
 const stopQrScanner = () => {
-  if (html5QrScanner.value && html5QrScanner.value.getState() === 'SCANNING') {
+  if (html5QrScanner.value) {
     html5QrScanner.value
       .stop()
       .then(ignore => {
