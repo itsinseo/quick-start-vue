@@ -140,7 +140,7 @@ function clearFilter() {
   <div v-if="needGoogleMap">
     <p>우리나라 동 단위까지 줌인 시 카카오 지도로 전환됩니다.</p>
   </div>
-  <div class="grid grid-cols-12">
+  <div class="grid grid-cols-12 gap-1">
     <div class="col-span-6 lg:col-span-2">
       <Select
         class="w-full"
@@ -179,7 +179,7 @@ function clearFilter() {
         optionLabel="name"
         optionValue="code"
         showClear
-        placeholder="국가 - 검색으로 전환 중"
+        placeholder="국가"
         :disabled="true"
       />
     </div>
@@ -194,11 +194,17 @@ function clearFilter() {
         placeholder="통신 상태"
       />
     </div>
-    <div class="col-span-6 lg:col-span-2">
+    <div class="col-span-9 lg:col-span-3">
+      <IconField>
+        <InputIcon class="pi pi-search" />
+        <InputText class="w-full" placeholder="검색" disabled />
+      </IconField>
+    </div>
+    <div class="col-span-3 lg:col-span-1">
       <Button class="w-full" @click="clearFilter" icon="pi pi-filter-slash" />
     </div>
   </div>
-  <div style="width: 90vw; height: 65vh">
+  <div class="h-[70vh] w-full">
     <KeepAlive>
       <GoogleMap
         v-if="isGlobal"

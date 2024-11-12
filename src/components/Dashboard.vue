@@ -23,7 +23,7 @@ const totalRouterCount = ref(simData.value[0].totalCnt);
 </script>
 
 <template>
-  <div class="grid grid-cols-1 lg:grid-cols-2">
+  <div class="grid grid-cols-1 gap-1 lg:grid-cols-2">
     <div>
       <Panel header="사업자별 기기 현황" toggleable>
         <DataTable
@@ -53,16 +53,16 @@ const totalRouterCount = ref(simData.value[0].totalCnt);
           </template>
           <Column expander />
           <Column
+            class="break-all"
             field="company_name"
             header="고객사"
             sortable
-            style="word-break: break-all"
           />
           <Column field="terminal_count" header="터미널">
             <template #body="{ data }">
               {{ data.terminal_count - data.terminal_disconnected }} /
               {{ data.terminal_count }}
-              <b v-if="data.terminal_disconnected !== 0" style="color: red"
+              <b class="text-red-500" v-if="data.terminal_disconnected !== 0"
                 ><br />({{ data.terminal_disconnected }})</b
               >
             </template>
@@ -78,9 +78,10 @@ const totalRouterCount = ref(simData.value[0].totalCnt);
           </Column>
           <template #expansion="{ data }">
             <DataTable
+            class="text-[0.8rem]"
               v-if="data.children && data.children.length > 0"
               :value="data.children"
-              style="font-size: 0.8rem"
+              
             >
               <Column field="terminalId" header="터미널ID" />
               <Column field="location" header="위치" />
@@ -125,8 +126,8 @@ const totalRouterCount = ref(simData.value[0].totalCnt);
           <Column field="monthlyFee" />
           <ColumnGroup type="footer">
             <Row>
-              <Column class="" footer="합계" />
-              <Column class="" :footer="totalRouterCount" :colspan="2" />
+              <Column footer="합계" />
+              <Column :footer="totalRouterCount" :colspan="2" />
               <Column :footer="totalMonthlyCost">
                 <template>
                   {{ totalMonthlyCost }}

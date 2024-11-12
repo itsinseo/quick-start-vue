@@ -182,17 +182,16 @@ const { windowWidth, isLargeWindow } = useWindowSize();
   <div>
     <div>
       <Select
+        class="min-w-40"
         v-model="selectedCountry"
         :options="countryList"
         placeholder="국가 선택"
-        style="min-width: 10rem"
       />
       <InputText type="text" v-model="inputText" />
       <Button
         @click="testGoogleGeocoding(inputText)"
         label="Test Geocoding"
         icon="pi pi-wrench"
-        class="user-interaction"
       />
       <div>
         <Textarea
@@ -211,7 +210,7 @@ const { windowWidth, isLargeWindow } = useWindowSize();
         />
       </div>
     </div>
-    <InputText type="text" v-model="today" style="width: 20rem" />
+    <InputText class="w-80" type="text" v-model="today" />
     <Button
       @click="addGeocodingResults"
       label="Geocode"

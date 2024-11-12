@@ -23,14 +23,8 @@ const importedRoutes = ref(router.options.routes.filter(route => route.name));
 </script>
 
 <template>
-  <div class="m-2 flex">
-    <a class="text-4xl font-bold text-primary" href="/">{{ title }}</a>
-    <Divider layout="vertical" />
-    <h2 class="self-center text-2xl">{{ pageTitle }}</h2>
-  </div>
-
-  <div class="menu-bar">
-    <Menubar :model="importedRoutes">
+  <div class="m-2 flex justify-between">
+    <Menubar :model="importedRoutes" class="border-none min-w-[50vw]">
       <template #item="{ item, props }">
         <router-link
           v-if="item.path"
@@ -50,8 +44,10 @@ const importedRoutes = ref(router.options.routes.filter(route => route.name));
         </router-link>
       </template>
     </Menubar>
+    <a class="self-center text-3xl font-bold text-primary" href="/">{{
+      title
+    }}</a>
   </div>
-
   <RouterView />
 </template>
 

@@ -44,8 +44,9 @@ initSelectedColumns();
     rowHover
   >
     <template #header>
-      <div style="text-align: left">
+      <div class="text-left">
         <MultiSelect
+          class="max-w-[90vw]"
           :modelValue="selectedColumns"
           :options="columns"
           optionLabel="header"

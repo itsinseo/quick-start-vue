@@ -23,9 +23,9 @@ const globalFilterFields = [
   'sim'
 ];
 const terminalHeaderList = [
-  { name: 'TSC', description: '삼성전자' },
-  { name: 'LTM', description: 'LG' },
-  { name: 'CTM', description: '중소기업' },
+  { name: 'SSS', description: '삼성전자' },
+  { name: 'LLL', description: 'LG' },
+  { name: 'CCC', description: '중소기업' },
   { name: 'MTL', description: '임시' }
 ];
 const locationList = [
@@ -60,7 +60,7 @@ const salesStatus = ['정상출고', '회수', 'A/S'];
 const customerDepartment = ref([
   { name: 'LG', department: ['VS', 'MAGNA'] },
   { name: 'SAMSUNG', department: ['생활가전', '무선'] },
-  { name: 'LS', department: [] }
+  { name: 'SK', department: [] }
 ]);
 
 const filteredCustomers = ref();
@@ -197,39 +197,30 @@ onBeforeUnmount(() => {
     scrollHeight="70vh"
   >
     <template #header>
-      <div class="grid grid-cols-6">
-        <div class="col-span-1">
+      <div class="grid grid-cols-12 gap-1">
+        <div class="col-span-2 lg:col-span-1">
           <Button
             class="w-full"
             v-if="isLargeWindow"
-            label="추가"
+            icon="pi pi-plus"
             @click="desktopDialog = true"
           />
           <Button
             class="w-full"
             v-else
-            label="추가"
+            icon="pi pi-plus"
             @click="mobileDialog = true"
           />
         </div>
-        <div class="col-span-1">
+        <div class="col-span-2 lg:col-span-1">
           <Button
             class="w-full"
-            label="QR"
+            icon="pi pi-qrcode"
             @click.prevent="showCustomQrScanner = !showCustomQrScanner"
           />
         </div>
-        <div class="col-span-4">
-          <IconField iconPosition="left">
-            <InputIcon class="pi pi-search" />
-            <InputText
-              class="w-full"
-              v-model="filters['global'].value"
-              placeholder="검색"
-            />
-          </IconField>
-        </div>
-        <div class="col-span-3">
+
+        <div class="col-span-4 lg:col-span-3">
           <Select
             class="w-full"
             v-model="filters['terminal_id'].value"
@@ -244,7 +235,7 @@ onBeforeUnmount(() => {
             </template>
           </Select>
         </div>
-        <div class="col-span-2">
+        <div class="col-span-4 lg:col-span-1">
           <MultiSelect
             class="w-full"
             v-model="filters['location'].value"
@@ -256,7 +247,17 @@ onBeforeUnmount(() => {
             selectedItemsLabel="{0}개 국가"
           />
         </div>
-        <div class="col-span-1">
+        <div class="col-span-10 lg:col-span-5">
+          <IconField iconPosition="left">
+            <InputIcon class="pi pi-search" />
+            <InputText
+              class="w-full"
+              v-model="filters['global'].value"
+              placeholder="검색"
+            />
+          </IconField>
+        </div>
+        <div class="col-span-2 lg:col-span-1">
           <Button
             class="w-full"
             icon="pi pi-filter-slash"
@@ -264,7 +265,10 @@ onBeforeUnmount(() => {
             @click="clearFilter()"
           />
         </div>
-        <div v-if="showCustomQrScanner" class="col-span-6 justify-items-center">
+        <div
+          v-if="showCustomQrScanner"
+          class="col-span-12 justify-items-center lg:col-span-6"
+        >
           <CustomQrScanner
             class="h-full w-full max-w-[600px]"
             @emit-qr-scan-result="showQrScanResult"
@@ -274,11 +278,14 @@ onBeforeUnmount(() => {
       </div>
     </template>
     <template #empty> 검색 결과가 없습니다. </template>
-    <Column field="terminal_id" header="터미널 ID" sortable>
+    <Column
+      class="max-w-[25vw] break-words"
+      field="terminal_id"
+      header="터미널 ID"
+      sortable
+    >
       <template #body="{ data }">
-        {{ data.terminal_id.slice(0, 7) }}<br class="break-terminal-id" />{{
-          data.terminal_id.slice(7)
-        }}
+        {{ data.terminal_id }}
       </template>
     </Column>
     <Column class="hidden lg:table-cell" field="customer" header="고객사" />
@@ -288,7 +295,7 @@ onBeforeUnmount(() => {
       header="납품처"
       :showFilterMenu="false"
       sortable
-    ></Column>
+    />
     <Column field="customer" sortable class="lg:hidden">
       <template #header>
         <div>고객사<br />납품처</div>
@@ -303,18 +310,23 @@ onBeforeUnmount(() => {
         {{ formatDate(data.registered_date) }}
       </template>
     </Column>
-    <Column field="sim" header="SIM" />
-    <Column field="modified_date" header="최종수정" sortable />
+    <Column class="max-w-[25vw] break-words" field="sim" header="SIM" />
+    <Column
+      class="hidden lg:table-cell"
+      field="modified_date"
+      header="최종수정"
+      sortable
+    />
   </DataTable>
 
   <Dialog
+    class="max-w-[900px]"
     v-model:visible="desktopDialog"
     modal
     header="터미널 상세 정보"
-    style="max-width: 900px"
     :breakpoints="{ '960px': '95vw' }"
   >
-    <div class="grid grid-cols-12">
+    <div class="grid grid-cols-12 gap-1">
       <div class="col-span-12">
         <span style="font-weight: bold; color: red">* 터미널ID (13자리)</span>
       </div>
@@ -368,7 +380,7 @@ onBeforeUnmount(() => {
 
     <Divider />
 
-    <div class="grid grid-cols-12">
+    <div class="grid grid-cols-12 gap-1">
       <div class="col-span-12">
         <span style="font-weight: bold; color: red">* 납품정보</span>
       </div>
@@ -420,7 +432,7 @@ onBeforeUnmount(() => {
 
     <Divider />
 
-    <div class="grid grid-cols-12">
+    <div class="grid grid-cols-12 gap-1">
       <div class="col-span-12">
         <span style="font-weight: bold; color: red">* 설치정보</span>
       </div>
@@ -506,7 +518,7 @@ onBeforeUnmount(() => {
       </StepList>
       <StepPanels>
         <StepPanel v-slot="{ activateCallback }" value="1">
-          <div class="grid grid-cols-12">
+          <div class="grid grid-cols-12 gap-1">
             <div class="col-span-12">
               <span style="font-weight: bold; color: red"
                 >* 터미널ID (13자리)</span
@@ -554,7 +566,7 @@ onBeforeUnmount(() => {
           </div>
         </StepPanel>
         <StepPanel v-slot="{ activateCallback }" value="2">
-          <div class="grid grid-cols-12">
+          <div class="grid grid-cols-12 gap-1">
             <div class="col-span-12">
               <span style="font-weight: bold; color: red">* 납품정보</span>
             </div>
@@ -607,7 +619,7 @@ onBeforeUnmount(() => {
           </div>
         </StepPanel>
         <StepPanel v-slot="{ activateCallback }" value="3">
-          <div class="grid grid-cols-12">
+          <div class="grid grid-cols-12 gap-1">
             <div class="col-span-12">
               <span style="font-weight: bold; color: red">* 설치정보</span>
             </div>
