@@ -4,6 +4,7 @@ import { ref } from 'vue';
 import terminalCommunication from '@/data/terminal-communication.json';
 
 const terminalStatus = ref(terminalCommunication);
+const showDrawer = ref(false);
 
 const selectedColumns = ref();
 const columns = ref([
@@ -44,17 +45,8 @@ initSelectedColumns();
     rowHover
   >
     <template #header>
-      <div class="text-left">
-        <MultiSelect
-          class="max-w-[90vw]"
-          :modelValue="selectedColumns"
-          :options="columns"
-          optionLabel="header"
-          @update:modelValue="onToggle"
-          display="chip"
-          scrollHeight="20vh"
-          placeholder="항목 선택"
-        />
+      <div class="flex justify-end">
+        <i class="pi pi-cog cursor-pointer" @click="showDrawer = true" />
       </div>
     </template>
     <Column
@@ -62,11 +54,28 @@ initSelectedColumns();
       :field="col.field"
       :header="col.header"
       :key="col.field + '_' + index"
-      style="word-break: break-all"
       sortable
     >
     </Column>
   </DataTable>
+
+  <Drawer v-model:visible="showDrawer" position="right" class="min-w-[30vw]">
+    <div class="my-2 text-xl">
+      <span>표시할 열 선택</span>
+    </div>
+    <MultiSelect
+      class="w-full"
+      :modelValue="selectedColumns"
+      :options="columns"
+      optionLabel="header"
+      @update:modelValue="onToggle"
+      display="chip"
+      :maxSelectedLabels="3"
+      scrollHeight="60vh"
+      placeholder="항목 선택"
+      selectedItemsLabel="{0}개 선택됨"
+    />
+  </Drawer>
 </template>
 
 <style></style>

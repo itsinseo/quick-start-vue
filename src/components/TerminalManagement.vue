@@ -216,6 +216,7 @@ onBeforeUnmount(() => {
           <Button
             class="w-full"
             icon="pi pi-qrcode"
+            :outlined="showCustomQrScanner"
             @click.prevent="showCustomQrScanner = !showCustomQrScanner"
           />
         </div>
