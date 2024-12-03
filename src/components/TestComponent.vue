@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 
+import * as XLSX from 'xlsx';
 import dayjs from 'dayjs';
 import { Loader } from '@googlemaps/js-api-loader';
 import { useWindowSize } from '@/utils/useWindowSize.js';
@@ -176,6 +177,60 @@ const exportCSV2 = () => {
 };
 
 const { windowWidth, isLargeWindow } = useWindowSize();
+
+// Excel Sheet
+const header = ref([
+  'IMSI',
+  'ICCID',
+  'SIM State',
+  'Service Profile',
+  'Last APN',
+  'MSISDN',
+  'IMEI'
+]);
+
+const sheetDataArray = ref();
+const workbook = ref();
+const parseXlsxFile = () => {
+  // workbook.value.SheetNames.forEach(sheetname => {
+  //   const ws = workbook.value.Sheets[sheetname];
+  //   const data = XLSX.utils.sheet_to_json(ws, {
+  //     header: header.value
+  //   });
+  //   sheetDataArray.value.push(data);
+  // });
+  const ws = workbook.value.Sheets['Data'];
+  const data = XLSX.utils.sheet_to_json(ws);
+  // sheetDataArray.value.push(data);
+  sheetDataArray.value = data;
+};
+
+// File Upload
+const onFileSelect = event => {
+  const file = event.files[0];
+  const reader = new FileReader();
+
+  reader.onload = async e => {
+    workbook.value = XLSX.read(e.target.result, { type: 'array' });
+    parseXlsxFile();
+  };
+
+  reader.readAsArrayBuffer(file);
+};
+
+// Clipboard
+const copySheetData = () => {
+  const tempArray = [];
+  sheetDataArray.value.forEach(row => {
+    tempArray.push(Object.values(row) + '\n');
+  });
+  var data = [
+    new ClipboardItem({
+      'text/plain': Promise.resolve(new Blob(tempArray, { type: 'text/plain' }))
+    })
+  ];
+  navigator.clipboard.write(data);
+};
 </script>
 
 <template>
@@ -236,6 +291,33 @@ const { windowWidth, isLargeWindow } = useWindowSize();
       label="TailwindCSS"
     />
   </div>
+  <FileUpload
+    mode="basic"
+    :multiple="false"
+    :maxFileSize="1000000"
+    accept=".xlsx, .xls"
+    customUpload
+    @select="onFileSelect"
+  />
+  <Button icon="pi pi-copy" @click="copySheetData" label="Copy" />
+  <DataTable
+    :value="sheetDataArray"
+    removableSort
+    paginator
+    :rows="5"
+    :rowsPerPageOptions="[5, 10, 20, 50]"
+    scrollable
+    scrollHeight="400px"
+  >
+    <template #empty>No data.</template>
+    <Column
+      v-for="col of header"
+      :key="col"
+      :field="col"
+      :header="col"
+      sortable
+    />
+  </DataTable>
 </template>
 
 <style scoped></style>

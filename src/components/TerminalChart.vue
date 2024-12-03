@@ -47,11 +47,11 @@ setPieChartData();
 </script>
 
 <template>
-  <div class="grid grid-cols-6 gap-1 lg:grid-cols-12">
-    <div class="col-span-6 justify-items-center">
+  <div class="grid grid-cols-6 gap-1 p-4 lg:grid-cols-12">
+    <div class="col-span-12 justify-items-center md:col-span-6">
       <Chart class="max-h-[70vh] w-full" type="bar" :data="mixedChartData" />
     </div>
-    <div class="col-span-6 justify-items-center">
+    <div class="col-span-12 justify-items-center md:col-span-6">
       <Chart class="max-h-[70vh] w-full" type="pie" :data="pieChartData" />
     </div>
   </div>
